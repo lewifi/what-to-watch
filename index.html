@@ -92,18 +92,24 @@ header {
 }
 
 .logo span {
+  display: inline-block;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 10px;
   font-family: 'DM Sans', sans-serif;
   font-weight: 300;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   margin-left: 10px;
   vertical-align: middle;
+  line-height: 1.3;
+}
+@media (max-width: 520px) {
+  .logo span { font-size: 9px; margin-left: 8px; }
+}
+@media (max-width: 720px) {
+  .source-pills, .live-indicator { display: none; }
 }
 
-@media (max-width: 640px) {
-  .logo span { display: none; }
-}
+
 
 .source-pills {
   display: flex;
@@ -715,7 +721,7 @@ footer a:hover { color: var(--text); }
 
 <!-- ── HEADER ── -->
 <header>
-  <div class="logo">EPHIX PULSE <span>What the world is watching / Live TV & Movie Trending Aggregator</span></div>
+  <div class="logo">EPHIX PULSE <span>What the World is Watching<br>Live TV &amp; Movie Trending Aggregator</span></div>
   <div class="source-pills" id="source-pills">
     <span class="source-pill pill-tmdb"   id="pill-tmdb">TMDB</span>
     <span class="source-pill pill-trakt"  id="pill-trakt">Trakt</span>
@@ -855,7 +861,7 @@ footer a:hover { color: var(--text); }
 <footer>
   <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
   <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="opacity:0.7;margin-right:6px">Signal mix</span><span style="color:var(--tmdb)">TMDB 38%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 42%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 12%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p>
-  <p>EPHIX PULSE — Aggregate Trending · What the world is watching</p>
+  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator</p>
 </footer>
 
 <!-- ── MODAL ── -->
@@ -958,6 +964,22 @@ async function startLoad() {
     setStep('reddit',  'error');  // Silently shown as inactive
 
     if (Object.keys(youtubeMap).length > 0) document.getElementById('pill-youtube').classList.add('active');
+
+    // ── DEBUG: YouTube influence check ──
+    const ytMatches = Object.values(youtubeMap).filter(v => v > 0).length;
+    const ytTotal = Object.keys(youtubeMap).length;
+    if (ytTotal > 0) {
+      console.log(`%c[YouTube] ${ytMatches} of ${ytTotal} titles matched YouTube video mentions (${Math.round(ytMatches/ytTotal*100)}%)`, 'color:#ff0000;font-weight:bold');
+      const top = Object.entries(youtubeMap)
+        .filter(([k,v]) => v > 0)
+        .sort((a,b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([k,v]) => `  ${k}: ${(v*100).toFixed(0)}%`)
+        .join('\n');
+      if (top) console.log('[YouTube] Top 5 matches:\n' + top);
+    } else {
+      console.log('%c[YouTube] No data available — fallback skipped', 'color:#888');
+    }
 
     setStep('merge', 'loading');
     allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, {

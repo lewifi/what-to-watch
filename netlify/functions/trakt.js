@@ -8,8 +8,9 @@ exports.handler = async (event) => {
       headers: {
         'Content-Type': 'application/json',
         'trakt-api-version': '2',
-        'trakt-api-key': process.env.TRAKT_KEY
-      }
+        'trakt-api-key': process.env.TRAKT_KEY,
+        'User-Agent': 'ephix-pulse/1.0 (https://ephix.net)'
+}
     });
     const data = await res.text();
     return {

@@ -12,13 +12,13 @@
   --surface: #0e1118;
   --surface2: #131620;
   --border: #1c2030;
-  --accent: #7eb8d4;
+  --accent: #e8ff47;
   --accent2: #ff4757;
   --accent3: #38d9a9;
   --text: #e8eaf0;
   --muted: #5a6080;
   --card-hover: #141824;
-  --tmdb: #01d277;
+  --tmdb: #01b4e4;
   --trakt: #ed1c24;
   --reddit: #ff4500;
 }
@@ -64,7 +64,7 @@ header {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 28px;
   letter-spacing: 0.12em;
-  color: var(--text);
+  color: var(--accent);
   flex-shrink: 0;
 }
 
@@ -96,7 +96,7 @@ header {
 }
 
 .source-pill.active { opacity: 1; }
-.pill-tmdb  { background: rgba(1,210,119,0.12);  color: var(--tmdb);   border: 1px solid rgba(1,210,119,0.28); }
+.pill-tmdb  { background: rgba(1,180,228,0.15);  color: var(--tmdb);   border: 1px solid rgba(1,180,228,0.3); }
 .pill-trakt { background: rgba(237,28,36,0.15);  color: var(--trakt);  border: 1px solid rgba(237,28,36,0.3); }
 .pill-reddit{ background: rgba(255,69,0,0.15);   color: var(--reddit); border: 1px solid rgba(255,69,0,0.3);  }
 
@@ -241,7 +241,7 @@ header {
 
 .load-btn {
   background: var(--accent);
-  color: #fff;
+  color: #000;
   border: none;
   padding: 10px 28px;
   font-family: 'DM Sans', sans-serif;
@@ -343,7 +343,7 @@ header {
   transition: all 0.2s;
 }
 
-.tab.active { background: var(--accent); color: #fff; font-weight: 500; }
+.tab.active { background: var(--accent); color: #000; font-weight: 500; }
 .tab:not(.active):hover { color: var(--text); background: var(--border); }
 
 .sort-label {
@@ -473,7 +473,7 @@ header {
   pointer-events: none;
 }
 
-.card-rank.top3 { color: rgba(126,184,212,0.28); }
+.card-rank.top3 { color: rgba(232,255,71,0.28); }
 
 .card-type-badge {
   position: absolute;
@@ -487,7 +487,7 @@ header {
 }
 
 .badge-movie { background: rgba(255,71,87,0.85);  color:#fff; }
-.badge-tv    { background: rgba(126,184,212,0.85); color:#0a1520; }
+.badge-tv    { background: rgba(232,255,71,0.85); color:#000; }
 
 .card-info {
   position: absolute;
@@ -684,7 +684,7 @@ footer a:hover { color: var(--text); }
 <!-- ── SETUP PANEL ── -->
 <div id="setup-panel">
   <div class="setup-title">Setup API Keys</div>
-  <div class="setup-subtitle">PULSE pulls from three sources and merges them into a single ranked list. TMDB and Trakt need free API keys. Reddit requires no key at all — it uses the public JSON feed.</div>
+  <div class="setup-subtitle">PULSE pulls from three sources and merges them into a single ranked list. All keys are free — stored only in your browser, never sent anywhere except the APIs directly.</div>
 
   <div class="setup-grid">
 
@@ -730,16 +730,20 @@ footer a:hover { color: var(--text); }
         <div class="setup-card-weight">25%</div>
       </div>
       <div class="setup-card-desc">
-        Social buzz — 24h mention count across r/movies, r/television, r/NetflixBestOf, r/TrueFilm.<br>
-        <strong style="color:var(--accent3)">No key needed</strong> — uses Reddit's public JSON API automatically.
+        Social buzz — 24h mention count across r/movies, r/television, r/NetflixBestOf.<br>
+        Free app at <a href="https://www.reddit.com/prefs/apps" target="_blank">reddit.com/prefs/apps</a> → script app → Client ID + Secret
       </div>
-      <div class="setup-status status-ok" id="status-reddit">✓ No key required — always active</div>
+      <div class="setup-input-row" style="flex-direction:column;gap:6px">
+        <input class="setup-input" id="key-reddit-id" type="text" placeholder="Reddit Client ID" autocomplete="off" spellcheck="false">
+        <input class="setup-input" id="key-reddit-secret" type="text" placeholder="Reddit Client Secret" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="setup-status status-opt" id="status-reddit">Optional — adds social signal</div>
     </div>
 
   </div>
 
   <button class="load-btn" id="load-btn" onclick="startLoad()">Load Trending Data</button>
-  <div class="setup-footer-note">TMDB and Trakt keys are saved to localStorage — you only need to enter them once. Reddit data loads automatically with no setup. To reset keys, clear localStorage or re-enter below.</div>
+  <div class="setup-footer-note">Keys are saved to localStorage so you only need to enter them once. To reset, click the setup icon in the header (appears after loading).</div>
 </div>
 
 <!-- ── PROGRESS ── -->
@@ -795,8 +799,10 @@ footer a:hover { color: var(--text); }
 //  CONFIG — hardcode keys here if you prefer not to type them in
 // ════════════════════════════════════════════════════════════════
 const HC = {
-  tmdb:  'b203bfa8cf7b31f70ae017cc39f6b99c',   // TMDB v3 API key
-  trakt: '2d0ab4bd173a8ba65d8c72653f60d2681d34dd5aa38a7d4a5f500a5fbe7e3eb7'    // Trakt Client ID
+  tmdb:         'b203bfa8cf7b31f70ae017cc39f6b99c',   // TMDB v3 API key
+  trakt:        'urn:ietf:wg:oauth:2.0:oob',   // Trakt Client ID
+  redditId:     '',   // Reddit app Client ID
+  redditSecret: ''    // Reddit app Client Secret
 };
 
 const TMDB_BASE  = 'https://api.themoviedb.org/3';
@@ -823,15 +829,20 @@ const REDDIT_SUBS = ['movies','television','NetflixBestOf','MovieSuggestions','T
 let allItems     = [];
 let currentFilter = 'all';
 let currentSort   = 'pulse';
-let keys = { tmdb:'', trakt:'' };
+let keys = { tmdb:'', trakt:'', redditId:'', redditSecret:'' };
 
 // ── LOAD SAVED KEYS ──────────────────────────────────────────────
 function loadKeys() {
-  keys.tmdb  = HC.tmdb  || localStorage.getItem('pulse_tmdb')  || '';
-  keys.trakt = HC.trakt || localStorage.getItem('pulse_trakt') || '';
+  keys.tmdb          = HC.tmdb          || localStorage.getItem('pulse_tmdb')   || '';
+  keys.trakt         = HC.trakt         || localStorage.getItem('pulse_trakt')  || '';
+  keys.redditId      = HC.redditId      || localStorage.getItem('pulse_rid')    || '';
+  keys.redditSecret  = HC.redditSecret  || localStorage.getItem('pulse_rsec')   || '';
 
-  if (keys.tmdb)  { setInput('key-tmdb',  keys.tmdb);  markSaved('key-tmdb',  'status-tmdb');  }
-  if (keys.trakt) { setInput('key-trakt', keys.trakt); markSaved('key-trakt', 'status-trakt'); }
+  if (keys.tmdb)         { setInput('key-tmdb', keys.tmdb);             markSaved('key-tmdb', 'status-tmdb'); }
+  if (keys.trakt)        { setInput('key-trakt', keys.trakt);           markSaved('key-trakt','status-trakt'); }
+  if (keys.redditId)     { setInput('key-reddit-id', keys.redditId);    }
+  if (keys.redditSecret) { setInput('key-reddit-secret', keys.redditSecret); }
+  if (keys.redditId && keys.redditSecret) markSaved('key-reddit-id','status-reddit');
 
   if (keys.tmdb) startLoad();
 }
@@ -850,8 +861,11 @@ function markSaved(inputId, statusId) {
 
 // ── START LOAD ───────────────────────────────────────────────────
 async function startLoad() {
-  keys.tmdb  = (document.getElementById('key-tmdb')?.value  || '').trim() || keys.tmdb;
-  keys.trakt = (document.getElementById('key-trakt')?.value || '').trim() || keys.trakt;
+  // Read inputs
+  keys.tmdb          = (document.getElementById('key-tmdb')?.value         || '').trim() || keys.tmdb;
+  keys.trakt         = (document.getElementById('key-trakt')?.value        || '').trim() || keys.trakt;
+  keys.redditId      = (document.getElementById('key-reddit-id')?.value    || '').trim() || keys.redditId;
+  keys.redditSecret  = (document.getElementById('key-reddit-secret')?.value|| '').trim() || keys.redditSecret;
 
   if (!keys.tmdb) {
     document.getElementById('status-tmdb').textContent = '⚠ TMDB key is required';
@@ -859,17 +873,21 @@ async function startLoad() {
     return;
   }
 
-  localStorage.setItem('pulse_tmdb', keys.tmdb);
-  if (keys.trakt) localStorage.setItem('pulse_trakt', keys.trakt);
+  // Save
+  localStorage.setItem('pulse_tmdb',  keys.tmdb);
+  if (keys.trakt)        localStorage.setItem('pulse_trakt', keys.trakt);
+  if (keys.redditId)     localStorage.setItem('pulse_rid',   keys.redditId);
+  if (keys.redditSecret) localStorage.setItem('pulse_rsec',  keys.redditSecret);
 
-  document.getElementById('setup-panel').style.display = 'none';
+  // UI transitions
+  document.getElementById('setup-panel').style.display   = 'none';
   document.getElementById('progress-bar-wrap').style.display = 'block';
   showSkeletons(20);
 
-  // Reddit is always active — no key needed
+  // Update source pills
   document.getElementById('pill-tmdb').classList.add('active');
-  document.getElementById('pill-reddit').classList.add('active');
-  if (keys.trakt) document.getElementById('pill-trakt').classList.add('active');
+  if (keys.trakt)   document.getElementById('pill-trakt').classList.add('active');
+  if (keys.redditId && keys.redditSecret) document.getElementById('pill-reddit').classList.add('active');
 
   try {
     setStep('tmdb', 'loading');
@@ -881,8 +899,8 @@ async function startLoad() {
     setStep('trakt', keys.trakt ? 'done' : 'error');
 
     setStep('reddit', 'loading');
-    const redditMap = await fetchReddit(tmdbItems);
-    setStep('reddit', 'done');
+    const redditMap = (keys.redditId && keys.redditSecret) ? await fetchReddit(tmdbItems) : {};
+    setStep('reddit', (keys.redditId && keys.redditSecret) ? 'done' : 'error');
 
     setStep('merge', 'loading');
     allItems = mergeAndScore(tmdbItems, traktMap, redditMap);

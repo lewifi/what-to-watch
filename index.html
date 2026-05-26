@@ -692,7 +692,7 @@ footer a:hover { color: var(--text); }
 </header>
 
 <!-- ── SETUP PANEL ── -->
-<div id="setup-panel">
+<div id="setup-panel" style="display:none">
   <div class="setup-title">Setup EPHIX PULSE</div>
   <div class="setup-subtitle">EPHIX PULSE pulls from four sources into one ranked list. TMDB and Trakt are the core signals. YouTube and Reddit add buzz — both are optional and the site works fine without them.</div>
 
@@ -816,6 +816,7 @@ footer a:hover { color: var(--text); }
 
 <footer>
   <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
+  <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="color:var(--tmdb)">TMDB 45%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 35%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 12%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p>
   <p>EPHIX PULSE — Aggregate Trending · What the world is watching</p>
 </footer>
 
@@ -946,7 +947,11 @@ async function startLoad() {
     }
 
     setStep('merge', 'loading');
-    allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap);
+    allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, {
+        trakt:   keys.trakt   ? (Object.keys(traktMap).length   > 0 ? 'ok' : 'fail') : 'skip',
+        youtube: keys.youtube ? (Object.keys(youtubeMap).length > 0 ? 'ok' : 'fail') : 'skip',
+        reddit:  Object.keys(redditMap).length > 0 ? 'ok' : 'fail'
+      });
     setStep('merge', 'done');
 
     setTimeout(() => {
@@ -1136,7 +1141,7 @@ async function fetchReddit(tmdbItems) {
 }
 
 // ── MERGE & SCORE ────────────────────────────────────────────────
-function mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap) {
+function mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, sourceStatus = {}) {
   // Normalise TMDB popularity (rank-based: #1 = 1.0, #100 = 0.01)
   const total = tmdbItems.length;
 
@@ -1158,10 +1163,14 @@ function mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap) {
     // Reddit score
     const redditScore  = Math.min(redditMap[tKey]  || 0, 1);
 
-    // Dynamic weight redistribution — if a source failed, spread its weight to TMDB+Trakt
-    const hasTrakt   = Object.keys(traktMap).length   > 0;
-    const hasYoutube = Object.keys(youtubeMap).length > 0;
-    const hasReddit  = Object.keys(redditMap).length  > 0;
+    // Dynamic weight redistribution — only count source if it actually returned data
+    const hasTrakt   = sourceStatus.trakt   === 'ok';
+    const hasYoutube = sourceStatus.youtube === 'ok';
+    const hasReddit  = sourceStatus.reddit  === 'ok';
+    // For display: distinguish skip (no key) from fail (had key, errored)
+    const traktStatus   = sourceStatus.trakt   || 'skip';
+    const youtubeStatus = sourceStatus.youtube || 'skip';
+    const redditStatus  = sourceStatus.reddit  || 'skip';
 
     let activeW = W_TMDB;
     let pulse   = tmdbScore * W_TMDB;
@@ -1180,7 +1189,10 @@ function mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap) {
       _redditScore:   Math.round(redditScore  * 100),
       _hasTrakt:   hasTrakt,
       _hasYoutube: hasYoutube,
-      _hasReddit:  hasReddit
+      _hasReddit:  hasReddit,
+      _traktStatus:   traktStatus,
+      _youtubeStatus: youtubeStatus,
+      _redditStatus:  redditStatus
     };
   }).sort((a,b) => b._pulseScore - a._pulseScore);
 }
@@ -1236,6 +1248,14 @@ function buildCard(item, rank) {
   const yScore  = item._youtubeScore ?? 0;
   const rScore  = item._redditScore  ?? 0;
 
+  // Display helpers: 'ok' = show score, 'fail' = show ✗, 'skip' = show —
+  const trVal = item._traktStatus   === 'ok' ? trScore : (item._traktStatus   === 'fail' ? '✗' : '—');
+  const yVal  = item._youtubeStatus === 'ok' ? yScore  : (item._youtubeStatus === 'fail' ? '✗' : '—');
+  const rVal  = item._redditStatus  === 'ok' ? rScore  : (item._redditStatus  === 'fail' ? '✗' : '—');
+  const trW   = item._hasTrakt   ? trScore : 0;
+  const yW    = item._hasYoutube ? yScore  : 0;
+  const rW    = item._hasReddit  ? rScore  : 0;
+
   // Image
   if (poster) {
     const img = document.createElement('img');
@@ -1284,18 +1304,18 @@ function buildCard(item, rank) {
         </div>
         <div class="score-bar-row">
           <span class="score-bar-name">Trakt</span>
-          <div class="score-bar-track"><div class="score-bar-fill fill-trakt" style="width:${item._hasTrakt ? trScore : 0}%"></div></div>
-          <span class="score-bar-val">${item._hasTrakt ? trScore : '—'}</span>
+          <div class="score-bar-track"><div class="score-bar-fill fill-trakt" style="width:${trW}%"></div></div>
+          <span class="score-bar-val" style="${typeof trVal==='string'?'color:var(--muted)':''}">${trVal}</span>
         </div>
         <div class="score-bar-row">
           <span class="score-bar-name">YouTube</span>
-          <div class="score-bar-track"><div class="score-bar-fill fill-youtube" style="width:${item._hasYoutube ? yScore : 0}%"></div></div>
-          <span class="score-bar-val">${item._hasYoutube ? yScore : '—'}</span>
+          <div class="score-bar-track"><div class="score-bar-fill fill-youtube" style="width:${yW}%"></div></div>
+          <span class="score-bar-val" style="${typeof yVal==='string'?'color:var(--muted)':''}">${yVal}</span>
         </div>
         <div class="score-bar-row">
           <span class="score-bar-name">Reddit</span>
-          <div class="score-bar-track"><div class="score-bar-fill fill-reddit" style="width:${item._hasReddit ? rScore : 0}%"></div></div>
-          <span class="score-bar-val">${item._hasReddit ? rScore : '—'}</span>
+          <div class="score-bar-track"><div class="score-bar-fill fill-reddit" style="width:${rW}%"></div></div>
+          <span class="score-bar-val" style="${typeof rVal==='string'?'color:var(--muted)':''}">${rVal}</span>
         </div>
       </div>
     </div>
@@ -1360,7 +1380,15 @@ document.querySelectorAll('.sort-btn').forEach(btn => {
 });
 
 // ── BOOT ─────────────────────────────────────────────────────────
-loadKeys();
+// If all core keys are hardcoded, skip setup panel entirely
+if (HC.tmdb && HC.trakt) {
+  keys.tmdb    = HC.tmdb;
+  keys.trakt   = HC.trakt;
+  keys.youtube = HC.youtube || localStorage.getItem('pulse_youtube') || '';
+  startLoad();
+} else {
+  loadKeys();
+}
 </script>
 </body>
 </html>

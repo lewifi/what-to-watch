@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EPHIX PULSE — Live Movie & TV Trending Aggregate</title>
+<title>EPHIX PULSE — Live TV & Movie Trending Aggregate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
@@ -678,7 +678,7 @@ footer a:hover { color: var(--text); }
 
 <!-- ── HEADER ── -->
 <header>
-  <div class="logo">EPHIX PULSE <span>Live trending aggregate - What the world is watching</span></div>
+  <div class="logo">EPHIX PULSE <span>Live TV & Movie Trending Aggregate - What the World is Watching</span></div>
   <div class="source-pills" id="source-pills">
     <span class="source-pill pill-tmdb"   id="pill-tmdb">TMDB</span>
     <span class="source-pill pill-trakt"  id="pill-trakt">Trakt</span>
@@ -910,48 +910,43 @@ async function startLoad() {
   if (keys.youtube) document.getElementById('pill-youtube').classList.add('active');
 
   try {
+    // ── Fire TMDB first — needed as base list ──
     setStep('tmdb', 'loading');
     const tmdbItems = await fetchTMDB();
     setStep('tmdb', 'done');
 
-    setStep('trakt', 'loading');
-    const traktMap = keys.trakt ? await fetchTrakt() : {};
-    setStep('trakt', keys.trakt ? 'done' : 'error');
-
-    // YouTube — soft fail, returns empty map on any error
+    // ── Fire Trakt, YouTube, Reddit all in parallel ──
+    setStep('trakt',   'loading');
     setStep('youtube', 'loading');
-    let youtubeMap = {};
-    if (keys.youtube) {
-      try {
-        youtubeMap = await fetchYouTube(tmdbItems);
-        setStep('youtube', 'done');
-        document.getElementById('pill-youtube').classList.add('active');
-      } catch(ytErr) {
-        console.warn('YouTube failed (non-fatal):', ytErr.message);
-        setStep('youtube', 'error');
-      }
-    } else {
-      setStep('youtube', 'error');
-    }
+    setStep('reddit',  'loading');
 
-    // Reddit — soft fail via CORS proxy, returns empty map on any error
-    setStep('reddit', 'loading');
-    let redditMap = {};
-    try {
-      redditMap = await fetchReddit(tmdbItems);
-      setStep('reddit', 'done');
-      document.getElementById('pill-reddit').classList.add('active');
-    } catch(rdErr) {
-      console.warn('Reddit failed (non-fatal):', rdErr.message);
-      setStep('reddit', 'error');
-    }
+    const [traktResult, youtubeResult, redditResult] = await Promise.allSettled([
+      keys.trakt   ? fetchTrakt()              : Promise.resolve({}),
+      keys.youtube ? fetchYouTube(tmdbItems)   : Promise.resolve({}),
+      fetchReddit(tmdbItems)
+    ]);
+
+    const traktMap   = traktResult.status   === 'fulfilled' ? traktResult.value   : {};
+    const youtubeMap = youtubeResult.status === 'fulfilled' ? youtubeResult.value : {};
+    const redditMap  = redditResult.status  === 'fulfilled' ? redditResult.value  : {};
+
+    if (traktResult.status   === 'rejected') console.warn('Trakt failed (non-fatal):',   traktResult.reason?.message);
+    if (youtubeResult.status === 'rejected') console.warn('YouTube failed (non-fatal):', youtubeResult.reason?.message);
+    if (redditResult.status  === 'rejected') console.warn('Reddit failed (non-fatal):',  redditResult.reason?.message);
+
+    setStep('trakt',   keys.trakt   ? (traktMap   && Object.keys(traktMap).length   > 0 ? 'done' : 'error') : 'error');
+    setStep('youtube', keys.youtube ? (youtubeMap && Object.keys(youtubeMap).length > 0 ? 'done' : 'error') : 'error');
+    setStep('reddit',  redditMap    && Object.keys(redditMap).length  > 0 ? 'done' : 'error');
+
+    if (Object.keys(youtubeMap).length > 0) document.getElementById('pill-youtube').classList.add('active');
+    if (Object.keys(redditMap).length  > 0) document.getElementById('pill-reddit').classList.add('active');
 
     setStep('merge', 'loading');
     allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, {
-        trakt:   keys.trakt   ? (Object.keys(traktMap).length   > 0 ? 'ok' : 'fail') : 'skip',
-        youtube: keys.youtube ? (Object.keys(youtubeMap).length > 0 ? 'ok' : 'fail') : 'skip',
-        reddit:  Object.keys(redditMap).length > 0 ? 'ok' : 'fail'
-      });
+      trakt:   keys.trakt   ? (Object.keys(traktMap).length   > 0 ? 'ok' : 'fail') : 'skip',
+      youtube: keys.youtube ? (Object.keys(youtubeMap).length > 0 ? 'ok' : 'fail') : 'skip',
+      reddit:  Object.keys(redditMap).length > 0 ? 'ok' : 'fail'
+    });
     setStep('merge', 'done');
 
     setTimeout(() => {
@@ -1095,17 +1090,20 @@ async function fetchYouTube(tmdbItems) {
 }
 
 // ── FETCH REDDIT ─────────────────────────────────────────────────
-// Routes through allorigins.win CORS proxy — keyless, soft-fail
+// Routes through allorigins.win CORS proxy — keyless, soft-fail, 3s timeout
 async function fetchReddit(tmdbItems) {
   const subResults = await Promise.allSettled(
     REDDIT_SUBS.map(sub => {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 3000);
       const url = encodeURIComponent(`https://www.reddit.com/r/${sub}/hot.json?limit=100&raw_json=1`);
-      return fetch(`${CORS_PROXY}${url}`)
-        .then(r => { if (!r.ok) throw new Error(`REDDIT_PROXY_${r.status}`); return r.json(); })
+      return fetch(`${CORS_PROXY}${url}`, { signal: controller.signal })
+        .then(r => { clearTimeout(timer); if (!r.ok) throw new Error(`REDDIT_PROXY_${r.status}`); return r.json(); })
         .then(wrapper => {
           const parsed = JSON.parse(wrapper.contents);
           return parsed;
-        });
+        })
+        .catch(e => { clearTimeout(timer); throw e; });
     })
   );
 

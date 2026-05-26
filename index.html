@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EPHIX PULSE — What the World is Watching</title>
+<title>EPHIX PULSE — Live Movie & TV Trending Aggregate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
@@ -678,7 +678,7 @@ footer a:hover { color: var(--text); }
 
 <!-- ── HEADER ── -->
 <header>
-  <div class="logo">EPHIX PULSE <span>What the world is watching</span></div>
+  <div class="logo">EPHIX PULSE <span>Live trending aggregate - What the world is watching</span></div>
   <div class="source-pills" id="source-pills">
     <span class="source-pill pill-tmdb"   id="pill-tmdb">TMDB</span>
     <span class="source-pill pill-trakt"  id="pill-trakt">Trakt</span>
@@ -1079,7 +1079,7 @@ async function fetchYouTube(tmdbItems) {
   tmdbItems.forEach(item => {
     const title = (item.title || item.name || '').toLowerCase();
     if (!title || title.length < 3) return;
-    const escaped = title.replace(/[.*+?^${}()|[\]\]/g, '\$&');
+    const escaped = title.replace(/[.*+?^${}()|\[\]]/g, '\$&');
     const matches = videoText.match(new RegExp(`\b${escaped}\b`, 'g'));
     const count = matches ? matches.length : 0;
     const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
@@ -1125,7 +1125,7 @@ async function fetchReddit(tmdbItems) {
   tmdbItems.forEach(item => {
     const title = (item.title || item.name || '').toLowerCase();
     if (!title || title.length < 3) return;
-    const escaped = title.replace(/[.*+?^${}()|[\]\]/g, '\$&');
+    const escaped = title.replace(/[.*+?^${}()|\[\]]/g, '\$&');
     const matches = postText.match(new RegExp(`\b${escaped}\b`, 'g'));
     const count = matches ? matches.length : 0;
     const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));

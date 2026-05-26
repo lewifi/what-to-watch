@@ -21,6 +21,7 @@
   --tmdb: #01d277;
   --trakt: #ed1c24;
   --reddit: #ff4500;
+  --youtube: #ff0000;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -104,7 +105,8 @@ header {
 .source-pill.active { opacity: 1; }
 .pill-tmdb  { background: rgba(1,210,119,0.12);  color: var(--tmdb);   border: 1px solid rgba(1,210,119,0.28); }
 .pill-trakt { background: rgba(237,28,36,0.15);  color: var(--trakt);  border: 1px solid rgba(237,28,36,0.3); }
-.pill-reddit{ background: rgba(255,69,0,0.15);   color: var(--reddit); border: 1px solid rgba(255,69,0,0.3);  }
+.pill-reddit { background: rgba(255,69,0,0.15);   color: var(--reddit);  border: 1px solid rgba(255,69,0,0.3);   }
+.pill-youtube{ background: rgba(255,0,0,0.12);    color: var(--youtube); border: 1px solid rgba(255,0,0,0.28);   }
 
 .live-indicator {
   display: flex;
@@ -588,7 +590,8 @@ header {
 
 .fill-tmdb   { background: var(--tmdb);   }
 .fill-trakt  { background: var(--trakt);  }
-.fill-reddit { background: var(--reddit); }
+.fill-reddit  { background: var(--reddit);  }
+.fill-youtube { background: var(--youtube); }
 
 .score-bar-val {
   font-size: 9px;
@@ -675,11 +678,12 @@ footer a:hover { color: var(--text); }
 
 <!-- ── HEADER ── -->
 <header>
-  <div class="logo">EPHIX PULSE <span>Live aggregate trending - What the world is watching</span></div>
+  <div class="logo">EPHIX PULSE <span>What the world is watching</span></div>
   <div class="source-pills" id="source-pills">
-    <span class="source-pill pill-tmdb"  id="pill-tmdb">TMDB</span>
-    <span class="source-pill pill-trakt" id="pill-trakt">Trakt</span>
-    <span class="source-pill pill-reddit"id="pill-reddit">Reddit</span>
+    <span class="source-pill pill-tmdb"   id="pill-tmdb">TMDB</span>
+    <span class="source-pill pill-trakt"  id="pill-trakt">Trakt</span>
+    <span class="source-pill pill-youtube"id="pill-youtube">YouTube</span>
+    <span class="source-pill pill-reddit" id="pill-reddit">Reddit</span>
   </div>
   <div class="live-indicator">
     <div class="live-dot"></div>
@@ -690,7 +694,7 @@ footer a:hover { color: var(--text); }
 <!-- ── SETUP PANEL ── -->
 <div id="setup-panel">
   <div class="setup-title">Setup EPHIX PULSE</div>
-  <div class="setup-subtitle">PULSE pulls from three sources and merges them into a single ranked list. TMDB and Trakt need free API keys. Reddit requires no key at all — it uses the public JSON feed.</div>
+  <div class="setup-subtitle">EPHIX PULSE pulls from four sources into one ranked list. TMDB and Trakt are the core signals. YouTube and Reddit add buzz — both are optional and the site works fine without them.</div>
 
   <div class="setup-grid">
 
@@ -728,33 +732,51 @@ footer a:hover { color: var(--text); }
       <div class="setup-status status-opt" id="status-trakt">Optional — boosts accuracy</div>
     </div>
 
+    <!-- YouTube -->
+    <div class="setup-card">
+      <div class="setup-card-header">
+        <div class="setup-source-dot" style="background:var(--youtube)"></div>
+        <div class="setup-card-title">YouTube</div>
+        <div class="setup-card-weight">12%</div>
+      </div>
+      <div class="setup-card-desc">
+        Trailer & buzz signal — trending film/TV video mentions.<br>
+        Free key at <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → New project → Enable YouTube Data API v3 → Credentials → API Key
+      </div>
+      <div class="setup-input-row">
+        <input class="setup-input" id="key-youtube" type="text" placeholder="YouTube Data API v3 key" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="setup-status status-opt" id="status-youtube">Optional — adds pre-release hype signal</div>
+    </div>
+
     <!-- Reddit -->
     <div class="setup-card">
       <div class="setup-card-header">
         <div class="setup-source-dot dot-reddit"></div>
         <div class="setup-card-title">Reddit</div>
-        <div class="setup-card-weight">25%</div>
+        <div class="setup-card-weight">8%</div>
       </div>
       <div class="setup-card-desc">
-        Social buzz — 24h mention count across r/movies, r/television, r/NetflixBestOf, r/TrueFilm.<br>
-        <strong style="color:var(--accent3)">No key needed</strong> — uses Reddit's public JSON API automatically.
+        Social buzz — mention count across r/movies, r/television, r/NetflixBestOf.<br>
+        <strong style="color:var(--accent3)">No key needed</strong> — uses Reddit's public feed via CORS proxy.
       </div>
-      <div class="setup-status status-ok" id="status-reddit">✓ No key required — always active</div>
+      <div class="setup-status status-ok" id="status-reddit">✓ No key required — always attempted</div>
     </div>
 
   </div>
 
   <button class="load-btn" id="load-btn" onclick="startLoad()">Load Trending Data</button>
-  <div class="setup-footer-note">TMDB and Trakt keys are saved to localStorage — you only need to enter them once. Reddit data loads automatically with no setup. To reset keys, clear localStorage or re-enter below.</div>
+  <div class="setup-footer-note">TMDB and Trakt keys are saved to localStorage. YouTube key is optional but recommended. Reddit loads automatically. If YouTube or Reddit fail, the site continues with the remaining sources — scores just redistribute.</div>
 </div>
 
 <!-- ── PROGRESS ── -->
 <div id="progress-bar-wrap">
   <div class="progress-steps">
-    <div class="progress-step" id="step-tmdb">  <div class="step-dot"></div> TMDB   </div>
-    <div class="progress-step" id="step-trakt"> <div class="step-dot"></div> Trakt  </div>
-    <div class="progress-step" id="step-reddit"><div class="step-dot"></div> Reddit </div>
-    <div class="progress-step" id="step-merge"> <div class="step-dot"></div> Merging </div>
+    <div class="progress-step" id="step-tmdb">   <div class="step-dot"></div> TMDB    </div>
+    <div class="progress-step" id="step-trakt">  <div class="step-dot"></div> Trakt   </div>
+    <div class="progress-step" id="step-youtube"><div class="step-dot"></div> YouTube </div>
+    <div class="progress-step" id="step-reddit"> <div class="step-dot"></div> Reddit  </div>
+    <div class="progress-step" id="step-merge">  <div class="step-dot"></div> Merging </div>
   </div>
 </div>
 
@@ -779,9 +801,10 @@ footer a:hover { color: var(--text); }
 <div class="section-header" id="section-header" style="display:none">
   <div class="section-title">Today's <em>Top 100</em></div>
   <div class="score-legend">
-    <div class="legend-item"><div class="legend-dot" style="background:var(--tmdb)"></div>TMDB 40%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--tmdb)"></div>TMDB 45%</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--trakt)"></div>Trakt 35%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--reddit)"></div>Reddit 25%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--youtube)"></div>YouTube 12%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--reddit)"></div>Reddit 8%</div>
   </div>
 </div>
 
@@ -792,7 +815,8 @@ footer a:hover { color: var(--text); }
 </div>
 
 <footer>
-  <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
+  <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
+  <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="color:var(--tmdb)">TMDB 45%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 35%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 12%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p>
   <p>EPHIX PULSE — Aggregate Trending · What the world is watching</p>
 </footer>
 
@@ -801,18 +825,23 @@ footer a:hover { color: var(--text); }
 //  CONFIG — hardcode keys here if you prefer not to type them in
 // ════════════════════════════════════════════════════════════════
 const HC = {
-  tmdb:  'b203bfa8cf7b31f70ae017cc39f6b99c',
-  trakt: '2d0ab4bd173a8ba65d8c72653f60d2681d34dd5aa38a7d4a5f500a5fbe7e3eb7'
+  tmdb:    'b203bfa8cf7b31f70ae017cc39f6b99c',
+  trakt:   '2d0ab4bd173a8ba65d8c72653f60d2681d34dd5aa38a7d4a5f500a5fbe7e3eb7',
+  youtube: 'AIzaSyChJc_yIC-hRsF_1y-cZO_rcHq0V4fDg3I'
 };
 
 const TMDB_BASE  = 'https://api.themoviedb.org/3';
 const TRAKT_BASE = 'https://api.trakt.tv';
 const IMG_BASE   = 'https://image.tmdb.org/t/p/w342';
 
-// Score weights (must sum to 1)
-const W_TMDB   = 0.40;
-const W_TRAKT  = 0.35;
-const W_REDDIT = 0.25;
+// Score weights — TMDB+Trakt are core, YouTube+Reddit are soft bonus signals
+const W_TMDB    = 0.45;
+const W_TRAKT   = 0.35;
+const W_YOUTUBE = 0.12;
+const W_REDDIT  = 0.08;
+
+const YT_BASE = 'https://www.googleapis.com/youtube/v3';
+const CORS_PROXY = 'https://api.allorigins.win/get?url=';
 
 const GENRE_MAP = {
   28:'Action',10759:'Action & Adventure',12:'Adventure',16:'Animation',35:'Comedy',
@@ -829,15 +858,17 @@ const REDDIT_SUBS = ['movies','television','NetflixBestOf','MovieSuggestions','T
 let allItems     = [];
 let currentFilter = 'all';
 let currentSort   = 'pulse';
-let keys = { tmdb:'', trakt:'' };
+let keys = { tmdb:'', trakt:'', youtube:'' };
 
 // ── LOAD SAVED KEYS ──────────────────────────────────────────────
 function loadKeys() {
-  keys.tmdb  = HC.tmdb  || localStorage.getItem('pulse_tmdb')  || '';
-  keys.trakt = HC.trakt || localStorage.getItem('pulse_trakt') || '';
+  keys.tmdb     = HC.tmdb     || localStorage.getItem('pulse_tmdb')     || '';
+  keys.trakt    = HC.trakt    || localStorage.getItem('pulse_trakt')    || '';
+  keys.youtube  = HC.youtube  || localStorage.getItem('pulse_youtube')  || '';
 
-  if (keys.tmdb)  { setInput('key-tmdb',  keys.tmdb);  markSaved('key-tmdb',  'status-tmdb');  }
-  if (keys.trakt) { setInput('key-trakt', keys.trakt); markSaved('key-trakt', 'status-trakt'); }
+  if (keys.tmdb)    { setInput('key-tmdb',     keys.tmdb);    markSaved('key-tmdb',     'status-tmdb');    }
+  if (keys.trakt)   { setInput('key-trakt',    keys.trakt);   markSaved('key-trakt',    'status-trakt');   }
+  if (keys.youtube) { setInput('key-youtube',  keys.youtube); markSaved('key-youtube',  'status-youtube'); }
 
   if (keys.tmdb) startLoad();
 }
@@ -856,8 +887,9 @@ function markSaved(inputId, statusId) {
 
 // ── START LOAD ───────────────────────────────────────────────────
 async function startLoad() {
-  keys.tmdb  = (document.getElementById('key-tmdb')?.value  || '').trim() || keys.tmdb;
-  keys.trakt = (document.getElementById('key-trakt')?.value || '').trim() || keys.trakt;
+  keys.tmdb    = (document.getElementById('key-tmdb')?.value     || '').trim() || keys.tmdb;
+  keys.trakt   = (document.getElementById('key-trakt')?.value    || '').trim() || keys.trakt;
+  keys.youtube = (document.getElementById('key-youtube')?.value  || '').trim() || keys.youtube;
 
   if (!keys.tmdb) {
     document.getElementById('status-tmdb').textContent = '⚠ TMDB key is required';
@@ -866,16 +898,16 @@ async function startLoad() {
   }
 
   localStorage.setItem('pulse_tmdb', keys.tmdb);
-  if (keys.trakt) localStorage.setItem('pulse_trakt', keys.trakt);
+  if (keys.trakt)   localStorage.setItem('pulse_trakt',   keys.trakt);
+  if (keys.youtube) localStorage.setItem('pulse_youtube', keys.youtube);
 
   document.getElementById('setup-panel').style.display = 'none';
   document.getElementById('progress-bar-wrap').style.display = 'block';
   showSkeletons(20);
 
-  // Reddit is always active — no key needed
   document.getElementById('pill-tmdb').classList.add('active');
-  document.getElementById('pill-reddit').classList.add('active');
-  if (keys.trakt) document.getElementById('pill-trakt').classList.add('active');
+  if (keys.trakt)   document.getElementById('pill-trakt').classList.add('active');
+  if (keys.youtube) document.getElementById('pill-youtube').classList.add('active');
 
   try {
     setStep('tmdb', 'loading');
@@ -886,12 +918,36 @@ async function startLoad() {
     const traktMap = keys.trakt ? await fetchTrakt() : {};
     setStep('trakt', keys.trakt ? 'done' : 'error');
 
+    // YouTube — soft fail, returns empty map on any error
+    setStep('youtube', 'loading');
+    let youtubeMap = {};
+    if (keys.youtube) {
+      try {
+        youtubeMap = await fetchYouTube(tmdbItems);
+        setStep('youtube', 'done');
+        document.getElementById('pill-youtube').classList.add('active');
+      } catch(ytErr) {
+        console.warn('YouTube failed (non-fatal):', ytErr.message);
+        setStep('youtube', 'error');
+      }
+    } else {
+      setStep('youtube', 'error');
+    }
+
+    // Reddit — soft fail via CORS proxy, returns empty map on any error
     setStep('reddit', 'loading');
-    const redditMap = await fetchReddit(tmdbItems);
-    setStep('reddit', 'done');
+    let redditMap = {};
+    try {
+      redditMap = await fetchReddit(tmdbItems);
+      setStep('reddit', 'done');
+      document.getElementById('pill-reddit').classList.add('active');
+    } catch(rdErr) {
+      console.warn('Reddit failed (non-fatal):', rdErr.message);
+      setStep('reddit', 'error');
+    }
 
     setStep('merge', 'loading');
-    allItems = mergeAndScore(tmdbItems, traktMap, redditMap);
+    allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap);
     setStep('merge', 'done');
 
     setTimeout(() => {
@@ -983,28 +1039,33 @@ async function fetchTrakt() {
   return map;
 }
 
-// ── FETCH REDDIT ─────────────────────────────────────────────────
-// Uses Reddit's public keyless JSON API — no auth required
-async function fetchReddit(tmdbItems) {
-  const subResults = await Promise.allSettled(
-    REDDIT_SUBS.map(sub =>
-      fetch(`https://www.reddit.com/r/${sub}/hot.json?limit=100&raw_json=1`, {
-        headers: { 'Accept': 'application/json' }
-      })
+// ── FETCH YOUTUBE ────────────────────────────────────────────────
+// Fetches trending movies+entertainment videos, matches titles to TMDB items
+// Cost: ~3 quota units per load (well within 10,000/day free limit)
+async function fetchYouTube(tmdbItems) {
+  // videoCategoryId 1 = Film & Animation, 24 = Entertainment — best overlap with movies/TV
+  const [moviesRes, entRes] = await Promise.allSettled([
+    fetch(`${YT_BASE}/videos?part=snippet&chart=mostPopular&videoCategoryId=1&maxResults=50&key=${keys.youtube}`)
       .then(r => {
-        if (!r.ok) throw new Error(`Reddit r/${sub} HTTP ${r.status}`);
+        if (r.status === 400) throw new Error('YT_400 — Bad request. Check your YouTube API key.');
+        if (r.status === 403) throw new Error('YT_403 — YouTube API key invalid or quota exceeded (10,000 units/day free).');
+        if (!r.ok) throw new Error(`YT_${r.status} — YouTube fetch failed.`);
         return r.json();
-      })
-    )
-  );
+      }),
+    fetch(`${YT_BASE}/videos?part=snippet&chart=mostPopular&videoCategoryId=24&maxResults=50&key=${keys.youtube}`)
+      .then(r => { if (!r.ok) return { items: [] }; return r.json(); })
+  ]);
 
-  const succeeded = subResults.filter(r => r.status === 'fulfilled').length;
-  if (succeeded === 0) throw new Error('REDDIT_ALL_FAIL — all subreddits unreachable. Reddit may be rate-limiting. Try again in a minute.');
+  const allVideos = [
+    ...(moviesRes.status === 'fulfilled' ? moviesRes.value?.items || [] : []),
+    ...(entRes.status   === 'fulfilled' ? entRes.value?.items   || [] : [])
+  ];
 
-  const postText = subResults
-    .filter(r => r.status === 'fulfilled')
-    .flatMap(r => r.value?.data?.children || [])
-    .map(p => (p.data?.title || '') + ' ' + (p.data?.selftext || ''))
+  if (allVideos.length === 0) throw new Error('YT_EMPTY — No YouTube trending videos returned.');
+
+  // Build a blob of video titles to match against
+  const videoText = allVideos
+    .map(v => (v.snippet?.title || '') + ' ' + (v.snippet?.description || '').slice(0, 200))
     .join(' ')
     .toLowerCase();
 
@@ -1014,8 +1075,54 @@ async function fetchReddit(tmdbItems) {
   tmdbItems.forEach(item => {
     const title = (item.title || item.name || '').toLowerCase();
     if (!title || title.length < 3) return;
-    const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const matches = postText.match(new RegExp(`\\b${escaped}\\b`, 'g'));
+    const escaped = title.replace(/[.*+?^${}()|[\]\]/g, '\$&');
+    const matches = videoText.match(new RegExp(`\b${escaped}\b`, 'g'));
+    const count = matches ? matches.length : 0;
+    const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
+    mentionMap[key] = count;
+    if (count > maxMentions) maxMentions = count;
+  });
+
+  Object.keys(mentionMap).forEach(k => {
+    mentionMap[k] = mentionMap[k] / maxMentions;
+  });
+
+  return mentionMap;
+}
+
+// ── FETCH REDDIT ─────────────────────────────────────────────────
+// Routes through allorigins.win CORS proxy — keyless, soft-fail
+async function fetchReddit(tmdbItems) {
+  const subResults = await Promise.allSettled(
+    REDDIT_SUBS.map(sub => {
+      const url = encodeURIComponent(`https://www.reddit.com/r/${sub}/hot.json?limit=100&raw_json=1`);
+      return fetch(`${CORS_PROXY}${url}`)
+        .then(r => { if (!r.ok) throw new Error(`REDDIT_PROXY_${r.status}`); return r.json(); })
+        .then(wrapper => {
+          const parsed = JSON.parse(wrapper.contents);
+          return parsed;
+        });
+    })
+  );
+
+  const succeeded = subResults.filter(r => r.status === 'fulfilled').length;
+  if (succeeded === 0) throw new Error('REDDIT_ALL_FAIL — CORS proxy unreachable.');
+
+  const postText = subResults
+    .filter(r => r.status === 'fulfilled')
+    .flatMap(r => r.value?.data?.children || [])
+    .map(p => (p.data?.title || '') + ' ' + (p.data?.selftext || '').slice(0, 300))
+    .join(' ')
+    .toLowerCase();
+
+  const mentionMap = {};
+  let maxMentions = 1;
+
+  tmdbItems.forEach(item => {
+    const title = (item.title || item.name || '').toLowerCase();
+    if (!title || title.length < 3) return;
+    const escaped = title.replace(/[.*+?^${}()|[\]\]/g, '\$&');
+    const matches = postText.match(new RegExp(`\b${escaped}\b`, 'g'));
     const count = matches ? matches.length : 0;
     const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
     mentionMap[key] = count;
@@ -1030,7 +1137,7 @@ async function fetchReddit(tmdbItems) {
 }
 
 // ── MERGE & SCORE ────────────────────────────────────────────────
-function mergeAndScore(tmdbItems, traktMap, redditMap) {
+function mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap) {
   // Normalise TMDB popularity (rank-based: #1 = 1.0, #100 = 0.01)
   const total = tmdbItems.length;
 
@@ -1046,30 +1153,35 @@ function mergeAndScore(tmdbItems, traktMap, redditMap) {
       traktScore = Math.min(traktEntry.watchers / traktEntry.max, 1);
     }
 
-    // Reddit score: normalised mention count
-    const redditScore = Math.min(redditMap[tKey] || 0, 1);
+    // YouTube score
+    const youtubeScore = Math.min(youtubeMap[tKey] || 0, 1);
 
-    // Weighted aggregate
-    const hasTrakt  = Object.keys(traktMap).length  > 0;
-    const hasReddit = Object.keys(redditMap).length > 0;
+    // Reddit score
+    const redditScore  = Math.min(redditMap[tKey]  || 0, 1);
 
-    let pulse;
-    if (hasTrakt && hasReddit) {
-      pulse = tmdbScore * W_TMDB + traktScore * W_TRAKT + redditScore * W_REDDIT;
-    } else if (hasTrakt) {
-      pulse = tmdbScore * (W_TMDB / (W_TMDB + W_TRAKT)) + traktScore * (W_TRAKT / (W_TMDB + W_TRAKT));
-    } else {
-      pulse = tmdbScore;
-    }
+    // Dynamic weight redistribution — if a source failed, spread its weight to TMDB+Trakt
+    const hasTrakt   = Object.keys(traktMap).length   > 0;
+    const hasYoutube = Object.keys(youtubeMap).length > 0;
+    const hasReddit  = Object.keys(redditMap).length  > 0;
+
+    let activeW = W_TMDB;
+    let pulse   = tmdbScore * W_TMDB;
+    if (hasTrakt)   { pulse += traktScore   * W_TRAKT;   activeW += W_TRAKT;   }
+    if (hasYoutube) { pulse += youtubeScore * W_YOUTUBE; activeW += W_YOUTUBE; }
+    if (hasReddit)  { pulse += redditScore  * W_REDDIT;  activeW += W_REDDIT;  }
+    // Normalise so scores always sum to the active weight total
+    if (activeW > 0) pulse = pulse / activeW;
 
     return {
       ...item,
-      _pulseScore:  Math.round(pulse * 1000) / 10,  // 0–100
-      _tmdbScore:   Math.round(tmdbScore  * 100),
-      _traktScore:  Math.round(traktScore * 100),
-      _redditScore: Math.round(redditScore * 100),
-      _hasTrakt:  hasTrakt,
-      _hasReddit: hasReddit
+      _pulseScore:    Math.round(pulse * 1000) / 10,
+      _tmdbScore:     Math.round(tmdbScore    * 100),
+      _traktScore:    Math.round(traktScore   * 100),
+      _youtubeScore:  Math.round(youtubeScore * 100),
+      _redditScore:   Math.round(redditScore  * 100),
+      _hasTrakt:   hasTrakt,
+      _hasYoutube: hasYoutube,
+      _hasReddit:  hasReddit
     };
   }).sort((a,b) => b._pulseScore - a._pulseScore);
 }
@@ -1119,10 +1231,11 @@ function buildCard(item, rank) {
   const genres  = (item.genre_ids || []).slice(0,2).map(id => GENRE_MAP[id]).filter(Boolean).join(' · ');
   const poster  = item.poster_path ? `${IMG_BASE}${item.poster_path}` : null;
 
-  const pulse   = item._pulseScore  ?? 0;
-  const tScore  = item._tmdbScore   ?? 0;
-  const trScore = item._traktScore  ?? 0;
-  const rScore  = item._redditScore ?? 0;
+  const pulse   = item._pulseScore   ?? 0;
+  const tScore  = item._tmdbScore    ?? 0;
+  const trScore = item._traktScore   ?? 0;
+  const yScore  = item._youtubeScore ?? 0;
+  const rScore  = item._redditScore  ?? 0;
 
   // Image
   if (poster) {
@@ -1174,6 +1287,11 @@ function buildCard(item, rank) {
           <span class="score-bar-name">Trakt</span>
           <div class="score-bar-track"><div class="score-bar-fill fill-trakt" style="width:${item._hasTrakt ? trScore : 0}%"></div></div>
           <span class="score-bar-val">${item._hasTrakt ? trScore : '—'}</span>
+        </div>
+        <div class="score-bar-row">
+          <span class="score-bar-name">YouTube</span>
+          <div class="score-bar-track"><div class="score-bar-fill fill-youtube" style="width:${item._hasYoutube ? yScore : 0}%"></div></div>
+          <span class="score-bar-val">${item._hasYoutube ? yScore : '—'}</span>
         </div>
         <div class="score-bar-row">
           <span class="score-bar-name">Reddit</span>

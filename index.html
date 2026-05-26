@@ -71,8 +71,24 @@ header {
 }
 
 @keyframes logo-breathe {
-  0%, 100% { text-shadow: 0 0 8px rgba(126,184,212,0.15), 0 0 20px rgba(126,184,212,0.06); opacity: 1; }
-  50%       { text-shadow: 0 0 16px rgba(126,184,212,0.45), 0 0 40px rgba(126,184,212,0.18), 0 0 70px rgba(126,184,212,0.08); opacity: 0.88; }
+  0%, 100% {
+    color: #c8e8f8;
+    text-shadow:
+      0 0 6px rgba(80,160,240,0.4),
+      0 0 18px rgba(60,140,230,0.25),
+      0 0 40px rgba(40,120,220,0.12);
+    opacity: 1;
+  }
+  50% {
+    color: #ffffff;
+    text-shadow:
+      0 0 10px rgba(100,180,255,0.95),
+      0 0 25px rgba(70,155,255,0.75),
+      0 0 55px rgba(50,130,255,0.45),
+      0 0 100px rgba(30,100,240,0.25),
+      0 0 160px rgba(20,80,220,0.12);
+    opacity: 1;
+  }
 }
 
 .logo span {
@@ -533,73 +549,20 @@ header {
 
 /* Pulse score bar */
 .pulse-score-wrap {
-  margin-top: 7px;
-  opacity: 0;
-  transform: translateY(5px);
-  transition: all 0.25s ease;
-}
-
-.card:hover .pulse-score-wrap {
-  opacity: 1;
-  transform: translateY(0);
+  margin-top: 6px;
 }
 
 .pulse-score-label {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   font-size: 10px;
   color: var(--muted);
-  margin-bottom: 4px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.pulse-score-label strong { color: var(--accent); font-weight: 500; }
-
-.score-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.score-bar-row {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.score-bar-name {
-  font-size: 9px;
-  color: var(--muted);
-  width: 38px;
-  flex-shrink: 0;
-  letter-spacing: 0.05em;
-}
-
-.score-bar-track {
-  flex: 1;
-  height: 3px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 2px;
-  overflow: hidden;
-}
-
-.score-bar-fill {
-  height: 100%;
-  border-radius: 2px;
-  transition: width 0.6s ease;
-}
-
-.fill-tmdb   { background: var(--tmdb);   }
-.fill-trakt  { background: var(--trakt);  }
-.fill-reddit  { background: var(--reddit);  }
-.fill-youtube { background: var(--youtube); }
-
-.score-bar-val {
-  font-size: 9px;
-  color: var(--muted);
-  width: 22px;
-  text-align: right;
-  flex-shrink: 0;
-}
+.pulse-score-label strong { color: var(--accent); font-weight: 500; font-size: 13px; }
 
 /* Skeleton */
 .skeleton {
@@ -1291,30 +1254,8 @@ function buildCard(item, rank) {
     ${genres ? `<div style="font-size:10px;color:var(--muted);margin-bottom:4px">${genres}</div>` : ''}
     <div class="pulse-score-wrap">
       <div class="pulse-score-label">
-        <span>Pulse Score</span>
+        <span>Pulse</span>
         <strong>${pulse.toFixed(1)}</strong>
-      </div>
-      <div class="score-bars">
-        <div class="score-bar-row">
-          <span class="score-bar-name">TMDB</span>
-          <div class="score-bar-track"><div class="score-bar-fill fill-tmdb" style="width:${tScore}%"></div></div>
-          <span class="score-bar-val">${tScore}</span>
-        </div>
-        <div class="score-bar-row">
-          <span class="score-bar-name">Trakt</span>
-          <div class="score-bar-track"><div class="score-bar-fill fill-trakt" style="width:${trW}%"></div></div>
-          <span class="score-bar-val" style="${typeof trVal==='string'?'color:var(--muted)':''}">${trVal}</span>
-        </div>
-        <div class="score-bar-row">
-          <span class="score-bar-name">YouTube</span>
-          <div class="score-bar-track"><div class="score-bar-fill fill-youtube" style="width:${yW}%"></div></div>
-          <span class="score-bar-val" style="${typeof yVal==='string'?'color:var(--muted)':''}">${yVal}</span>
-        </div>
-        <div class="score-bar-row">
-          <span class="score-bar-name">Reddit</span>
-          <div class="score-bar-track"><div class="score-bar-fill fill-reddit" style="width:${rW}%"></div></div>
-          <span class="score-bar-val" style="${typeof rVal==='string'?'color:var(--muted)':''}">${rVal}</span>
-        </div>
       </div>
     </div>
   `;

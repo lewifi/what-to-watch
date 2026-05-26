@@ -715,7 +715,7 @@ footer a:hover { color: var(--text); }
 
 <!-- ── HEADER ── -->
 <header>
-  <div class="logo">EPHIX PULSE <span>What the World is Watching / Live TV & Movie Trending Aggregator</span></div>
+  <div class="logo">EPHIX PULSE <span>What the world is watching / Live TV & Movie Trending Aggregator</span></div>
   <div class="source-pills" id="source-pills">
     <span class="source-pill pill-tmdb"   id="pill-tmdb">TMDB</span>
     <span class="source-pill pill-trakt"  id="pill-trakt">Trakt</span>
@@ -874,8 +874,8 @@ footer a:hover { color: var(--text); }
 const API = {
   tmdb:    '/api/tmdb',
   trakt:   '/api/trakt',
-  youtube: '/api/youtube',
-  reddit:  '/api/reddit'
+  youtube: '/api/youtube'
+  // reddit removed — Reddit blocks AWS IPs server-side
 };
 const IMG_BASE = 'https://image.tmdb.org/t/p/w342';
 
@@ -894,7 +894,6 @@ const GENRE_MAP = {
 };
 
 // Reddit communities to scan
-const REDDIT_SUBS = ['movies','television','NetflixBestOf','MovieSuggestions','TrueFilm'];
 
 // ── STATE ────────────────────────────────────────────────────────
 let allItems     = [];
@@ -941,26 +940,24 @@ async function startLoad() {
     setStep('youtube', 'loading');
     setStep('reddit',  'loading');
 
-    const [traktResult, youtubeResult, redditResult] = await Promise.allSettled([
+    // Reddit is disabled (Reddit blocks AWS IPs) — kept in weighting as silent dead weight
+    const [traktResult, youtubeResult] = await Promise.allSettled([
       fetchTrakt(),
-      fetchYouTube(tmdbItems),
-      fetchReddit(tmdbItems)
+      fetchYouTube(tmdbItems)
     ]);
 
     const traktMap   = traktResult.status   === 'fulfilled' ? traktResult.value   : {};
     const youtubeMap = youtubeResult.status === 'fulfilled' ? youtubeResult.value : {};
-    const redditMap  = redditResult.status  === 'fulfilled' ? redditResult.value  : {};
+    const redditMap  = {};
 
     if (traktResult.status   === 'rejected') console.warn('Trakt failed (non-fatal):',   traktResult.reason?.message);
     if (youtubeResult.status === 'rejected') console.warn('YouTube failed (non-fatal):', youtubeResult.reason?.message);
-    if (redditResult.status  === 'rejected') console.warn('Reddit failed (non-fatal):',  redditResult.reason?.message);
 
     setStep('trakt',   Object.keys(traktMap).length   > 0 ? 'done' : 'error');
     setStep('youtube', Object.keys(youtubeMap).length > 0 ? 'done' : 'error');
-    setStep('reddit',  Object.keys(redditMap).length  > 0 ? 'done' : 'error');
+    setStep('reddit',  'error');  // Silently shown as inactive
 
     if (Object.keys(youtubeMap).length > 0) document.getElementById('pill-youtube').classList.add('active');
-    if (Object.keys(redditMap).length  > 0) document.getElementById('pill-reddit').classList.add('active');
 
     setStep('merge', 'loading');
     allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, {
@@ -1052,29 +1049,9 @@ async function fetchTrakt() {
 // ── FETCH YOUTUBE ────────────────────────────────────────────────
 // Fetches trending movies+entertainment videos, matches titles to TMDB items
 // Cost: ~3 quota units per load (well within 10,000/day free limit)
-async function fetchYouTube(tmdbItems) {
-  // videoCategoryId 1 = Film & Animation, 24 = Entertainment — best overlap with movies/TV
-  const ytQs = 'path=videos&part=snippet&chart=mostPopular&maxResults=50';
-  const [moviesRes, entRes] = await Promise.allSettled([
-    fetch(`${API.youtube}?${ytQs}&videoCategoryId=1`)
-      .then(r => {
-        if (r.status === 403) throw new Error('YT_403 — Quota exceeded or key invalid.');
-        if (!r.ok) throw new Error(`YT_${r.status} — YouTube fetch failed.`);
-        return r.json();
-      }),
-    fetch(`${API.youtube}?${ytQs}&videoCategoryId=24`)
-      .then(r => { if (!r.ok) return { items: [] }; return r.json(); })
-  ]);
-
-  const allVideos = [
-    ...(moviesRes.status === 'fulfilled' ? moviesRes.value?.items || [] : []),
-    ...(entRes.status   === 'fulfilled' ? entRes.value?.items   || [] : [])
-  ];
-
-  if (allVideos.length === 0) throw new Error('YT_EMPTY — No YouTube trending videos returned.');
-
-  // Build a blob of video titles to match against
-  const videoText = allVideos
+// Helper — build mention map from a list of YouTube video items
+function _ytBuildMentionMap(videos, tmdbItems) {
+  const videoText = videos
     .map(v => (v.snippet?.title || '') + ' ' + (v.snippet?.description || '').slice(0, 200))
     .join(' ')
     .toLowerCase();
@@ -1100,46 +1077,77 @@ async function fetchYouTube(tmdbItems) {
   return mentionMap;
 }
 
-// ── FETCH REDDIT ─────────────────────────────────────────────────
-// Routes through Netlify function — keyless, server-side, no CORS issues
-async function fetchReddit(tmdbItems) {
-  const subResults = await Promise.allSettled(
-    REDDIT_SUBS.map(sub =>
-      fetch(`${API.reddit}?sub=${encodeURIComponent(sub)}`)
-        .then(r => { if (!r.ok) throw new Error(`REDDIT_${r.status}`); return r.json(); })
+async function fetchYouTube(tmdbItems) {
+  // ── 6-hour localStorage cache to minimise quota use ──
+  const CACHE_KEY = 'pulse_yt_videos';
+  const CACHE_TTL = 6 * 60 * 60 * 1000;
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (cached && Date.now() - cached.t < CACHE_TTL && Array.isArray(cached.v) && cached.v.length > 0) {
+      return _ytBuildMentionMap(cached.v, tmdbItems);
+    }
+  } catch(_) {}
+
+  // ── PRIMARY: search API (cost ~300 quota, high relevance) ──
+  const year = new Date().getFullYear();
+  const queries = [
+    `official trailer ${year}`,
+    `trailer official movie`,
+    `review ${year}`
+  ];
+  const searchQs = 'path=search&part=snippet&type=video&maxResults=50&order=viewCount';
+  const publishedAfter = encodeURIComponent(new Date(Date.now() - 60*24*60*60*1000).toISOString());
+
+  let quotaExhausted = false;
+  const searchResults = await Promise.allSettled(
+    queries.map(q =>
+      fetch(`${API.youtube}?${searchQs}&q=${encodeURIComponent(q)}&publishedAfter=${publishedAfter}`)
+        .then(r => {
+          if (r.status === 403) { quotaExhausted = true; throw new Error('YT_403'); }
+          if (!r.ok) throw new Error(`YT_${r.status}`);
+          return r.json();
+        })
     )
   );
 
-  const succeeded = subResults.filter(r => r.status === 'fulfilled').length;
-  if (succeeded === 0) throw new Error('REDDIT_ALL_FAIL — proxy unreachable.');
-
-  const postText = subResults
+  let allVideos = searchResults
     .filter(r => r.status === 'fulfilled')
-    .flatMap(r => r.value?.data?.children || [])
-    .map(p => (p.data?.title || '') + ' ' + (p.data?.selftext || '').slice(0, 300))
-    .join(' ')
-    .toLowerCase();
+    .flatMap(r => r.value?.items || []);
 
-  const mentionMap = {};
-  let maxMentions = 1;
+  // ── FALLBACK 1: chart=mostPopular (cheap, 1 quota each) ──
+  if (allVideos.length === 0 || quotaExhausted) {
+    console.warn('YouTube search unavailable — falling back to trending videos endpoint');
+    const trendingQs = 'path=videos&part=snippet&chart=mostPopular&maxResults=50';
+    const trendingResults = await Promise.allSettled([
+      fetch(`${API.youtube}?${trendingQs}&videoCategoryId=1`).then(r => r.ok ? r.json() : null),
+      fetch(`${API.youtube}?${trendingQs}&videoCategoryId=24`).then(r => r.ok ? r.json() : null)
+    ]);
+    allVideos = trendingResults
+      .filter(r => r.status === 'fulfilled' && r.value)
+      .flatMap(r => r.value?.items || []);
+  }
 
-  tmdbItems.forEach(item => {
-    const title = (item.title || item.name || '').toLowerCase();
-    if (!title || title.length < 3) return;
-    const escaped = title.replace(/[.*+?^${}()|\[\]]/g, '\$&');
-    const matches = postText.match(new RegExp(`\b${escaped}\b`, 'g'));
-    const count = matches ? matches.length : 0;
-    const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
-    mentionMap[key] = count;
-    if (count > maxMentions) maxMentions = count;
-  });
+  // ── FALLBACK 2: stale cache, even if expired ──
+  if (allVideos.length === 0) {
+    try {
+      const stale = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (stale && Array.isArray(stale.v) && stale.v.length > 0) {
+        console.warn('YouTube using stale cache (all live calls failed)');
+        return _ytBuildMentionMap(stale.v, tmdbItems);
+      }
+    } catch(_) {}
+    throw new Error('YT_EMPTY — All YouTube sources exhausted.');
+  }
 
-  Object.keys(mentionMap).forEach(k => {
-    mentionMap[k] = mentionMap[k] / maxMentions;
-  });
+  // ── Cache fresh results ──
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: allVideos }));
+  } catch(_) {}
 
-  return mentionMap;
+  return _ytBuildMentionMap(allVideos, tmdbItems);
 }
+
+// ── REDDIT removed — Reddit blocks AWS IPs server-side. Weighting kept for display.
 
 // ── MERGE & SCORE ────────────────────────────────────────────────
 function mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, sourceStatus = {}) {

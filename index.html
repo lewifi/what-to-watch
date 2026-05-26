@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EPHIX PULSE — Live TV & Movie Trending Aggregator</title>
+<title>EPHIX PULSE — What the World is Watching</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
@@ -99,6 +99,10 @@ header {
   letter-spacing: 0.05em;
   margin-left: 10px;
   vertical-align: middle;
+}
+
+@media (max-width: 640px) {
+  .logo span { display: none; }
 }
 
 .source-pills {
@@ -697,13 +701,13 @@ footer a:hover { color: var(--text); }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
-   <!-- Google tag (gtag.js) -->
+
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5XX60C0HK1"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-5XX60C0HK1');
 </script>
 </head>
@@ -711,7 +715,7 @@ footer a:hover { color: var(--text); }
 
 <!-- ── HEADER ── -->
 <header>
-  <div class="logo">EPHIX PULSE <span>Live TV & Movie Trending Aggregator - What the World is Watching</span></div>
+  <div class="logo">EPHIX PULSE <span>What the World is Watching / Live TV & Movie Trending Aggregator</span></div>
   <div class="source-pills" id="source-pills">
     <span class="source-pill pill-tmdb"   id="pill-tmdb">TMDB</span>
     <span class="source-pill pill-trakt"  id="pill-trakt">Trakt</span>
@@ -850,7 +854,7 @@ footer a:hover { color: var(--text); }
 
 <footer>
   <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
-  <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="color:var(--tmdb)">TMDB 38%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 42%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 12%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p>
+  <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="opacity:0.7;margin-right:6px">Signal mix</span><span style="color:var(--tmdb)">TMDB 38%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 42%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 12%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p>
   <p>EPHIX PULSE — Aggregate Trending · What the world is watching</p>
 </footer>
 
@@ -863,33 +867,425 @@ footer a:hover { color: var(--text); }
 </div>
 
 <script>
-const _k={tmdb:'SBgaGUhMSxJJTB1IGRtMHRpLTxobHUlJGRNMHEgTE0k=',trakt:'GE4aS0geSE4bHRlLEkhLHB9OEkkdGBwfGUwcGk4YHBIbThkeTk4fS0sZEksdTh5LH0wfGhpLH0xITx1PGU9IHQ==',youtube:'a2NQS3lTaUJgSXVTY2kHQnhZbHUbUwdJcGV1WEliWxp8HkxuTRlj'};function epftkojgo(s){const b=atob(s);return Array.from(b).map(c=>String.fromCharCode(c.charCodeAt(0)^42)).join('')}
-const HC={tmdb:epftkojgo(_k.tmdb),trakt:epftkojgo(_k.trakt),youtube:epftkojgo(_k.youtube)};const TMDB_BASE='https://api.themoviedb.org/3';const TRAKT_BASE='https://api.trakt.tv';const IMG_BASE='https://image.tmdb.org/t/p/w342';const W_TMDB=0.38;const W_TRAKT=0.42;const W_YOUTUBE=0.12;const W_REDDIT=0.08;const YT_BASE='https://www.googleapis.com/youtube/v3';const CORS_PROXY='https://api.allorigins.win/get?url=';const GENRE_MAP={28:'Action',10759:'Action & Adventure',12:'Adventure',16:'Animation',35:'Comedy',80:'Crime',99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',27:'Horror',10762:'Kids',10402:'Music',9648:'Mystery',10763:'News',10764:'Reality',10749:'Romance',878:'Sci-Fi',10765:'Sci-Fi & Fantasy',10766:'Soap',10767:'Talk',53:'Thriller',10770:'TV Movie',10752:'War',10768:'War & Politics',37:'Western'};const REDDIT_SUBS=['movies','television','NetflixBestOf','MovieSuggestions','TrueFilm'];let allItems=[];let currentFilter='all';let currentSort='pulse';let keys={tmdb:'',trakt:'',youtube:''};function loadKeys(){keys.tmdb=HC.tmdb||localStorage.getItem('pulse_tmdb')||'';keys.trakt=HC.trakt||localStorage.getItem('pulse_trakt')||'';keys.youtube=HC.youtube||localStorage.getItem('pulse_youtube')||'';if(keys.tmdb){setInput('key-tmdb',keys.tmdb);markSaved('key-tmdb','status-tmdb')}
-if(keys.trakt){setInput('key-trakt',keys.trakt);markSaved('key-trakt','status-trakt')}
-if(keys.youtube){setInput('key-youtube',keys.youtube);markSaved('key-youtube','status-youtube')}
-if(keys.tmdb)startLoad();}
-function setInput(id,val){const el=document.getElementById(id);if(el)el.value=val}
-function markSaved(inputId,statusId){const el=document.getElementById(inputId);if(el)el.classList.add('saved');const st=document.getElementById(statusId);if(st){st.textContent='✓ Saved';st.className='setup-status status-ok'}}
-async function startLoad(){keys.tmdb=(document.getElementById('key-tmdb')?.value||'').trim()||keys.tmdb;keys.trakt=(document.getElementById('key-trakt')?.value||'').trim()||keys.trakt;keys.youtube=(document.getElementById('key-youtube')?.value||'').trim()||keys.youtube;if(!keys.tmdb){document.getElementById('status-tmdb').textContent='⚠ TMDB key is required';document.getElementById('status-tmdb').className='setup-status status-err';return}
-localStorage.setItem('pulse_tmdb',keys.tmdb);if(keys.trakt)localStorage.setItem('pulse_trakt',keys.trakt);if(keys.youtube)localStorage.setItem('pulse_youtube',keys.youtube);document.getElementById('setup-panel').style.display='none';document.getElementById('progress-bar-wrap').style.display='block';showSkeletons(20);document.getElementById('pill-tmdb').classList.add('active');if(keys.trakt)document.getElementById('pill-trakt').classList.add('active');if(keys.youtube)document.getElementById('pill-youtube').classList.add('active');try{setStep('tmdb','loading');const tmdbItems=await fetchTMDB();setStep('tmdb','done');setStep('trakt','loading');setStep('youtube','loading');setStep('reddit','loading');const[traktResult,youtubeResult,redditResult]=await Promise.allSettled([keys.trakt?fetchTrakt():Promise.resolve({}),keys.youtube?fetchYouTube(tmdbItems):Promise.resolve({}),fetchReddit(tmdbItems)]);const traktMap=traktResult.status==='fulfilled'?traktResult.value:{};const youtubeMap=youtubeResult.status==='fulfilled'?youtubeResult.value:{};const redditMap=redditResult.status==='fulfilled'?redditResult.value:{};if(traktResult.status==='rejected')console.warn('Trakt failed (non-fatal):',traktResult.reason?.message);if(youtubeResult.status==='rejected')console.warn('YouTube failed (non-fatal):',youtubeResult.reason?.message);if(redditResult.status==='rejected')console.warn('Reddit failed (non-fatal):',redditResult.reason?.message);setStep('trakt',keys.trakt?(traktMap&&Object.keys(traktMap).length>0?'done':'error'):'error');setStep('youtube',keys.youtube?(youtubeMap&&Object.keys(youtubeMap).length>0?'done':'error'):'error');setStep('reddit',redditMap&&Object.keys(redditMap).length>0?'done':'error');if(Object.keys(youtubeMap).length>0)document.getElementById('pill-youtube').classList.add('active');if(Object.keys(redditMap).length>0)document.getElementById('pill-reddit').classList.add('active');setStep('merge','loading');allItems=mergeAndScore(tmdbItems,traktMap,youtubeMap,redditMap,{trakt:keys.trakt?(Object.keys(traktMap).length>0?'ok':'fail'):'skip',youtube:keys.youtube?(Object.keys(youtubeMap).length>0?'ok':'fail'):'skip',reddit:Object.keys(redditMap).length>0?'ok':'fail'});setStep('merge','done');setTimeout(()=>{document.getElementById('progress-bar-wrap').style.display='none';document.getElementById('controls').style.display='flex';document.getElementById('section-header').style.display='flex';const now=new Date();document.getElementById('last-updated').textContent=`Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;renderGrid()},600)}catch(err){document.getElementById('progress-bar-wrap').style.display='none';showError(err.message)}}
-function setStep(name,state){const el=document.getElementById('step-'+name);if(!el)return;el.className='progress-step '+state}
-async function fetchTMDB(){const pages=[1,2,3,4,5];const results=await Promise.all(pages.map(p=>fetch(`${TMDB_BASE}/trending/all/day?api_key=${keys.tmdb}&page=${p}`).then(r=>{if(r.status===401)throw new Error('TMDB_401 — Invalid API key. Check your TMDB key and reload.');if(r.status===429)throw new Error('TMDB_429 — Rate limited. Wait a minute and try again.');if(!r.ok)throw new Error(`TMDB_${r.status} — Unexpected error fetching trending data.`);return r.json()})));return results.flatMap(r=>r.results||[]).slice(0,100)}
-async function fetchTrakt(){const headers={'Content-Type':'application/json','trakt-api-version':'2','trakt-api-key':keys.trakt};const[moviesRes,showsRes]=await Promise.allSettled([fetch(`${TRAKT_BASE}/movies/trending?limit=100&extended=full`,{headers}).then(r=>{if(r.status===401)throw new Error('TRAKT_401 — Invalid Client ID.');if(r.status===429)throw new Error('TRAKT_429 — Trakt rate limit hit.');if(!r.ok)throw new Error(`TRAKT_${r.status} — Movies fetch failed.`);return r.json()}),fetch(`${TRAKT_BASE}/shows/trending?limit=100&extended=full`,{headers}).then(r=>{if(r.status===401)throw new Error('TRAKT_401 — Invalid Client ID.');if(r.status===429)throw new Error('TRAKT_429 — Trakt rate limit hit.');if(!r.ok)throw new Error(`TRAKT_${r.status} — Shows fetch failed.`);return r.json()})]);const map={};const maxWatchers={movie:1,show:1};if(moviesRes.status==='fulfilled'){moviesRes.value.forEach(item=>{if(item.watchers>maxWatchers.movie)maxWatchers.movie=item.watchers});moviesRes.value.forEach(item=>{const key=normaliseTitle(item.movie?.title,item.movie?.year);map[key]={watchers:item.watchers,max:maxWatchers.movie,type:'movie'}})}
-if(showsRes.status==='fulfilled'){showsRes.value.forEach(item=>{if(item.watchers>maxWatchers.show)maxWatchers.show=item.watchers});showsRes.value.forEach(item=>{const key=normaliseTitle(item.show?.title,item.show?.year);map[key]={watchers:item.watchers,max:maxWatchers.show,type:'show'}})}
-return map}
-async function fetchYouTube(tmdbItems){const[moviesRes,entRes]=await Promise.allSettled([fetch(`${YT_BASE}/videos?part=snippet&chart=mostPopular&videoCategoryId=1&maxResults=50&key=${keys.youtube}`).then(r=>{if(r.status===400)throw new Error('YT_400 — Bad request. Check your YouTube API key.');if(r.status===403)throw new Error('YT_403 — YouTube API key invalid or quota exceeded (10,000 units/day free).');if(!r.ok)throw new Error(`YT_${r.status} — YouTube fetch failed.`);return r.json()}),fetch(`${YT_BASE}/videos?part=snippet&chart=mostPopular&videoCategoryId=24&maxResults=50&key=${keys.youtube}`).then(r=>{if(!r.ok)return{items:[]};return r.json()})]);const allVideos=[...(moviesRes.status==='fulfilled'?moviesRes.value?.items||[]:[]),...(entRes.status==='fulfilled'?entRes.value?.items||[]:[])];if(allVideos.length===0)throw new Error('YT_EMPTY — No YouTube trending videos returned.');const videoText=allVideos.map(v=>(v.snippet?.title||'')+' '+(v.snippet?.description||'').slice(0,200)).join(' ').toLowerCase();const mentionMap={};let maxMentions=1;tmdbItems.forEach(item=>{const title=(item.title||item.name||'').toLowerCase();if(!title||title.length<3)return;const escaped=title.replace(/[.*+?^${}()|\[\]]/g,'\$&');const matches=videoText.match(new RegExp(`\b${escaped}\b`,'g'));const count=matches?matches.length:0;const key=normaliseTitle(item.title||item.name,(item.release_date||item.first_air_date||'').slice(0,4));mentionMap[key]=count;if(count>maxMentions)maxMentions=count});Object.keys(mentionMap).forEach(k=>{mentionMap[k]=mentionMap[k]/maxMentions});return mentionMap}
-async function fetchReddit(tmdbItems){const subResults=await Promise.allSettled(REDDIT_SUBS.map(sub=>{const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),3000);const url=encodeURIComponent(`https://www.reddit.com/r/${sub}/hot.json?limit=100&raw_json=1`);return fetch(`${CORS_PROXY}${url}`,{signal:controller.signal}).then(r=>{clearTimeout(timer);if(!r.ok)throw new Error(`REDDIT_PROXY_${r.status}`);return r.json()}).then(wrapper=>{const parsed=JSON.parse(wrapper.contents);return parsed}).catch(e=>{clearTimeout(timer);throw e})}));const succeeded=subResults.filter(r=>r.status==='fulfilled').length;if(succeeded===0)throw new Error('REDDIT_ALL_FAIL — CORS proxy unreachable.');const postText=subResults.filter(r=>r.status==='fulfilled').flatMap(r=>r.value?.data?.children||[]).map(p=>(p.data?.title||'')+' '+(p.data?.selftext||'').slice(0,300)).join(' ').toLowerCase();const mentionMap={};let maxMentions=1;tmdbItems.forEach(item=>{const title=(item.title||item.name||'').toLowerCase();if(!title||title.length<3)return;const escaped=title.replace(/[.*+?^${}()|\[\]]/g,'\$&');const matches=postText.match(new RegExp(`\b${escaped}\b`,'g'));const count=matches?matches.length:0;const key=normaliseTitle(item.title||item.name,(item.release_date||item.first_air_date||'').slice(0,4));mentionMap[key]=count;if(count>maxMentions)maxMentions=count});Object.keys(mentionMap).forEach(k=>{mentionMap[k]=mentionMap[k]/maxMentions});return mentionMap}
-function mergeAndScore(tmdbItems,traktMap,youtubeMap,redditMap,sourceStatus={}){const total=tmdbItems.length;return tmdbItems.map((item,idx)=>{const tmdbScore=1-(idx/total);const tKey=normaliseTitle(item.title||item.name,(item.release_date||item.first_air_date||'').slice(0,4));let traktScore=0;const traktEntry=traktMap[tKey];if(traktEntry){traktScore=Math.min(traktEntry.watchers/traktEntry.max,1)}
-const youtubeScore=Math.min(youtubeMap[tKey]||0,1);const redditScore=Math.min(redditMap[tKey]||0,1);const hasTrakt=sourceStatus.trakt==='ok';const hasYoutube=sourceStatus.youtube==='ok';const hasReddit=sourceStatus.reddit==='ok';const traktStatus=sourceStatus.trakt||'skip';const youtubeStatus=sourceStatus.youtube||'skip';const redditStatus=sourceStatus.reddit||'skip';let activeW=W_TMDB;let pulse=tmdbScore*W_TMDB;if(hasTrakt){pulse+=traktScore*W_TRAKT;activeW+=W_TRAKT}
-if(hasYoutube){pulse+=youtubeScore*W_YOUTUBE;activeW+=W_YOUTUBE}
-if(hasReddit){pulse+=redditScore*W_REDDIT;activeW+=W_REDDIT}
-if(activeW>0)pulse=pulse/activeW;return{...item,_pulseScore:Math.round(pulse*1000)/10,_tmdbScore:Math.round(tmdbScore*100),_traktScore:Math.round(traktScore*100),_youtubeScore:Math.round(youtubeScore*100),_redditScore:Math.round(redditScore*100),_hasTrakt:hasTrakt,_hasYoutube:hasYoutube,_hasReddit:hasReddit,_traktStatus:traktStatus,_youtubeStatus:youtubeStatus,_redditStatus:redditStatus}}).sort((a,b)=>b._pulseScore-a._pulseScore)}
-function normaliseTitle(title,year){if(!title)return'';return(title.toLowerCase().replace(/[^a-z0-9]/g,'')+(year||'')).slice(0,40)}
-function renderGrid(){const grid=document.getElementById('grid');const errEl=document.getElementById('error-state');grid.innerHTML='';let filtered=currentFilter==='all'?[...allItems]:allItems.filter(i=>i.media_type===currentFilter);if(currentSort==='rating'){filtered.sort((a,b)=>(b.vote_average||0)-(a.vote_average||0))}else if(currentSort==='title'){filtered.sort((a,b)=>(a.title||a.name||'').localeCompare(b.title||b.name||''))}
-document.getElementById('count-badge').textContent=`${filtered.length} title${filtered.length !== 1 ? 's' : ''}`;if(filtered.length===0){errEl.style.display='block';return}
-errEl.style.display='none';filtered.forEach((item,idx)=>{const card=buildCard(item,idx+1);card.style.animationDelay=`${Math.min(idx * 14, 500)}ms`;grid.appendChild(card)})}
-function buildCard(item,rank){const card=document.createElement('div');card.className='card';const title=item.title||item.name||'Untitled';const year=(item.release_date||item.first_air_date||'').slice(0,4);const rating=item.vote_average?item.vote_average.toFixed(1):'—';const type=item.media_type;const genres=(item.genre_ids||[]).slice(0,2).map(id=>GENRE_MAP[id]).filter(Boolean).join(' · ');const poster=item.poster_path?`${IMG_BASE}${item.poster_path}`:null;const pulse=item._pulseScore??0;const tScore=item._tmdbScore??0;const trScore=item._traktScore??0;const yScore=item._youtubeScore??0;const rScore=item._redditScore??0;const trVal=item._traktStatus==='ok'?trScore:(item._traktStatus==='fail'?'✗':'—');const yVal=item._youtubeStatus==='ok'?yScore:(item._youtubeStatus==='fail'?'✗':'—');const rVal=item._redditStatus==='ok'?rScore:(item._redditStatus==='fail'?'✗':'—');const trW=item._hasTrakt?trScore:0;const yW=item._hasYoutube?yScore:0;const rW=item._hasReddit?rScore:0;if(poster){const img=document.createElement('img');img.src=poster;img.alt=title;img.loading='lazy';img.onerror=()=>img.replaceWith(noPosterEl(title));card.appendChild(img)}else{card.appendChild(noPosterEl(title))}
-const overlay=document.createElement('div');overlay.className='card-overlay';card.appendChild(overlay);const rankEl=document.createElement('div');rankEl.className='card-rank'+(rank<=3?' top3':'');rankEl.textContent=rank;card.appendChild(rankEl);const badge=document.createElement('div');badge.className=`card-type-badge ${type === 'movie' ? 'badge-movie' : 'badge-tv'}`;badge.textContent=type==='movie'?'Film':'TV';card.appendChild(badge);const info=document.createElement('div');info.className='card-info';info.innerHTML=`
+// ════════════════════════════════════════════════════════════════
+//  CONFIG — hardcode keys here if you prefer not to type them in
+// ════════════════════════════════════════════════════════════════
+// ── API proxy endpoints (keys live server-side on Netlify) ──────
+const API = {
+  tmdb:    '/api/tmdb',
+  trakt:   '/api/trakt',
+  youtube: '/api/youtube',
+  reddit:  '/api/reddit'
+};
+const IMG_BASE = 'https://image.tmdb.org/t/p/w342';
+
+// Score weights — TMDB+Trakt are core, YouTube+Reddit are soft bonus signals
+const W_TMDB    = 0.38;
+const W_TRAKT   = 0.42;
+const W_YOUTUBE = 0.12;
+const W_REDDIT  = 0.08;
+
+const GENRE_MAP = {
+  28:'Action',10759:'Action & Adventure',12:'Adventure',16:'Animation',35:'Comedy',
+  80:'Crime',99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',
+  27:'Horror',10762:'Kids',10402:'Music',9648:'Mystery',10763:'News',10764:'Reality',
+  10749:'Romance',878:'Sci-Fi',10765:'Sci-Fi & Fantasy',10766:'Soap',10767:'Talk',
+  53:'Thriller',10770:'TV Movie',10752:'War',10768:'War & Politics',37:'Western'
+};
+
+// Reddit communities to scan
+const REDDIT_SUBS = ['movies','television','NetflixBestOf','MovieSuggestions','TrueFilm'];
+
+// ── STATE ────────────────────────────────────────────────────────
+let allItems     = [];
+let currentFilter = 'all';
+let currentSort   = 'pulse';
+// keys state removed — all auth handled server-side
+
+// ── LOAD SAVED KEYS ──────────────────────────────────────────────
+function loadKeys() {
+  // Keys are server-side now — nothing to load. Function kept for compatibility.
+  startLoad();
+}
+
+function setInput(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function markSaved(inputId, statusId) {
+  const el = document.getElementById(inputId);
+  if (el) el.classList.add('saved');
+  const st = document.getElementById(statusId);
+  if (st) { st.textContent = '✓ Saved'; st.className = 'setup-status status-ok'; }
+}
+
+// ── START LOAD ───────────────────────────────────────────────────
+async function startLoad() {
+  document.getElementById('setup-panel').style.display = 'none';
+  document.getElementById('progress-bar-wrap').style.display = 'block';
+  showSkeletons(20);
+
+  document.getElementById('pill-tmdb').classList.add('active');
+  document.getElementById('pill-trakt').classList.add('active');
+  document.getElementById('pill-youtube').classList.add('active');
+
+  try {
+    // ── Fire TMDB first — needed as base list ──
+    setStep('tmdb', 'loading');
+    const tmdbItems = await fetchTMDB();
+    setStep('tmdb', 'done');
+
+    // ── Fire Trakt, YouTube, Reddit all in parallel ──
+    setStep('trakt',   'loading');
+    setStep('youtube', 'loading');
+    setStep('reddit',  'loading');
+
+    const [traktResult, youtubeResult, redditResult] = await Promise.allSettled([
+      fetchTrakt(),
+      fetchYouTube(tmdbItems),
+      fetchReddit(tmdbItems)
+    ]);
+
+    const traktMap   = traktResult.status   === 'fulfilled' ? traktResult.value   : {};
+    const youtubeMap = youtubeResult.status === 'fulfilled' ? youtubeResult.value : {};
+    const redditMap  = redditResult.status  === 'fulfilled' ? redditResult.value  : {};
+
+    if (traktResult.status   === 'rejected') console.warn('Trakt failed (non-fatal):',   traktResult.reason?.message);
+    if (youtubeResult.status === 'rejected') console.warn('YouTube failed (non-fatal):', youtubeResult.reason?.message);
+    if (redditResult.status  === 'rejected') console.warn('Reddit failed (non-fatal):',  redditResult.reason?.message);
+
+    setStep('trakt',   Object.keys(traktMap).length   > 0 ? 'done' : 'error');
+    setStep('youtube', Object.keys(youtubeMap).length > 0 ? 'done' : 'error');
+    setStep('reddit',  Object.keys(redditMap).length  > 0 ? 'done' : 'error');
+
+    if (Object.keys(youtubeMap).length > 0) document.getElementById('pill-youtube').classList.add('active');
+    if (Object.keys(redditMap).length  > 0) document.getElementById('pill-reddit').classList.add('active');
+
+    setStep('merge', 'loading');
+    allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, {
+      trakt:   Object.keys(traktMap).length   > 0 ? 'ok' : 'fail',
+      youtube: Object.keys(youtubeMap).length > 0 ? 'ok' : 'fail',
+      reddit:  Object.keys(redditMap).length  > 0 ? 'ok' : 'fail'
+    });
+    setStep('merge', 'done');
+
+    setTimeout(() => {
+      document.getElementById('progress-bar-wrap').style.display = 'none';
+      document.getElementById('controls').style.display = 'flex';
+      document.getElementById('section-header').style.display = 'flex';
+
+      const now = new Date();
+      document.getElementById('last-updated').textContent =
+        `Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+
+      renderGrid();
+    }, 600);
+
+  } catch(err) {
+    document.getElementById('progress-bar-wrap').style.display = 'none';
+    showError(err.message);
+  }
+}
+
+function setStep(name, state) {
+  const el = document.getElementById('step-' + name);
+  if (!el) return;
+  el.className = 'progress-step ' + state;
+}
+
+// ── FETCH TMDB ───────────────────────────────────────────────────
+async function fetchTMDB() {
+  const pages = [1,2,3,4,5];
+  const results = await Promise.all(pages.map(p =>
+    fetch(`${API.tmdb}?path=trending/all/day&page=${p}`)
+      .then(r => {
+        if (r.status === 401) throw new Error('TMDB_401 — Invalid API key.');
+        if (r.status === 429) throw new Error('TMDB_429 — Rate limited.');
+        if (!r.ok) throw new Error(`TMDB_${r.status} — Unexpected error.`);
+        return r.json();
+      })
+  ));
+  return results.flatMap(r => r.results || []).slice(0, 100);
+}
+
+// ── FETCH TRAKT ──────────────────────────────────────────────────
+// Returns map: "Title Year" -> { watchers, type }
+async function fetchTrakt() {
+  const [moviesRes, showsRes] = await Promise.allSettled([
+    fetch(`${API.trakt}?path=movies/trending&limit=100&extended=full`).then(r => {
+      if (!r.ok) throw new Error(`TRAKT_${r.status} — Movies fetch failed.`);
+      return r.json();
+    }),
+    fetch(`${API.trakt}?path=shows/trending&limit=100&extended=full`).then(r => {
+      if (!r.ok) throw new Error(`TRAKT_${r.status} — Shows fetch failed.`);
+      return r.json();
+    })
+  ]);
+
+  const map = {};
+  const maxWatchers = { movie: 1, show: 1 };
+
+  if (moviesRes.status === 'fulfilled') {
+    moviesRes.value.forEach(item => {
+      if (item.watchers > maxWatchers.movie) maxWatchers.movie = item.watchers;
+    });
+    moviesRes.value.forEach(item => {
+      const key = normaliseTitle(item.movie?.title, item.movie?.year);
+      map[key] = { watchers: item.watchers, max: maxWatchers.movie, type: 'movie' };
+    });
+  }
+
+  if (showsRes.status === 'fulfilled') {
+    showsRes.value.forEach(item => {
+      if (item.watchers > maxWatchers.show) maxWatchers.show = item.watchers;
+    });
+    showsRes.value.forEach(item => {
+      const key = normaliseTitle(item.show?.title, item.show?.year);
+      map[key] = { watchers: item.watchers, max: maxWatchers.show, type: 'show' };
+    });
+  }
+
+  return map;
+}
+
+// ── FETCH YOUTUBE ────────────────────────────────────────────────
+// Fetches trending movies+entertainment videos, matches titles to TMDB items
+// Cost: ~3 quota units per load (well within 10,000/day free limit)
+async function fetchYouTube(tmdbItems) {
+  // videoCategoryId 1 = Film & Animation, 24 = Entertainment — best overlap with movies/TV
+  const ytQs = 'path=videos&part=snippet&chart=mostPopular&maxResults=50';
+  const [moviesRes, entRes] = await Promise.allSettled([
+    fetch(`${API.youtube}?${ytQs}&videoCategoryId=1`)
+      .then(r => {
+        if (r.status === 403) throw new Error('YT_403 — Quota exceeded or key invalid.');
+        if (!r.ok) throw new Error(`YT_${r.status} — YouTube fetch failed.`);
+        return r.json();
+      }),
+    fetch(`${API.youtube}?${ytQs}&videoCategoryId=24`)
+      .then(r => { if (!r.ok) return { items: [] }; return r.json(); })
+  ]);
+
+  const allVideos = [
+    ...(moviesRes.status === 'fulfilled' ? moviesRes.value?.items || [] : []),
+    ...(entRes.status   === 'fulfilled' ? entRes.value?.items   || [] : [])
+  ];
+
+  if (allVideos.length === 0) throw new Error('YT_EMPTY — No YouTube trending videos returned.');
+
+  // Build a blob of video titles to match against
+  const videoText = allVideos
+    .map(v => (v.snippet?.title || '') + ' ' + (v.snippet?.description || '').slice(0, 200))
+    .join(' ')
+    .toLowerCase();
+
+  const mentionMap = {};
+  let maxMentions = 1;
+
+  tmdbItems.forEach(item => {
+    const title = (item.title || item.name || '').toLowerCase();
+    if (!title || title.length < 3) return;
+    const escaped = title.replace(/[.*+?^${}()|\[\]]/g, '\$&');
+    const matches = videoText.match(new RegExp(`\b${escaped}\b`, 'g'));
+    const count = matches ? matches.length : 0;
+    const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
+    mentionMap[key] = count;
+    if (count > maxMentions) maxMentions = count;
+  });
+
+  Object.keys(mentionMap).forEach(k => {
+    mentionMap[k] = mentionMap[k] / maxMentions;
+  });
+
+  return mentionMap;
+}
+
+// ── FETCH REDDIT ─────────────────────────────────────────────────
+// Routes through Netlify function — keyless, server-side, no CORS issues
+async function fetchReddit(tmdbItems) {
+  const subResults = await Promise.allSettled(
+    REDDIT_SUBS.map(sub =>
+      fetch(`${API.reddit}?sub=${encodeURIComponent(sub)}`)
+        .then(r => { if (!r.ok) throw new Error(`REDDIT_${r.status}`); return r.json(); })
+    )
+  );
+
+  const succeeded = subResults.filter(r => r.status === 'fulfilled').length;
+  if (succeeded === 0) throw new Error('REDDIT_ALL_FAIL — proxy unreachable.');
+
+  const postText = subResults
+    .filter(r => r.status === 'fulfilled')
+    .flatMap(r => r.value?.data?.children || [])
+    .map(p => (p.data?.title || '') + ' ' + (p.data?.selftext || '').slice(0, 300))
+    .join(' ')
+    .toLowerCase();
+
+  const mentionMap = {};
+  let maxMentions = 1;
+
+  tmdbItems.forEach(item => {
+    const title = (item.title || item.name || '').toLowerCase();
+    if (!title || title.length < 3) return;
+    const escaped = title.replace(/[.*+?^${}()|\[\]]/g, '\$&');
+    const matches = postText.match(new RegExp(`\b${escaped}\b`, 'g'));
+    const count = matches ? matches.length : 0;
+    const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
+    mentionMap[key] = count;
+    if (count > maxMentions) maxMentions = count;
+  });
+
+  Object.keys(mentionMap).forEach(k => {
+    mentionMap[k] = mentionMap[k] / maxMentions;
+  });
+
+  return mentionMap;
+}
+
+// ── MERGE & SCORE ────────────────────────────────────────────────
+function mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, sourceStatus = {}) {
+  // Normalise TMDB popularity (rank-based: #1 = 1.0, #100 = 0.01)
+  const total = tmdbItems.length;
+
+  return tmdbItems.map((item, idx) => {
+    const tmdbScore = 1 - (idx / total); // 1.0 → ~0.01
+
+    const tKey = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
+
+    // Trakt score: normalised watcher count
+    let traktScore = 0;
+    const traktEntry = traktMap[tKey];
+    if (traktEntry) {
+      traktScore = Math.min(traktEntry.watchers / traktEntry.max, 1);
+    }
+
+    // YouTube score
+    const youtubeScore = Math.min(youtubeMap[tKey] || 0, 1);
+
+    // Reddit score
+    const redditScore  = Math.min(redditMap[tKey]  || 0, 1);
+
+    // Dynamic weight redistribution — only count source if it actually returned data
+    const hasTrakt   = sourceStatus.trakt   === 'ok';
+    const hasYoutube = sourceStatus.youtube === 'ok';
+    const hasReddit  = sourceStatus.reddit  === 'ok';
+    // For display: distinguish skip (no key) from fail (had key, errored)
+    const traktStatus   = sourceStatus.trakt   || 'skip';
+    const youtubeStatus = sourceStatus.youtube || 'skip';
+    const redditStatus  = sourceStatus.reddit  || 'skip';
+
+    let activeW = W_TMDB;
+    let pulse   = tmdbScore * W_TMDB;
+    if (hasTrakt)   { pulse += traktScore   * W_TRAKT;   activeW += W_TRAKT;   }
+    if (hasYoutube) { pulse += youtubeScore * W_YOUTUBE; activeW += W_YOUTUBE; }
+    if (hasReddit)  { pulse += redditScore  * W_REDDIT;  activeW += W_REDDIT;  }
+    // Normalise so scores always sum to the active weight total
+    if (activeW > 0) pulse = pulse / activeW;
+
+    return {
+      ...item,
+      _pulseScore:    Math.round(pulse * 1000) / 10,
+      _tmdbScore:     Math.round(tmdbScore    * 100),
+      _traktScore:    Math.round(traktScore   * 100),
+      _youtubeScore:  Math.round(youtubeScore * 100),
+      _redditScore:   Math.round(redditScore  * 100),
+      _hasTrakt:   hasTrakt,
+      _hasYoutube: hasYoutube,
+      _hasReddit:  hasReddit,
+      _traktStatus:   traktStatus,
+      _youtubeStatus: youtubeStatus,
+      _redditStatus:  redditStatus
+    };
+  }).sort((a,b) => b._pulseScore - a._pulseScore);
+}
+
+function normaliseTitle(title, year) {
+  if (!title) return '';
+  return (title.toLowerCase().replace(/[^a-z0-9]/g,'') + (year || '')).slice(0,40);
+}
+
+// ── RENDER ───────────────────────────────────────────────────────
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const errEl = document.getElementById('error-state');
+  grid.innerHTML = '';
+
+  let filtered = currentFilter === 'all'
+    ? [...allItems]
+    : allItems.filter(i => i.media_type === currentFilter);
+
+  if (currentSort === 'rating') {
+    filtered.sort((a,b) => (b.vote_average||0) - (a.vote_average||0));
+  } else if (currentSort === 'title') {
+    filtered.sort((a,b) => (a.title||a.name||'').localeCompare(b.title||b.name||''));
+  }
+
+  document.getElementById('count-badge').textContent =
+    `${filtered.length} title${filtered.length !== 1 ? 's' : ''}`;
+
+  if (filtered.length === 0) { errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+
+  filtered.forEach((item, idx) => {
+    const card = buildCard(item, idx + 1);
+    card.style.animationDelay = `${Math.min(idx * 14, 500)}ms`;
+    grid.appendChild(card);
+  });
+}
+
+function buildCard(item, rank) {
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  const title   = item.title || item.name || 'Untitled';
+  const year    = (item.release_date || item.first_air_date || '').slice(0,4);
+  const rating  = item.vote_average ? item.vote_average.toFixed(1) : '—';
+  const type    = item.media_type;
+  const genres  = (item.genre_ids || []).slice(0,2).map(id => GENRE_MAP[id]).filter(Boolean).join(' · ');
+  const poster  = item.poster_path ? `${IMG_BASE}${item.poster_path}` : null;
+
+  const pulse   = item._pulseScore   ?? 0;
+  const tScore  = item._tmdbScore    ?? 0;
+  const trScore = item._traktScore   ?? 0;
+  const yScore  = item._youtubeScore ?? 0;
+  const rScore  = item._redditScore  ?? 0;
+
+  // Display helpers: 'ok' = show score, 'fail' = show ✗, 'skip' = show —
+  const trVal = item._traktStatus   === 'ok' ? trScore : (item._traktStatus   === 'fail' ? '✗' : '—');
+  const yVal  = item._youtubeStatus === 'ok' ? yScore  : (item._youtubeStatus === 'fail' ? '✗' : '—');
+  const rVal  = item._redditStatus  === 'ok' ? rScore  : (item._redditStatus  === 'fail' ? '✗' : '—');
+  const trW   = item._hasTrakt   ? trScore : 0;
+  const yW    = item._hasYoutube ? yScore  : 0;
+  const rW    = item._hasReddit  ? rScore  : 0;
+
+  // Image
+  if (poster) {
+    const img = document.createElement('img');
+    img.src = poster;
+    img.alt = title;
+    img.loading = 'lazy';
+    img.onerror = () => img.replaceWith(noPosterEl(title));
+    card.appendChild(img);
+  } else {
+    card.appendChild(noPosterEl(title));
+  }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'card-overlay';
+  card.appendChild(overlay);
+
+  const rankEl = document.createElement('div');
+  rankEl.className = 'card-rank' + (rank <= 3 ? ' top3' : '');
+  rankEl.textContent = rank;
+  card.appendChild(rankEl);
+
+  const badge = document.createElement('div');
+  badge.className = `card-type-badge ${type === 'movie' ? 'badge-movie' : 'badge-tv'}`;
+  badge.textContent = type === 'movie' ? 'Film' : 'TV';
+  card.appendChild(badge);
+
+  const info = document.createElement('div');
+  info.className = 'card-info';
+  info.innerHTML = `
     <div class="card-title">${escHtml(title)}</div>
     <div class="card-meta">
       <span class="card-imdb">${rating}</span>
@@ -902,20 +1298,142 @@ const overlay=document.createElement('div');overlay.className='card-overlay';car
         <strong>${pulse.toFixed(1)}</strong>
       </div>
     </div>
-  `;card.appendChild(info);card.addEventListener('click',()=>openModal(item));return card}
-function noPosterEl(title){const div=document.createElement('div');div.className='no-poster';div.innerHTML=`
+  `;
+  card.appendChild(info);
+
+  // Open detail modal on click
+  card.addEventListener('click', () => openModal(item));
+
+  return card;
+}
+
+function noPosterEl(title) {
+  const div = document.createElement('div');
+  div.className = 'no-poster';
+  div.innerHTML = `
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
       <rect x="2" y="2" width="20" height="20" rx="2"/>
       <path d="M7 8h10M7 12h6"/>
     </svg>
-    <span>${escHtml(title)}</span>`;return div}
-function showSkeletons(n){const grid=document.getElementById('grid');grid.innerHTML='';document.getElementById('error-state').style.display='none';for(let i=0;i<n;i++){const sk=document.createElement('div');sk.className='skeleton';grid.appendChild(sk)}}
-function showError(msg){document.getElementById('grid').innerHTML='';const err=document.getElementById('error-state');err.style.display='block';document.getElementById('error-msg').textContent=msg.includes('401')?'Invalid API key — check it and reload.':msg}
-function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-document.querySelectorAll('.tab').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentFilter=btn.dataset.filter;renderGrid()})});document.querySelectorAll('.sort-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentSort=btn.dataset.sort;renderGrid()})});const detailCache={};async function openModal(item){const overlay=document.getElementById('modal-overlay');const modalContent=document.getElementById('modal-content');overlay.classList.add('open');document.body.style.overflow='hidden';modalContent.innerHTML='<div class="modal-loading"><div class="modal-spinner"></div>Loading details…</div>';const id=item.id;const type=item.media_type;const cacheKey=`${type}_${id}`;let detail,credits;try{if(detailCache[cacheKey]){({detail,credits}=detailCache[cacheKey])}else{const appendParam=type==='tv'?'&append_to_response=external_ids':'';const[d,c]=await Promise.all([fetch(`${TMDB_BASE}/${type}/${id}?api_key=${keys.tmdb}${appendParam}`).then(r=>r.json()),fetch(`${TMDB_BASE}/${type}/${id}/credits?api_key=${keys.tmdb}`).then(r=>r.json())]);detail=d;credits=c;detailCache[cacheKey]={detail,credits}}}catch(err){modalContent.innerHTML=`<div class="modal-loading">Failed to load details — ${escHtml(err.message)}</div>`;return}
-renderModal(item,detail,credits)}
-function renderModal(item,detail,credits){const title=detail.title||detail.name||item.title||item.name||'Untitled';const tagline=detail.tagline||'';const overview=detail.overview||'No synopsis available.';const year=(detail.release_date||detail.first_air_date||'').slice(0,4);const rating=detail.vote_average?detail.vote_average.toFixed(1):null;const pulse=item._pulseScore?item._pulseScore.toFixed(1):null;const runtime=detail.runtime||(detail.episode_run_time?.[0]);const type=item.media_type;const poster=detail.poster_path?`https://image.tmdb.org/t/p/w500${detail.poster_path}`:null;const imdbId=detail.imdb_id||detail.external_ids?.imdb_id;const genres=(detail.genres||[]).map(g=>g.name);let director='';let writers='';let creators='';let starring='';if(type==='movie'){director=(credits.crew||[]).filter(c=>c.job==='Director').map(c=>c.name).slice(0,3).join(', ');writers=(credits.crew||[]).filter(c=>c.department==='Writing').map(c=>c.name).slice(0,3).join(', ')}else{creators=(detail.created_by||[]).map(c=>c.name).slice(0,3).join(', ')}
-starring=(credits.cast||[]).slice(0,5).map(c=>c.name).join(', ');const tmdbUrl=`https://www.themoviedb.org/${type}/${item.id}`;const imdbUrl=imdbId?`https://www.imdb.com/title/${imdbId}`:null;const googleUrl=`https://www.google.com/search?q=${encodeURIComponent(title + ' ' + (year || '') + (type === 'tv' ? ' tv series' : ' movie'))}`;const html=`
+    <span>${escHtml(title)}</span>`;
+  return div;
+}
+
+function showSkeletons(n) {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  document.getElementById('error-state').style.display = 'none';
+  for (let i = 0; i < n; i++) {
+    const sk = document.createElement('div');
+    sk.className = 'skeleton';
+    grid.appendChild(sk);
+  }
+}
+
+function showError(msg) {
+  document.getElementById('grid').innerHTML = '';
+  const err = document.getElementById('error-state');
+  err.style.display = 'block';
+  document.getElementById('error-msg').textContent =
+    msg.includes('401') ? 'Invalid API key — check it and reload.' : msg;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── TAB / SORT LISTENERS ─────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderGrid();
+  });
+});
+
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSort = btn.dataset.sort;
+    renderGrid();
+  });
+});
+
+
+// ── MODAL ──────────────────────────────────────────────────────────
+const detailCache = {};
+
+async function openModal(item) {
+  const overlay = document.getElementById('modal-overlay');
+  const modalContent = document.getElementById('modal-content');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Show skeleton immediately
+  modalContent.innerHTML = '<div class="modal-loading"><div class="modal-spinner"></div>Loading details…</div>';
+
+  const id = item.id;
+  const type = item.media_type;
+  const cacheKey = `${type}_${id}`;
+
+  let detail, credits;
+  try {
+    if (detailCache[cacheKey]) {
+      ({ detail, credits } = detailCache[cacheKey]);
+    } else {
+      // For movies imdb_id is on the main detail. For TV we need external_ids.
+      const appendParam = type === 'tv' ? '&append_to_response=external_ids' : '';
+      const [d, c] = await Promise.all([
+        fetch(`${API.tmdb}?path=${type}/${id}${appendParam}`).then(r => r.json()),
+        fetch(`${API.tmdb}?path=${type}/${id}/credits`).then(r => r.json())
+      ]);
+      detail = d;
+      credits = c;
+      detailCache[cacheKey] = { detail, credits };
+    }
+  } catch(err) {
+    modalContent.innerHTML = `<div class="modal-loading">Failed to load details — ${escHtml(err.message)}</div>`;
+    return;
+  }
+
+  renderModal(item, detail, credits);
+}
+
+function renderModal(item, detail, credits) {
+  const title    = detail.title || detail.name || item.title || item.name || 'Untitled';
+  const tagline  = detail.tagline || '';
+  const overview = detail.overview || 'No synopsis available.';
+  const year     = (detail.release_date || detail.first_air_date || '').slice(0,4);
+  const rating   = detail.vote_average ? detail.vote_average.toFixed(1) : null;
+  const pulse    = item._pulseScore ? item._pulseScore.toFixed(1) : null;
+  const runtime  = detail.runtime || (detail.episode_run_time?.[0]);
+  const type     = item.media_type;
+  const poster   = detail.poster_path ? `https://image.tmdb.org/t/p/w500${detail.poster_path}` : null;
+  const imdbId   = detail.imdb_id || detail.external_ids?.imdb_id;
+  const genres   = (detail.genres || []).map(g => g.name);
+
+  // Credits
+  let director = '';
+  let writers  = '';
+  let creators = '';
+  let starring = '';
+
+  if (type === 'movie') {
+    director = (credits.crew || []).filter(c => c.job === 'Director').map(c => c.name).slice(0,3).join(', ');
+    writers  = (credits.crew || []).filter(c => c.department === 'Writing').map(c => c.name).slice(0,3).join(', ');
+  } else {
+    creators = (detail.created_by || []).map(c => c.name).slice(0,3).join(', ');
+  }
+  starring = (credits.cast || []).slice(0,5).map(c => c.name).join(', ');
+
+  // Links
+  const tmdbUrl   = `https://www.themoviedb.org/${type}/${item.id}`;
+  const imdbUrl   = imdbId ? `https://www.imdb.com/title/${imdbId}` : null;
+  const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(title + ' ' + (year || '') + (type === 'tv' ? ' tv series' : ' movie'))}`;
+
+  const html = `
     <div class="modal-top">
       <div class="modal-poster">
         ${poster
@@ -930,18 +1448,18 @@ starring=(credits.cast||[]).slice(0,5).map(c=>c.name).join(', ');const tmdbUrl=`
           ${rating ? `<span class="modal-rating">★ ${rating}</span>` : ''}
           ${pulse  ? `<span class="modal-pulse">PULSE ${pulse}</span>` : ''}
           ${year   ? `<span>${year}</span>` : ''}
-          ${runtime ? `<span>${runtime}min</span>` : ''}
+          ${runtime ? `<span>${runtime} min</span>` : ''}
         </div>
         ${tagline ? `<div class="modal-tagline">"${escHtml(tagline)}"</div>` : ''}
       </div>
     </div>
     <div class="modal-body">
       <div class="modal-overview">${escHtml(overview)}</div>
-      ${genres.length ? `<div class="modal-genres">${genres.map(g=>`<span class="modal-genre-tag">${escHtml(g)}</span>`).join('')}</div>` : ''}
+      ${genres.length ? `<div class="modal-genres">${genres.map(g => `<span class="modal-genre-tag">${escHtml(g)}</span>`).join('')}</div>` : ''}
       <div class="modal-credits">
         ${director ? `<div class="modal-credit-block"><span class="modal-credit-label">Director</span><span class="modal-credit-value">${escHtml(director)}</span></div>` : ''}
-        ${writers  ? `<div class="modal-credit-block"><span class="modal-credit-label">Writer${writers.includes(',')?'s':''}</span><span class="modal-credit-value">${escHtml(writers)}</span></div>` : ''}
-        ${creators ? `<div class="modal-credit-block"><span class="modal-credit-label">Creator${creators.includes(',')?'s':''}</span><span class="modal-credit-value">${escHtml(creators)}</span></div>` : ''}
+        ${writers  ? `<div class="modal-credit-block"><span class="modal-credit-label">Writer${writers.includes(',') ? 's' : ''}</span><span class="modal-credit-value">${escHtml(writers)}</span></div>` : ''}
+        ${creators ? `<div class="modal-credit-block"><span class="modal-credit-label">Creator${creators.includes(',') ? 's' : ''}</span><span class="modal-credit-value">${escHtml(creators)}</span></div>` : ''}
         ${starring ? `<div class="modal-credit-block" style="grid-column: 1 / -1"><span class="modal-credit-label">Starring</span><span class="modal-credit-value">${escHtml(starring)}</span></div>` : ''}
       </div>
       <div class="modal-links">
@@ -950,9 +1468,24 @@ starring=(credits.cast||[]).slice(0,5).map(c=>c.name).join(', ');const tmdbUrl=`
         <a class="modal-link link-google" href="${googleUrl}" target="_blank" rel="noopener">↗ Google</a>
       </div>
     </div>
-  `;document.getElementById('modal-content').innerHTML=html}
-function closeModal(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow=''}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});if(HC.tmdb&&HC.trakt){keys.tmdb=HC.tmdb;keys.trakt=HC.trakt;keys.youtube=HC.youtube||localStorage.getItem('pulse_youtube')||'';startLoad()}else{loadKeys()}
+  `;
+
+  document.getElementById('modal-content').innerHTML = html;
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ESC key to close
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ── BOOT ─────────────────────────────────────────────────────────
+// All auth is server-side via Netlify functions — just start loading
+startLoad();
 </script>
 </body>
 </html>

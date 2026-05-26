@@ -105,12 +105,6 @@ header {
 @media (max-width: 520px) {
   .logo span { font-size: 9px; margin-left: 8px; }
 }
-@media (max-width: 900px) {
-  .source-pills, .live-indicator { display: none; }
-}
-
-
-
 .source-pills {
   display: flex;
   gap: 6px;
@@ -158,6 +152,10 @@ header {
   letter-spacing: 0.15em;
   color: var(--muted);
   text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .source-pills, .live-indicator { display: none !important; }
 }
 
 /* ── SETUP PANEL ── */

@@ -4,7 +4,10 @@ exports.handler = async (event) => {
 
   try {
     const res = await fetch(url, {
-      headers: { 'User-Agent': 'ephix-pulse/1.0 (https://ephix.net)' }
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; EphixPulse/1.0; +https://ephix.net)',
+        'Accept': 'application/json'
+      }
     });
     const data = await res.text();
     return {

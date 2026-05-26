@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PULSE — What the World is Watching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a0f;
+    --surface: #0e1118;
+    --border: #1c2030;
+    --accent: #e8ff47;
+    --accent2: #ff4757;
+    --text: #e8eaf0;
+    --muted: #5a6080;
+    --card-hover: #141824;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8, 10, 15, 0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 clamp(16px, 4vw, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+  }
+
+  .logo span {
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    margin-left: 12px;
+    vertical-align: middle;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .live-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--accent2);
+    border-radius: 50%;
+    animation: pulse-dot 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  .live-label {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* API key banner */
+  #api-banner {
+    background: linear-gradient(90deg, #1a1400, #201a00);
+    border-bottom: 1px solid #3d3000;
+    padding: 12px clamp(16px, 4vw, 48px);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  #api-banner p {
+    font-size: 13px;
+    color: #b8a060;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  #api-banner p strong { color: var(--accent); }
+
+  #api-key-input {
+    background: #0e0c00;
+    border: 1px solid #3d3000;
+    color: var(--text);
+    padding: 8px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    border-radius: 4px;
+    width: 280px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  #api-key-input:focus { border-color: var(--accent); }
+  #api-key-input::placeholder { color: var(--muted); }
+
+  #api-key-btn {
+    background: var(--accent);
+    color: #000;
+    border: none;
+    padding: 8px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+
+  #api-key-btn:hover { opacity: 0.85; }
+
+  /* Controls bar */
+  .controls {
+    padding: 20px clamp(16px, 4vw, 48px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab-group {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .tab {
+    padding: 8px 20px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: #000;
+    font-weight: 500;
+  }
+
+  .tab:not(.active):hover { color: var(--text); background: var(--border); }
+
+  .count-badge {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  #last-updated {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* Hero rank display */
+  .section-header {
+    padding: 32px clamp(16px, 4vw, 48px) 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 6vw, 72px);
+    letter-spacing: 0.04em;
+    line-height: 1;
+    color: var(--text);
+  }
+
+  .section-title em {
+    color: var(--accent);
+    font-style: normal;
+  }
+
+  /* Grid */
+  #grid {
+    padding: 0 clamp(16px, 4vw, 48px) 60px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 2px;
+  }
+
+  @media (min-width: 600px) {
+    #grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  }
+
+  @media (min-width: 1200px) {
+    #grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  }
+
+  /* Card */
+  .card {
+    position: relative;
+    aspect-ratio: 2/3;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--surface);
+    opacity: 0;
+    transform: translateY(12px);
+    animation: fadeUp 0.4s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+  }
+
+  .card:hover img { transform: scale(1.06); }
+
+  .card-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(8,10,15,0.97) 0%,
+      rgba(8,10,15,0.5) 40%,
+      transparent 70%
+    );
+    transition: opacity 0.3s;
+  }
+
+  .card:hover .card-overlay {
+    background: linear-gradient(
+      to top,
+      rgba(8,10,15,0.99) 0%,
+      rgba(8,10,15,0.7) 50%,
+      rgba(8,10,15,0.2) 100%
+    );
+  }
+
+  .card-rank {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    color: rgba(255,255,255,0.15);
+    transition: color 0.3s;
+    pointer-events: none;
+  }
+
+  .card:hover .card-rank { color: rgba(255,255,255,0.08); }
+
+  .card-rank.top3 {
+    color: rgba(232, 255, 71, 0.35);
+  }
+
+  .card-type-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+  }
+
+  .badge-movie { background: rgba(255, 71, 87, 0.85); color: #fff; }
+  .badge-tv { background: rgba(232, 255, 71, 0.85); color: #000; }
+
+  .card-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 14px 12px 14px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    color: #fff;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .card-score {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    color: var(--accent);
+    font-weight: 500;
+    font-size: 12px;
+  }
+
+  .card-score::before {
+    content: '★';
+    font-size: 10px;
+  }
+
+  .card-genres {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: all 0.25s ease;
+  }
+
+  .card:hover .card-genres {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Skeleton loaders */
+  .skeleton {
+    aspect-ratio: 2/3;
+    background: var(--surface);
+    border-radius: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .skeleton::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    animation: shimmer 1.6s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* No poster fallback */
+  .no-poster {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    color: var(--muted);
+    gap: 8px;
+  }
+
+  .no-poster svg { opacity: 0.3; }
+  .no-poster span { font-size: 11px; opacity: 0.5; text-align: center; padding: 0 12px; }
+
+  /* Error state */
+  #error-state {
+    display: none;
+    padding: 80px clamp(16px, 4vw, 48px);
+    text-align: center;
+  }
+
+  #error-state h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    letter-spacing: 0.05em;
+    color: var(--accent2);
+    margin-bottom: 12px;
+  }
+
+  #error-state p { color: var(--muted); font-size: 14px; max-width: 400px; margin: 0 auto; }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px clamp(16px, 4vw, 48px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  footer p { font-size: 12px; color: var(--muted); }
+  footer a { color: var(--muted); text-decoration: none; }
+  footer a:hover { color: var(--text); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">PULSE <span>What the world is watching</span></div>
+  <div class="header-right">
+    <div class="live-dot"></div>
+    <span class="live-label">Live Trending</span>
+  </div>
+</header>
+
+<div id="api-banner">
+  <p><strong>TMDB API Key required.</strong> Free at <a href="https://www.themoviedb.org/settings/api" target="_blank" style="color:var(--accent)">themoviedb.org</a> — takes 2 minutes. Paste it below to load live data.</p>
+  <input type="text" id="api-key-input" placeholder="Paste your TMDB API key here..." autocomplete="off" spellcheck="false">
+  <button id="api-key-btn">Load Data</button>
+</div>
+
+<div class="controls">
+  <div class="tab-group">
+    <button class="tab active" data-filter="all">All</button>
+    <button class="tab" data-filter="movie">Movies</button>
+    <button class="tab" data-filter="tv">TV Shows</button>
+  </div>
+  <span class="count-badge" id="count-badge"></span>
+  <span id="last-updated"></span>
+</div>
+
+<div class="section-header">
+  <div class="section-title">Today's <em>Top 100</em></div>
+</div>
+
+<div id="grid"></div>
+<div id="error-state">
+  <h2>No Data Yet</h2>
+  <p>Enter your TMDB API key above to load today's trending movies and TV shows.</p>
+</div>
+
+<footer>
+  <p>Data sourced from <a href="https://www.themoviedb.org" target="_blank">The Movie Database (TMDB)</a>. Updated daily.</p>
+  <p>Built for GitHub Pages · No server required</p>
+</footer>
+
+<script>
+  // ─── CONFIG ───────────────────────────────────────────────────────────────
+  // If you want to hardcode your key instead of entering it each time,
+  // replace the empty string below with your TMDB API key:
+  const HARDCODED_KEY = 'b203bfa8cf7b31f70ae017cc39f6b99c';
+
+  const TMDB_BASE = 'https://api.themoviedb.org/3';
+  const IMG_BASE = 'https://image.tmdb.org/t/p/w342';
+
+  const GENRE_MAP = {
+    28:'Action',10759:'Action & Adventure',12:'Adventure',16:'Animation',35:'Comedy',
+    80:'Crime',99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',
+    27:'Horror',10762:'Kids',10402:'Music',9648:'Mystery',10763:'News',10764:'Reality',
+    10749:'Romance',878:'Sci-Fi',10765:'Sci-Fi & Fantasy',10766:'Soap',10767:'Talk',
+    53:'Thriller',10770:'TV Movie',10752:'War',10768:'War & Politics',37:'Western'
+  };
+
+  // ─── STATE ────────────────────────────────────────────────────────────────
+  let allItems = [];
+  let currentFilter = 'all';
+  let apiKey = HARDCODED_KEY;
+
+  // ─── INIT ─────────────────────────────────────────────────────────────────
+  const savedKey = localStorage.getItem('tmdb_key');
+  if (HARDCODED_KEY) {
+    apiKey = HARDCODED_KEY;
+    hideBanner();
+    fetchAll();
+  } else if (savedKey) {
+    apiKey = savedKey;
+    document.getElementById('api-key-input').value = apiKey;
+    hideBanner();
+    fetchAll();
+  }
+
+  document.getElementById('api-key-btn').addEventListener('click', () => {
+    const val = document.getElementById('api-key-input').value.trim();
+    if (!val) return;
+    apiKey = val;
+    localStorage.setItem('tmdb_key', apiKey);
+    hideBanner();
+    fetchAll();
+  });
+
+  document.getElementById('api-key-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('api-key-btn').click();
+  });
+
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderGrid();
+    });
+  });
+
+  function hideBanner() {
+    document.getElementById('api-banner').style.display = 'none';
+  }
+
+  // ─── FETCH ────────────────────────────────────────────────────────────────
+  async function fetchAll() {
+    showSkeletons(20);
+
+    try {
+      // Fetch 5 pages = up to 100 results
+      const pages = [1, 2, 3, 4, 5];
+      const results = await Promise.all(
+        pages.map(p =>
+          fetch(`${TMDB_BASE}/trending/all/day?api_key=${apiKey}&page=${p}`)
+            .then(r => {
+              if (!r.ok) throw new Error(`HTTP ${r.status}`);
+              return r.json();
+            })
+        )
+      );
+
+      allItems = results.flatMap(r => r.results || []).slice(0, 100);
+
+      if (allItems.length === 0) throw new Error('No results');
+
+      const now = new Date();
+      document.getElementById('last-updated').textContent =
+        `Updated ${now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+      renderGrid();
+
+    } catch (err) {
+      showError(err.message);
+    }
+  }
+
+  // ─── RENDER ───────────────────────────────────────────────────────────────
+  function renderGrid() {
+    const grid = document.getElementById('grid');
+    const errorState = document.getElementById('error-state');
+    grid.innerHTML = '';
+
+    const filtered = currentFilter === 'all'
+      ? allItems
+      : allItems.filter(i => i.media_type === currentFilter);
+
+    document.getElementById('count-badge').textContent =
+      `${filtered.length} title${filtered.length !== 1 ? 's' : ''}`;
+
+    if (filtered.length === 0) {
+      errorState.style.display = 'block';
+      return;
+    }
+
+    errorState.style.display = 'none';
+
+    filtered.forEach((item, idx) => {
+      const card = buildCard(item, idx + 1);
+      card.style.animationDelay = `${Math.min(idx * 18, 600)}ms`;
+      grid.appendChild(card);
+    });
+  }
+
+  function buildCard(item, rank) {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const title = item.title || item.name || 'Untitled';
+    const year = (item.release_date || item.first_air_date || '').slice(0, 4);
+    const score = item.vote_average ? item.vote_average.toFixed(1) : '—';
+    const type = item.media_type;
+    const genres = (item.genre_ids || [])
+      .slice(0, 3)
+      .map(id => GENRE_MAP[id])
+      .filter(Boolean)
+      .join(' · ');
+
+    const posterUrl = item.poster_path
+      ? `${IMG_BASE}${item.poster_path}`
+      : null;
+
+    // Poster or fallback
+    if (posterUrl) {
+      const img = document.createElement('img');
+      img.src = posterUrl;
+      img.alt = title;
+      img.loading = 'lazy';
+      img.onerror = function() {
+        this.parentElement.replaceChild(noPosterEl(title), this);
+      };
+      card.appendChild(img);
+    } else {
+      card.appendChild(noPosterEl(title));
+    }
+
+    card.innerHTML += `
+      <div class="card-overlay"></div>
+      <div class="card-rank ${rank <= 3 ? 'top3' : ''}">${rank}</div>
+      <div class="card-type-badge ${type === 'movie' ? 'badge-movie' : 'badge-tv'}">
+        ${type === 'movie' ? 'Film' : 'TV'}
+      </div>
+      <div class="card-info">
+        <div class="card-title">${escHtml(title)}</div>
+        <div class="card-meta">
+          <span class="card-score">${score}</span>
+          ${year ? `<span>${year}</span>` : ''}
+        </div>
+        ${genres ? `<div class="card-genres">${genres}</div>` : ''}
+      </div>
+    `;
+
+    // Re-attach image if we used innerHTML (don't overwrite img)
+    if (posterUrl) {
+      const img = new Image();
+      img.src = posterUrl;
+      img.alt = title;
+      img.loading = 'lazy';
+      card.insertBefore(img, card.firstChild);
+    }
+
+    return card;
+  }
+
+  function noPosterEl(title) {
+    const div = document.createElement('div');
+    div.className = 'no-poster';
+    div.innerHTML = `
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+        <rect x="2" y="2" width="20" height="20" rx="2"/>
+        <path d="M7 8h10M7 12h6"/>
+      </svg>
+      <span>${escHtml(title)}</span>
+    `;
+    return div;
+  }
+
+  function showSkeletons(count) {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    document.getElementById('error-state').style.display = 'none';
+    for (let i = 0; i < count; i++) {
+      const sk = document.createElement('div');
+      sk.className = 'skeleton';
+      sk.style.animationDelay = `${i * 60}ms`;
+      grid.appendChild(sk);
+    }
+  }
+
+  function showError(msg) {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    const err = document.getElementById('error-state');
+    err.style.display = 'block';
+    err.querySelector('p').textContent =
+      msg.includes('401')
+        ? 'Invalid API key. Check your key and try again.'
+        : `Could not load data. ${msg}`;
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>

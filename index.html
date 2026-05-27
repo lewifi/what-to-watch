@@ -1,1 +1,2142 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>EPHIX PULSE — What the World is Watching</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"><style>:root { --bg: #080a0f; --surface: #0e1118; --surface2: #131620; --border: #1c2030; --accent: #7eb8d4; --accent2: #ff4757; --accent3: #38d9a9; --text: #e8eaf0; --muted: #5a6080; --card-hover: #141824; --tmdb: #01d277; --trakt: #ed1c24; --reddit: #ff4500; --youtube: #ff0000;}* { margin: 0; padding: 0; box-sizing: border-box; }body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; min-height: 100vh; overflow-x: hidden;}body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 999; opacity: 0.4;}header { position: sticky; top: 0; z-index: 100; background: rgba(8,10,15,0.94); backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); padding: 0 clamp(16px,4vw,48px); display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 16px;}.logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 0.12em; color: var(--text); flex-shrink: 0; animation: logo-breathe 4s ease-in-out infinite;}@keyframes logo-breathe { 0%, 100% { color: #2196F3; text-shadow: 0 0 8px rgba(33,150,243,0.6), 0 0 22px rgba(33,150,243,0.35), 0 0 50px rgba(33,150,243,0.18); opacity: 1; } 50% { color: #f0f8ff; text-shadow: 0 0 10px rgba(255,255,255,0.95), 0 0 28px rgba(100,190,255,0.85), 0 0 60px rgba(33,150,243,0.65), 0 0 110px rgba(33,130,243,0.35), 0 0 180px rgba(20,100,230,0.18); opacity: 1; }}.logo span { display: inline-block; color: var(--muted); font-size: 10px; font-family: 'DM Sans', sans-serif; font-weight: 300; letter-spacing: 0.06em; margin-left: 10px; vertical-align: middle; line-height: 1.3;}@media (max-width: 520px) { .logo span { font-size: 9px; margin-left: 8px; }}.source-pills { display: flex; gap: 6px; flex-wrap: wrap;}.source-pill { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 20px; font-weight: 500; opacity: 0.5; transition: opacity 0.3s;}.source-pill.active { opacity: 1; }.pill-tmdb { background: rgba(1,210,119,0.12); color: var(--tmdb); border: 1px solid rgba(1,210,119,0.28); }.pill-trakt { background: rgba(237,28,36,0.15); color: var(--trakt); border: 1px solid rgba(237,28,36,0.3); }.pill-reddit { background: rgba(255,69,0,0.15); color: var(--reddit); border: 1px solid rgba(255,69,0,0.3); }.pill-youtube{ background: rgba(255,0,0,0.12); color: var(--youtube); border: 1px solid rgba(255,0,0,0.28); }.live-indicator { display: flex; align-items: center; gap: 6px; flex-shrink: 0;}.live-dot { width: 7px; height: 7px; background: var(--accent2); border-radius: 50%; animation: pulse-dot 1.8s ease-in-out infinite;}@keyframes pulse-dot { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(0.7); }}.live-label { font-size: 11px; letter-spacing: 0.15em; color: var(--muted); text-transform: uppercase;}@media (max-width: 900px) { .source-pills, .live-indicator { display: none !important; }}#setup-panel { background: linear-gradient(135deg, #0a0c14, #0e1020); border-bottom: 1px solid var(--border); padding: 28px clamp(16px,4vw,48px);}.setup-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 6px;}.setup-subtitle { font-size: 13px; color: var(--muted); margin-bottom: 24px; max-width: 600px; line-height: 1.6;}.setup-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 20px;}.setup-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px;}.setup-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px;}.setup-source-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;}.dot-tmdb { background: var(--tmdb); }.dot-trakt { background: var(--trakt); }.dot-reddit { background: var(--reddit); }.setup-card-title { font-size: 13px; font-weight: 500; color: var(--text);}.setup-card-weight { margin-left: auto; font-size: 11px; color: var(--muted); background: var(--surface2); padding: 2px 8px; border-radius: 10px;}.setup-card-desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5;}.setup-card-desc a { color: var(--accent); text-decoration: none; }.setup-card-desc a:hover { text-decoration: underline; }.setup-input-row { display: flex; gap: 8px;}.setup-input { flex: 1; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; border-radius: 4px; outline: none; transition: border-color 0.2s; min-width: 0;}.setup-input:focus { border-color: var(--accent); }.setup-input.saved { border-color: var(--accent3); }.setup-input::placeholder { color: var(--muted); }.setup-status { font-size: 11px; margin-top: 6px; height: 14px; transition: color 0.2s;}.status-ok { color: var(--accent3); }.status-err { color: var(--accent2); }.status-opt { color: var(--muted); }.load-btn { background: var(--accent); color: #fff; border: none; padding: 10px 28px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 5px; letter-spacing: 0.04em; transition: opacity 0.2s, transform 0.1s;}.load-btn:hover { opacity: 0.88; }.load-btn:active { transform: scale(0.98); }.load-btn:disabled { opacity: 0.4; cursor: not-allowed; }.setup-footer-note { font-size: 11px; color: var(--muted); margin-top: 10px; line-height: 1.6;}#progress-bar-wrap { display: none; padding: 0 clamp(16px,4vw,48px); border-bottom: 1px solid var(--border); background: var(--surface);}.progress-steps { display: flex; gap: 0; height: 48px; align-items: stretch;}.progress-step { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); position: relative; transition: color 0.3s; border-right: 1px solid var(--border);}.progress-step:last-child { border-right: none; }.progress-step.loading { color: var(--text); }.progress-step.done { color: var(--accent3); }.progress-step.error { color: var(--accent2); }.step-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); transition: background 0.3s; flex-shrink: 0;}.progress-step.loading .step-dot { background: var(--accent); animation: pulse-dot 1s infinite; }.progress-step.done .step-dot { background: var(--accent3); }.progress-step.error .step-dot { background: var(--accent2); }.controls { padding: 16px clamp(16px,4vw,48px); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; border-bottom: 1px solid var(--border);}.tab-group { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden;}.tab { padding: 8px 18px; font-size: 12px; font-family: 'DM Sans', sans-serif; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all 0.2s;}.tab.active { background: var(--accent); color: #fff; font-weight: 500; }.tab:not(.active):hover { color: var(--text); background: var(--border); }.sort-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-left: 8px;}.sort-group { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden;}.sort-btn { padding: 8px 14px; font-size: 11px; font-family: 'DM Sans', sans-serif; letter-spacing: 0.07em; text-transform: uppercase; cursor: pointer; border: none; background: transparent; color: var(--muted); transition: all 0.2s;}.sort-btn.active { background: var(--surface2); color: var(--text); }.sort-btn:hover { color: var(--text); }#count-badge { font-size: 12px; color: var(--muted); }#last-updated { font-size: 12px; color: var(--muted); margin-left: auto; }.section-header { padding: 28px clamp(16px,4vw,48px) 14px; display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px;}.section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px,5vw,64px); letter-spacing: 0.04em; line-height: 1;}.section-title em { color: var(--accent); font-style: normal; }.score-legend { display: flex; gap: 16px; align-items: center; flex-wrap: wrap;}.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted);}.legend-dot { width: 6px; height: 6px; border-radius: 50%;}#grid { padding: 0 clamp(16px,4vw,48px) 60px; display: grid; grid-template-columns: repeat(auto-fill, minmax(155px,1fr)); gap: 2px;}@media (min-width:600px) { #grid { grid-template-columns: repeat(auto-fill,minmax(175px,1fr)); } }@media (min-width:1200px) { #grid { grid-template-columns: repeat(auto-fill,minmax(195px,1fr)); } }.card { position: relative; aspect-ratio: 2/3; overflow: hidden; cursor: pointer; background: var(--surface); opacity: 0; transform: translateY(10px); animation: fadeUp 0.35s ease forwards;}@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }.card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease;}.card:hover img { transform: scale(1.07); }.card-overlay { position: absolute; inset: 0; background: linear-gradient(to top,rgba(8,10,15,.97) 0%,rgba(8,10,15,.45) 38%,transparent 68%); transition: background 0.3s;}.card:hover .card-overlay { background: linear-gradient(to top,rgba(8,10,15,.99) 0%,rgba(8,10,15,.72) 52%,rgba(8,10,15,.18) 100%);}.card-rank { position: absolute; top: 8px; left: 10px; font-family: 'Bebas Neue', sans-serif; font-size: 48px; line-height: 1; color: rgba(255,255,255,0.12); pointer-events: none;}.card-rank.top3 { color: rgba(126,184,212,0.28); }.card-type-badge { position: absolute; top: 8px; right: 8px; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; font-weight: 500;}.badge-movie { background: rgba(255,71,87,0.85); color:#fff; }.badge-tv { background: rgba(126,184,212,0.85); color:#0a1520; }.card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px 11px 13px;}.card-title { font-size: 12px; font-weight: 500; line-height: 1.3; margin-bottom: 5px; color: #fff;}.card-meta { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); margin-bottom: 5px;}.card-imdb { display: flex; align-items: center; gap: 3px; color: #f5c518; font-size: 11px; font-weight: 500;}.card-imdb::before { content: '★'; font-size: 9px; }.pulse-score-wrap { margin-top: 6px;}.pulse-score-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 10px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase;}.pulse-score-label strong { color: var(--accent); font-weight: 500; font-size: 13px; }.skeleton { aspect-ratio: 2/3; background: var(--surface); position: relative; overflow: hidden;}.skeleton::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent); animation: shimmer 1.6s infinite;}@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); }}.no-poster { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--surface); color: var(--muted); gap: 8px;}.no-poster svg { opacity: 0.25; }.no-poster span { font-size: 11px; opacity: 0.45; text-align: center; padding: 0 12px; }#error-state { display: none; padding: 80px clamp(16px,4vw,48px); text-align: center;}#error-state h2 { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 0.05em; color: var(--accent2); margin-bottom: 12px;}#error-state p { color: var(--muted); font-size: 14px; max-width: 440px; margin: 0 auto; line-height: 1.6; }footer { border-top: 1px solid var(--border); padding: 18px clamp(16px,4vw,48px); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;}footer p { font-size: 11px; color: var(--muted); }footer a { color: var(--muted); text-decoration: none; }footer a:hover { color: var(--text); }#modal-overlay { display: none; position: fixed; inset: 0; background: rgba(5,7,12,0.88); backdrop-filter: blur(12px); z-index: 500; align-items: center; justify-content: center; padding: 20px;}#modal-overlay.open { display: flex; }#modal { background: #0e1118; border: 1px solid #1c2030; border-radius: 10px; max-width: 720px; width: 100%; max-height: 90vh; overflow-y: auto; position: relative; animation: modal-in 0.25s ease;}@keyframes modal-in { from { opacity:0; transform:scale(0.96) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); }}.modal-top { display:flex; }.modal-poster { width:180px; flex-shrink:0; overflow:hidden; border-radius:10px 0 0 0; }.modal-poster img { width:100%; height:100%; object-fit:cover; display:block; }.modal-poster-placeholder { width:100%; min-height:270px; background:#131620; display:flex; align-items:center; justify-content:center; color:#2a3050; }.modal-hero { flex:1; padding:24px 22px 20px; display:flex; flex-direction:column; gap:10px; background:linear-gradient(135deg,#0f1320,#0b0e18); border-radius:0 10px 0 0; }.modal-type-badge { font-size:9px; letter-spacing:0.15em; text-transform:uppercase; padding:3px 8px; border-radius:3px; font-weight:500; width:fit-content; }.modal-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,4vw,34px); letter-spacing:0.04em; line-height:1.05; color:#fff; }.modal-meta { display:flex; flex-wrap:wrap; gap:10px; font-size:12px; color:var(--muted); }.modal-rating { color:#f5c518; font-weight:500; }.modal-pulse { color:var(--accent); font-weight:500; }.modal-tagline { font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; }.modal-body { padding:20px 22px 24px; display:flex; flex-direction:column; gap:16px; border-top:1px solid var(--border); }.modal-overview { font-size:13px; color:#b0b8cc; line-height:1.7; }.modal-credits { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }.modal-credit-block { display:flex; flex-direction:column; gap:3px; }.modal-credit-label { font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }.modal-credit-value { font-size:12px; color:var(--text); line-height:1.4; }.modal-genres { display:flex; flex-wrap:wrap; gap:6px; }.modal-genre-tag { font-size:10px; padding:3px 10px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); }.modal-links { display:flex; gap:8px; flex-wrap:wrap; padding-top:4px; }.modal-link { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:5px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:500; text-decoration:none; letter-spacing:0.04em; transition:opacity 0.2s; cursor:pointer; border:none; }.modal-link:hover { opacity:0.8; }.link-tmdb { background:rgba(1,210,119,0.15); color:var(--tmdb); border:1px solid rgba(1,210,119,0.3); }.link-imdb { background:rgba(245,197,24,0.12); color:#f5c518; border:1px solid rgba(245,197,24,0.3); }.link-google { background:rgba(255,255,255,0.06); color:var(--text); border:1px solid var(--border); }.modal-close { position:absolute; top:12px; right:14px; background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--muted); width:30px; height:30px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; z-index:10; line-height:1; }.modal-close:hover { background:rgba(255,255,255,0.14); color:var(--text); }.modal-loading { padding:60px 20px; text-align:center; color:var(--muted); font-size:13px; }.modal-spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto 14px; }@keyframes spin { to { transform:rotate(360deg); } }@media (max-width:520px) { .modal-poster { width:110px; } .modal-hero { padding:14px 12px; } .modal-body { padding:14px 12px 20px; } }::-webkit-scrollbar { width: 5px; }::-webkit-scrollbar-track { background: var(--bg); }::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }</style><script async src="https://www.googletagmanager.com/gtag/js?id=G-5XX60C0HK1"></script><script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-5XX60C0HK1');</script></head><body><header><div class="logo">EPHIX PULSE <span>What the World is Watching<br>Live TV &amp; Movie Trending Aggregator</span></div><div class="source-pills" id="source-pills"><span class="source-pill pill-tmdb" id="pill-tmdb">TMDB</span><span class="source-pill pill-trakt" id="pill-trakt">Trakt</span><span class="source-pill pill-youtube"id="pill-youtube">YouTube</span><span class="source-pill pill-reddit" id="pill-reddit">Reddit</span></div><div class="live-indicator"><div class="live-dot"></div><span class="live-label">Live</span></div></header><div id="setup-panel" style="display:none"><div class="setup-title">Setup EPHIX PULSE</div><div class="setup-subtitle">EPHIX PULSE pulls from four sources into one ranked list. TMDB and Trakt are the core signals. YouTube and Reddit add buzz — both are optional and the site works fine without them.</div><div class="setup-grid"><div class="setup-card"><div class="setup-card-header"><div class="setup-source-dot dot-tmdb"></div><div class="setup-card-title">The Movie Database (TMDB)</div><div class="setup-card-weight">40%</div></div><div class="setup-card-desc"> Platform popularity score — what's trending on TMDB globally today.<br> Free key at <a href="https://www.themoviedb.org/settings/api" target="_blank">themoviedb.org/settings/api</a></div><div class="setup-input-row"><input class="setup-input" id="key-tmdb" type="text" placeholder="TMDB API key (v3)" autocomplete="off" spellcheck="false"></div><div class="setup-status status-opt" id="status-tmdb">Required</div></div><div class="setup-card"><div class="setup-card-header"><div class="setup-source-dot dot-trakt"></div><div class="setup-card-title">Trakt.tv</div><div class="setup-card-weight">35%</div></div><div class="setup-card-desc"> Active viewing signal — number of people watching right now.<br> Free app key at <a href="https://trakt.tv/oauth/applications/new" target="_blank">trakt.tv/oauth/applications</a> → Client ID </div><div class="setup-input-row"><input class="setup-input" id="key-trakt" type="text" placeholder="Trakt Client ID" autocomplete="off" spellcheck="false"></div><div class="setup-status status-opt" id="status-trakt">Optional — boosts accuracy</div></div><div class="setup-card"><div class="setup-card-header"><div class="setup-source-dot" style="background:var(--youtube)"></div><div class="setup-card-title">YouTube</div><div class="setup-card-weight">12%</div></div><div class="setup-card-desc"> Trailer & buzz signal — trending film/TV video mentions.<br> Free key at <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → New project → Enable YouTube Data API v3 → Credentials → API Key </div><div class="setup-input-row"><input class="setup-input" id="key-youtube" type="text" placeholder="YouTube Data API v3 key" autocomplete="off" spellcheck="false"></div><div class="setup-status status-opt" id="status-youtube">Optional — adds pre-release hype signal</div></div><div class="setup-card"><div class="setup-card-header"><div class="setup-source-dot dot-reddit"></div><div class="setup-card-title">Reddit</div><div class="setup-card-weight">8%</div></div><div class="setup-card-desc"> Social buzz — mention count across r/movies, r/television, r/NetflixBestOf.<br><strong style="color:var(--accent3)">No key needed</strong> — uses Reddit's public feed via CORS proxy. </div><div class="setup-status status-ok" id="status-reddit">✓ No key required — always attempted</div></div></div><button class="load-btn" id="load-btn" onclick="startLoad()">Load Trending Data</button><div class="setup-footer-note">TMDB and Trakt keys are saved to localStorage. YouTube key is optional but recommended. Reddit loads automatically. If YouTube or Reddit fail, the site continues with the remaining sources — scores just redistribute.</div></div><div id="progress-bar-wrap"><div class="progress-steps"><div class="progress-step" id="step-tmdb"><div class="step-dot"></div> TMDB </div><div class="progress-step" id="step-trakt"><div class="step-dot"></div> Trakt </div><div class="progress-step" id="step-youtube"><div class="step-dot"></div> YouTube </div><div class="progress-step" id="step-reddit"><div class="step-dot"></div> Reddit </div><div class="progress-step" id="step-merge"><div class="step-dot"></div> Merging </div></div></div><div class="controls" id="controls" style="display:none"><div class="tab-group"><button class="tab active" data-filter="all">All</button><button class="tab" data-filter="movie">Movies</button><button class="tab" data-filter="tv">TV</button></div><span class="sort-label">Sort</span><div class="sort-group"><button class="sort-btn active" data-sort="pulse">Pulse Score</button><button class="sort-btn" data-sort="rating">Rating</button><button class="sort-btn" data-sort="title">Title</button></div><span id="count-badge"></span><span id="last-updated"></span></div><div class="section-header" id="section-header" style="display:none"><div class="section-title">Today's <em>Top 100</em></div><div class="score-legend"><span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);opacity:0.7;margin-right:4px">Signal mix</span><div class="legend-item"><div class="legend-dot" style="background:var(--tmdb)"></div>TMDB 38%</div><div class="legend-item"><div class="legend-dot" style="background:var(--trakt)"></div>Trakt 42%</div><div class="legend-item"><div class="legend-dot" style="background:var(--youtube)"></div>YouTube 12%</div><div class="legend-item"><div class="legend-dot" style="background:var(--reddit)"></div>Reddit 8%</div></div></div><div id="grid"></div><div id="error-state"><h2>Something went wrong</h2><p id="error-msg">Check your API keys and try again.</p></div><footer><p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p><p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="opacity:0.7;margin-right:6px">Signal mix</span><span style="color:var(--tmdb)">TMDB 38%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 42%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 12%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p><p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator</p></footer><div id="modal-overlay" onclick="if(event.target===this)closeModal()"><div id="modal"><button class="modal-close" onclick="closeModal()" aria-label="Close">×</button><div id="modal-content"></div></div></div><script>const API = { tmdb: '/api/tmdb', trakt: '/api/trakt', youtube: '/api/youtube' };const IMG_BASE = 'https://image.tmdb.org/t/p/w342';const W_TMDB = 0.38;const W_TRAKT = 0.42;const W_YOUTUBE = 0.12;const W_REDDIT = 0.08;const GENRE_MAP = { 28:'Action',10759:'Action & Adventure',12:'Adventure',16:'Animation',35:'Comedy', 80:'Crime',99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History', 27:'Horror',10762:'Kids',10402:'Music',9648:'Mystery',10763:'News',10764:'Reality', 10749:'Romance',878:'Sci-Fi',10765:'Sci-Fi & Fantasy',10766:'Soap',10767:'Talk', 53:'Thriller',10770:'TV Movie',10752:'War',10768:'War & Politics',37:'Western'};let allItems = [];let currentFilter = 'all';let currentSort = 'pulse';function loadKeys() { startLoad();}function setInput(id, val) { const el = document.getElementById(id); if (el) el.value = val;}function markSaved(inputId, statusId) { const el = document.getElementById(inputId); if (el) el.classList.add('saved'); const st = document.getElementById(statusId); if (st) { st.textContent = '✓ Saved'; st.className = 'setup-status status-ok'; }}async function startLoad() { document.getElementById('setup-panel').style.display = 'none'; document.getElementById('progress-bar-wrap').style.display = 'block'; showSkeletons(20); document.getElementById('pill-tmdb').classList.add('active'); document.getElementById('pill-trakt').classList.add('active'); document.getElementById('pill-youtube').classList.add('active'); try { setStep('tmdb', 'loading'); const tmdbItems = await fetchTMDB(); setStep('tmdb', 'done'); setStep('trakt', 'loading'); setStep('youtube', 'loading'); setStep('reddit', 'loading'); const [traktResult, youtubeResult] = await Promise.allSettled([ fetchTrakt(), fetchYouTube(tmdbItems) ]); const traktMap = traktResult.status === 'fulfilled' ? traktResult.value : {}; const youtubeMap = youtubeResult.status === 'fulfilled' ? youtubeResult.value : {}; const redditMap = {}; if (traktResult.status === 'rejected') console.warn('Trakt failed (non-fatal):', traktResult.reason?.message); if (youtubeResult.status === 'rejected') console.warn('YouTube failed (non-fatal):', youtubeResult.reason?.message); setStep('trakt', Object.keys(traktMap).length > 0 ? 'done' : 'error'); setStep('youtube', Object.keys(youtubeMap).length > 0 ? 'done' : 'error'); setStep('reddit', 'error'); if (Object.keys(youtubeMap).length > 0) document.getElementById('pill-youtube').classList.add('active'); const ytMatches = Object.values(youtubeMap).filter(v => v > 0).length; const ytTotal = Object.keys(youtubeMap).length; if (ytTotal > 0) { console.log(`%c[YouTube] ${ytMatches} of ${ytTotal} titles matched YouTube video mentions (${Math.round(ytMatches/ytTotal*100)}%)`, 'color:#ff0000;font-weight:bold'); const top = Object.entries(youtubeMap) .filter(([k,v]) => v > 0) .sort((a,b) => b[1] - a[1]) .slice(0, 5) .map(([k,v]) => ` ${k}: ${(v*100).toFixed(0)}%`) .join('\n'); if (top) console.log('[YouTube] Top 5 matches:\n' + top); } else { console.log('%c[YouTube] No data available — fallback skipped', 'color:#888'); } setStep('merge', 'loading'); allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, { trakt: Object.keys(traktMap).length > 0 ? 'ok' : 'fail', youtube: Object.keys(youtubeMap).length > 0 ? 'ok' : 'fail', reddit: Object.keys(redditMap).length > 0 ? 'ok' : 'fail' }); setStep('merge', 'done'); setTimeout(() => { document.getElementById('progress-bar-wrap').style.display = 'none'; document.getElementById('controls').style.display = 'flex'; document.getElementById('section-header').style.display = 'flex'; const now = new Date(); document.getElementById('last-updated').textContent = `Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`; renderGrid(); }, 600); } catch(err) { document.getElementById('progress-bar-wrap').style.display = 'none'; showError(err.message); }}function setStep(name, state) { const el = document.getElementById('step-' + name); if (!el) return; el.className = 'progress-step ' + state;}async function fetchTMDB() { const pages = [1,2,3,4,5]; const results = await Promise.all(pages.map(p => fetch(`${API.tmdb}?path=trending/all/day&page=${p}`) .then(r => { if (r.status === 401) throw new Error('TMDB_401 — Invalid API key.'); if (r.status === 429) throw new Error('TMDB_429 — Rate limited.'); if (!r.ok) throw new Error(`TMDB_${r.status} — Unexpected error.`); return r.json(); }) )); return results.flatMap(r => r.results || []).slice(0, 100);}async function fetchTrakt() { const [moviesRes, showsRes] = await Promise.allSettled([ fetch(`${API.trakt}?path=movies/trending&limit=100&extended=full`).then(r => { if (!r.ok) throw new Error(`TRAKT_${r.status} — Movies fetch failed.`); return r.json(); }), fetch(`${API.trakt}?path=shows/trending&limit=100&extended=full`).then(r => { if (!r.ok) throw new Error(`TRAKT_${r.status} — Shows fetch failed.`); return r.json(); }) ]); const map = {}; const maxWatchers = { movie: 1, show: 1 }; if (moviesRes.status === 'fulfilled') { moviesRes.value.forEach(item => { if (item.watchers > maxWatchers.movie) maxWatchers.movie = item.watchers; }); moviesRes.value.forEach(item => { const key = normaliseTitle(item.movie?.title, item.movie?.year); map[key] = { watchers: item.watchers, max: maxWatchers.movie, type: 'movie' }; }); } if (showsRes.status === 'fulfilled') { showsRes.value.forEach(item => { if (item.watchers > maxWatchers.show) maxWatchers.show = item.watchers; }); showsRes.value.forEach(item => { const key = normaliseTitle(item.show?.title, item.show?.year); map[key] = { watchers: item.watchers, max: maxWatchers.show, type: 'show' }; }); } return map;}function _ytBuildMentionMap(videos, tmdbItems) { const videoText = videos .map(v => (v.snippet?.title || '') + ' ' + (v.snippet?.description || '').slice(0, 200)) .join(' ') .toLowerCase(); const mentionMap = {}; let maxMentions = 1; tmdbItems.forEach(item => { const title = (item.title || item.name || '').toLowerCase(); if (!title || title.length < 3) return; const escaped = title.replace(/[.*+?^${}()|\[\]]/g, '$&'); const matches = videoText.match(new RegExp(`\\b${escaped}\\b`, 'g')); const count = matches ? matches.length : 0; const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4)); mentionMap[key] = count; if (count > maxMentions) maxMentions = count; }); Object.keys(mentionMap).forEach(k => { mentionMap[k] = mentionMap[k] / maxMentions; }); return mentionMap;}async function fetchYouTube(tmdbItems) { const CACHE_KEY = 'pulse_yt_videos'; const CACHE_TTL = 6 * 60 * 60 * 1000; try { const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); if (cached && Date.now() - cached.t < CACHE_TTL && Array.isArray(cached.v) && cached.v.length > 0) { return _ytBuildMentionMap(cached.v, tmdbItems); } } catch(_) {} const year = new Date().getFullYear(); const queries = [ `official trailer ${year}`, `trailer official movie`, `review ${year}` ]; const searchQs = 'path=search&part=snippet&type=video&maxResults=50&order=viewCount'; const publishedAfter = encodeURIComponent(new Date(Date.now() - 60*24*60*60*1000).toISOString()); let quotaExhausted = false; const searchResults = await Promise.allSettled( queries.map(q => fetch(`${API.youtube}?${searchQs}&q=${encodeURIComponent(q)}&publishedAfter=${publishedAfter}`) .then(r => { if (r.status === 403) { quotaExhausted = true; throw new Error('YT_403'); } if (!r.ok) throw new Error(`YT_${r.status}`); return r.json(); }) ) ); let allVideos = searchResults .filter(r => r.status === 'fulfilled') .flatMap(r => r.value?.items || []); if (allVideos.length === 0 || quotaExhausted) { console.warn('YouTube search unavailable — falling back to trending videos endpoint'); const trendingQs = 'path=videos&part=snippet&chart=mostPopular&maxResults=50'; const trendingResults = await Promise.allSettled([ fetch(`${API.youtube}?${trendingQs}&videoCategoryId=1`).then(r => r.ok ? r.json() : null), fetch(`${API.youtube}?${trendingQs}&videoCategoryId=24`).then(r => r.ok ? r.json() : null) ]); allVideos = trendingResults .filter(r => r.status === 'fulfilled' && r.value) .flatMap(r => r.value?.items || []); } if (allVideos.length === 0) { try { const stale = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); if (stale && Array.isArray(stale.v) && stale.v.length > 0) { console.warn('YouTube using stale cache (all live calls failed)'); return _ytBuildMentionMap(stale.v, tmdbItems); } } catch(_) {} throw new Error('YT_EMPTY — All YouTube sources exhausted.'); } try { localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: allVideos })); } catch(_) {} return _ytBuildMentionMap(allVideos, tmdbItems);}function mergeAndScore(tmdbItems, traktMap, youtubeMap, redditMap, sourceStatus = {}) { const total = tmdbItems.length; return tmdbItems.map((item, idx) => { const tmdbScore = 1 - (idx / total); const tKey = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4)); let traktScore = 0; const traktEntry = traktMap[tKey]; if (traktEntry) { traktScore = Math.min(traktEntry.watchers / traktEntry.max, 1); } const youtubeScore = Math.min(youtubeMap[tKey] || 0, 1); const redditScore = Math.min(redditMap[tKey] || 0, 1); const hasTrakt = sourceStatus.trakt === 'ok'; const hasYoutube = sourceStatus.youtube === 'ok'; const hasReddit = sourceStatus.reddit === 'ok'; const traktStatus = sourceStatus.trakt || 'skip'; const youtubeStatus = sourceStatus.youtube || 'skip'; const redditStatus = sourceStatus.reddit || 'skip'; let activeW = W_TMDB; let pulse = tmdbScore * W_TMDB; if (hasTrakt) { pulse += traktScore * W_TRAKT; activeW += W_TRAKT; } if (hasYoutube) { pulse += youtubeScore * W_YOUTUBE; activeW += W_YOUTUBE; } if (hasReddit) { pulse += redditScore * W_REDDIT; activeW += W_REDDIT; } if (activeW > 0) pulse = pulse / activeW; return { ...item, _pulseScore: Math.round(pulse * 1000) / 10, _tmdbScore: Math.round(tmdbScore * 100), _traktScore: Math.round(traktScore * 100), _youtubeScore: Math.round(youtubeScore * 100), _redditScore: Math.round(redditScore * 100), _hasTrakt: hasTrakt, _hasYoutube: hasYoutube, _hasReddit: hasReddit, _traktStatus: traktStatus, _youtubeStatus: youtubeStatus, _redditStatus: redditStatus }; }).sort((a,b) => b._pulseScore - a._pulseScore);}function normaliseTitle(title, year) { if (!title) return ''; return (title.toLowerCase().replace(/[^a-z0-9]/g,'') + (year || '')).slice(0,40);}function renderGrid() { const grid = document.getElementById('grid'); const errEl = document.getElementById('error-state'); grid.innerHTML = ''; let filtered = currentFilter === 'all' ? [...allItems] : allItems.filter(i => i.media_type === currentFilter); if (currentSort === 'rating') { filtered.sort((a,b) => (b.vote_average||0) - (a.vote_average||0)); } else if (currentSort === 'title') { filtered.sort((a,b) => (a.title||a.name||'').localeCompare(b.title||b.name||'')); } document.getElementById('count-badge').textContent = `${filtered.length} title${filtered.length !== 1 ? 's' : ''}`; if (filtered.length === 0) { errEl.style.display = 'block'; return; } errEl.style.display = 'none'; filtered.forEach((item, idx) => { const card = buildCard(item, idx + 1); card.style.animationDelay = `${Math.min(idx * 14, 500)}ms`; grid.appendChild(card); });}function buildCard(item, rank) { const card = document.createElement('div'); card.className = 'card'; const title = item.title || item.name || 'Untitled'; const year = (item.release_date || item.first_air_date || '').slice(0,4); const rating = item.vote_average ? item.vote_average.toFixed(1) : '—'; const type = item.media_type; const genres = (item.genre_ids || []).slice(0,2).map(id => GENRE_MAP[id]).filter(Boolean).join(' · '); const poster = item.poster_path ? `${IMG_BASE}${item.poster_path}` : null; const pulse = item._pulseScore ?? 0; const tScore = item._tmdbScore ?? 0; const trScore = item._traktScore ?? 0; const yScore = item._youtubeScore ?? 0; const rScore = item._redditScore ?? 0; const trVal = item._traktStatus === 'ok' ? trScore : (item._traktStatus === 'fail' ? '✗' : '—'); const yVal = item._youtubeStatus === 'ok' ? yScore : (item._youtubeStatus === 'fail' ? '✗' : '—'); const rVal = item._redditStatus === 'ok' ? rScore : (item._redditStatus === 'fail' ? '✗' : '—'); const trW = item._hasTrakt ? trScore : 0; const yW = item._hasYoutube ? yScore : 0; const rW = item._hasReddit ? rScore : 0; if (poster) { const img = document.createElement('img'); img.src = poster; img.alt = title; img.loading = 'lazy'; img.onerror = () => img.replaceWith(noPosterEl(title)); card.appendChild(img); } else { card.appendChild(noPosterEl(title)); } const overlay = document.createElement('div'); overlay.className = 'card-overlay'; card.appendChild(overlay); const rankEl = document.createElement('div'); rankEl.className = 'card-rank' + (rank <= 3 ? ' top3' : ''); rankEl.textContent = rank; card.appendChild(rankEl); const badge = document.createElement('div'); badge.className = `card-type-badge ${type === 'movie' ? 'badge-movie' : 'badge-tv'}`; badge.textContent = type === 'movie' ? 'Film' : 'TV'; card.appendChild(badge); const info = document.createElement('div'); info.className = 'card-info'; info.innerHTML = ` <div class="card-title">${escHtml(title)}</div><div class="card-meta"><span class="card-imdb">${rating}</span> ${year ? `<span>${year}</span>` : ''} </div> ${genres ? `<div style="font-size:10px;color:var(--muted);margin-bottom:4px">${genres}</div>` : ''} <div class="pulse-score-wrap"><div class="pulse-score-label"><span>Pulse</span><strong>${pulse.toFixed(1)}</strong></div></div> `; card.appendChild(info); card.addEventListener('click', () => openModal(item)); return card;}function noPosterEl(title) { const div = document.createElement('div'); div.className = 'no-poster'; div.innerHTML = ` <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 8h10M7 12h6"/></svg><span>${escHtml(title)}</span>`; return div;}function showSkeletons(n) { const grid = document.getElementById('grid'); grid.innerHTML = ''; document.getElementById('error-state').style.display = 'none'; for (let i = 0; i < n; i++) { const sk = document.createElement('div'); sk.className = 'skeleton'; grid.appendChild(sk); }}function showError(msg) { document.getElementById('grid').innerHTML = ''; const err = document.getElementById('error-state'); err.style.display = 'block'; document.getElementById('error-msg').textContent = msg.includes('401') ? 'Invalid API key — check it and reload.' : msg;}function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}document.querySelectorAll('.tab').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.tab').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentFilter = btn.dataset.filter; renderGrid(); });});document.querySelectorAll('.sort-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentSort = btn.dataset.sort; renderGrid(); });});const detailCache = {};async function openModal(item) { const overlay = document.getElementById('modal-overlay'); const modalContent = document.getElementById('modal-content'); overlay.classList.add('open'); document.body.style.overflow = 'hidden'; modalContent.innerHTML = '<div class="modal-loading"><div class="modal-spinner"></div>Loading details…</div>'; const id = item.id; const type = item.media_type; const cacheKey = `${type}_${id}`; let detail, credits; try { if (detailCache[cacheKey]) { ({ detail, credits } = detailCache[cacheKey]); } else { const appendParam = type === 'tv' ? '&append_to_response=external_ids' : ''; const [d, c] = await Promise.all([ fetch(`${API.tmdb}?path=${type}/${id}${appendParam}`).then(r => r.json()), fetch(`${API.tmdb}?path=${type}/${id}/credits`).then(r => r.json()) ]); detail = d; credits = c; detailCache[cacheKey] = { detail, credits }; } } catch(err) { modalContent.innerHTML = `<div class="modal-loading">Failed to load details — ${escHtml(err.message)}</div>`; return; } renderModal(item, detail, credits);}function renderModal(item, detail, credits) { const title = detail.title || detail.name || item.title || item.name || 'Untitled'; const tagline = detail.tagline || ''; const overview = detail.overview || 'No synopsis available.'; const year = (detail.release_date || detail.first_air_date || '').slice(0,4); const rating = detail.vote_average ? detail.vote_average.toFixed(1) : null; const pulse = item._pulseScore ? item._pulseScore.toFixed(1) : null; const runtime = detail.runtime || (detail.episode_run_time?.[0]); const type = item.media_type; const poster = detail.poster_path ? `https://image.tmdb.org/t/p/w500${detail.poster_path}` : null; const imdbId = detail.imdb_id || detail.external_ids?.imdb_id; const genres = (detail.genres || []).map(g => g.name); let director = ''; let writers = ''; let creators = ''; let starring = ''; if (type === 'movie') { director = (credits.crew || []).filter(c => c.job === 'Director').map(c => c.name).slice(0,3).join(', '); writers = (credits.crew || []).filter(c => c.department === 'Writing').map(c => c.name).slice(0,3).join(', '); } else { creators = (detail.created_by || []).map(c => c.name).slice(0,3).join(', '); } starring = (credits.cast || []).slice(0,5).map(c => c.name).join(', '); const tmdbUrl = `https://www.themoviedb.org/${type}/${item.id}`; const imdbUrl = imdbId ? `https://www.imdb.com/title/${imdbId}` : null; const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(title + ' ' + (year || '') + (type === 'tv' ? ' tv series' : ' movie'))}`; const html = ` <div class="modal-top"><div class="modal-poster"> ${poster ? `<img src="${poster}" alt="${escHtml(title)}">` : `<div class="modal-poster-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 8h10M7 12h6"/></svg></div>` } </div><div class="modal-hero"><span class="modal-type-badge ${type === 'movie' ? 'badge-movie' : 'badge-tv'}">${type === 'movie' ? 'Film' : 'TV Series'}</span><div class="modal-title">${escHtml(title)}</div><div class="modal-meta"> ${rating ? `<span class="modal-rating">★ ${rating}</span>` : ''} ${pulse ? `<span class="modal-pulse">PULSE ${pulse}</span>` : ''} ${year ? `<span>${year}</span>` : ''} ${runtime ? `<span>${runtime} min</span>` : ''} </div> ${tagline ? `<div class="modal-tagline">"${escHtml(tagline)}"</div>` : ''} </div></div><div class="modal-body"><div class="modal-overview">${escHtml(overview)}</div> ${genres.length ? `<div class="modal-genres">${genres.map(g => `<span class="modal-genre-tag">${escHtml(g)}</span>`).join('')}</div>` : ''} <div class="modal-credits"> ${director ? `<div class="modal-credit-block"><span class="modal-credit-label">Director</span><span class="modal-credit-value">${escHtml(director)}</span></div>` : ''} ${writers ? `<div class="modal-credit-block"><span class="modal-credit-label">Writer${writers.includes(',') ? 's' : ''}</span><span class="modal-credit-value">${escHtml(writers)}</span></div>` : ''} ${creators ? `<div class="modal-credit-block"><span class="modal-credit-label">Creator${creators.includes(',') ? 's' : ''}</span><span class="modal-credit-value">${escHtml(creators)}</span></div>` : ''} ${starring ? `<div class="modal-credit-block" style="grid-column: 1 / -1"><span class="modal-credit-label">Starring</span><span class="modal-credit-value">${escHtml(starring)}</span></div>` : ''} </div><div class="modal-links"><a class="modal-link link-tmdb" href="${tmdbUrl}" target="_blank" rel="noopener">↗ TMDB</a> ${imdbUrl ? `<a class="modal-link link-imdb" href="${imdbUrl}" target="_blank" rel="noopener">↗ IMDb</a>` : ''} <a class="modal-link link-google" href="${googleUrl}" target="_blank" rel="noopener">↗ Google</a></div></div> `; document.getElementById('modal-content').innerHTML = html;}function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); document.body.style.overflow = '';}document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal();});startLoad();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EPHIX PULSE — What the World is Watching</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080a0f;
+  --surface: #0e1118;
+  --surface2: #131620;
+  --border: #1c2030;
+  --accent: #7eb8d4;
+  --accent2: #ff4757;
+  --accent3: #38d9a9;
+  --text: #e8eaf0;
+  --muted: #5a6080;
+  --card-hover: #141824;
+  --tmdb: #01d277;
+  --trakt: #ed1c24;
+  --reddit: #ff4500;
+  --youtube: #ff0000;
+  --wikipedia: #b0b0b0;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.4;
+}
+
+/* ── HEADER ── */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(8,10,15,0.94);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 clamp(16px,4vw,48px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  gap: 16px;
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.12em;
+  color: var(--text);
+  flex-shrink: 0;
+  animation: logo-breathe 4s ease-in-out infinite;
+}
+
+@keyframes logo-breathe {
+  0%, 100% {
+    color: #2196F3;
+    text-shadow:
+      0 0 8px rgba(33,150,243,0.6),
+      0 0 22px rgba(33,150,243,0.35),
+      0 0 50px rgba(33,150,243,0.18);
+    opacity: 1;
+  }
+  50% {
+    color: #f0f8ff;
+    text-shadow:
+      0 0 10px rgba(255,255,255,0.95),
+      0 0 28px rgba(100,190,255,0.85),
+      0 0 60px rgba(33,150,243,0.65),
+      0 0 110px rgba(33,130,243,0.35),
+      0 0 180px rgba(20,100,230,0.18);
+    opacity: 1;
+  }
+}
+
+.logo span {
+  display: inline-block;
+  color: var(--muted);
+  font-size: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  margin-left: 10px;
+  vertical-align: middle;
+  line-height: 1.3;
+}
+@media (max-width: 520px) {
+  .logo span { font-size: 9px; margin-left: 8px; }
+}
+.source-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.source-pill {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.source-pill.active { opacity: 1; }
+.pill-tmdb  { background: rgba(1,210,119,0.12);  color: var(--tmdb);   border: 1px solid rgba(1,210,119,0.28); }
+.pill-trakt { background: rgba(237,28,36,0.15);  color: var(--trakt);  border: 1px solid rgba(237,28,36,0.3); }
+.pill-reddit { background: rgba(255,69,0,0.15);   color: var(--reddit);  border: 1px solid rgba(255,69,0,0.3);   }
+.pill-youtube{ background: rgba(255,0,0,0.12);    color: var(--youtube); border: 1px solid rgba(255,0,0,0.28);   }
+.pill-wikipedia{background: rgba(176,176,176,0.10); color: var(--wikipedia); border: 1px solid rgba(176,176,176,0.3); }
+
+.live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.live-dot {
+  width: 7px; height: 7px;
+  background: var(--accent2);
+  border-radius: 50%;
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.4; transform:scale(0.7); }
+}
+
+.live-label {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+@media (max-width: 900px) {
+  .source-pills, .live-indicator { display: none !important; }
+}
+
+/* ── SETUP PANEL ── */
+#setup-panel {
+  background: linear-gradient(135deg, #0a0c14, #0e1020);
+  border-bottom: 1px solid var(--border);
+  padding: 28px clamp(16px,4vw,48px);
+}
+
+.setup-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.setup-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  max-width: 600px;
+  line-height: 1.6;
+}
+
+.setup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.setup-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.setup-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.setup-source-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-tmdb   { background: var(--tmdb); }
+.dot-trakt  { background: var(--trakt); }
+.dot-reddit { background: var(--reddit); }
+
+.setup-card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.setup-card-weight {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.setup-card-desc {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.setup-card-desc a { color: var(--accent); text-decoration: none; }
+.setup-card-desc a:hover { text-decoration: underline; }
+
+.setup-input-row {
+  display: flex;
+  gap: 8px;
+}
+
+.setup-input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 0;
+}
+
+.setup-input:focus  { border-color: var(--accent); }
+.setup-input.saved  { border-color: var(--accent3); }
+.setup-input::placeholder { color: var(--muted); }
+
+.setup-status {
+  font-size: 11px;
+  margin-top: 6px;
+  height: 14px;
+  transition: color 0.2s;
+}
+
+.status-ok  { color: var(--accent3); }
+.status-err { color: var(--accent2); }
+.status-opt { color: var(--muted); }
+
+.load-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 5px;
+  letter-spacing: 0.04em;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.load-btn:hover   { opacity: 0.88; }
+.load-btn:active  { transform: scale(0.98); }
+.load-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.setup-footer-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+/* ── PROGRESS BAR ── */
+#progress-bar-wrap {
+  display: none;
+  padding: 0 clamp(16px,4vw,48px);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.progress-steps {
+  display: flex;
+  gap: 0;
+  height: 48px;
+  align-items: stretch;
+}
+
+.progress-step {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  position: relative;
+  transition: color 0.3s;
+  border-right: 1px solid var(--border);
+}
+
+.progress-step:last-child { border-right: none; }
+
+.progress-step.loading { color: var(--text); }
+.progress-step.done    { color: var(--accent3); }
+.progress-step.error   { color: var(--accent2); }
+
+.step-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+
+.progress-step.loading .step-dot { background: var(--accent); animation: pulse-dot 1s infinite; }
+.progress-step.done    .step-dot { background: var(--accent3); }
+.progress-step.error   .step-dot { background: var(--accent2); }
+
+/* ── CONTROLS ── */
+.controls {
+  padding: 16px clamp(16px,4vw,48px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-group {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.tab {
+  padding: 8px 18px;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+
+.tab.active { background: var(--accent); color: #fff; font-weight: 500; }
+.tab:not(.active):hover { color: var(--text); background: var(--border); }
+
+.sort-label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-left: 8px;
+}
+
+.sort-group {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.sort-btn {
+  padding: 8px 14px;
+  font-size: 11px;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+
+.sort-btn.active { background: var(--surface2); color: var(--text); }
+.sort-btn:hover  { color: var(--text); }
+
+#count-badge    { font-size: 12px; color: var(--muted); }
+#last-updated   { font-size: 12px; color: var(--muted); margin-left: auto; }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  padding: 28px clamp(16px,4vw,48px) 14px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(32px,5vw,64px);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.section-title em { color: var(--accent); font-style: normal; }
+
+.score-legend {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.legend-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+
+/* ── GRID ── */
+#grid {
+  padding: 0 clamp(16px,4vw,48px) 60px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px,1fr));
+  gap: 2px;
+}
+
+@media (min-width:600px)  { #grid { grid-template-columns: repeat(auto-fill,minmax(175px,1fr)); } }
+@media (min-width:1200px) { #grid { grid-template-columns: repeat(auto-fill,minmax(195px,1fr)); } }
+
+/* ── CARD ── */
+.card {
+  position: relative;
+  aspect-ratio: 2/3;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--surface);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.35s ease forwards;
+}
+
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+.card img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.card:hover img { transform: scale(1.07); }
+
+.card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top,rgba(8,10,15,.97) 0%,rgba(8,10,15,.45) 38%,transparent 68%);
+  transition: background 0.3s;
+}
+
+.card:hover .card-overlay {
+  background: linear-gradient(to top,rgba(8,10,15,.99) 0%,rgba(8,10,15,.72) 52%,rgba(8,10,15,.18) 100%);
+}
+
+.card-rank {
+  position: absolute;
+  top: 8px; left: 10px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px; line-height: 1;
+  color: rgba(255,255,255,0.12);
+  pointer-events: none;
+}
+
+.card-rank.top3 { color: rgba(126,184,212,0.28); }
+
+.card-type-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 7px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
+.badge-movie { background: rgba(255,71,87,0.85);  color:#fff; }
+.badge-tv    { background: rgba(126,184,212,0.85); color:#0a1520; }
+
+.card-info {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 12px 11px 13px;
+}
+
+.card-title {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.3;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.card-imdb {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #c9a548;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.card-imdb::before { content: '★'; font-size: 9px; }
+
+/* Pulse score bar */
+.pulse-score-wrap {
+  margin-top: 6px;
+}
+
+.pulse-score-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pulse-score-label strong {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+/* Skeleton */
+.skeleton {
+  aspect-ratio: 2/3;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent);
+  animation: shimmer 1.6s infinite;
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%);  }
+}
+
+/* No poster */
+.no-poster {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  color: var(--muted);
+  gap: 8px;
+}
+
+.no-poster svg   { opacity: 0.25; }
+.no-poster span  { font-size: 11px; opacity: 0.45; text-align: center; padding: 0 12px; }
+
+/* Error / empty */
+#error-state {
+  display: none;
+  padding: 80px clamp(16px,4vw,48px);
+  text-align: center;
+}
+
+#error-state h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 40px;
+  letter-spacing: 0.05em;
+  color: var(--accent2);
+  margin-bottom: 12px;
+}
+
+#error-state p { color: var(--muted); font-size: 14px; max-width: 440px; margin: 0 auto; line-height: 1.6; }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 18px clamp(16px,4vw,48px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+footer p   { font-size: 11px; color: var(--muted); }
+footer a   { color: var(--muted); text-decoration: none; }
+footer a:hover { color: var(--text); }
+
+/* Scrollbar */
+
+/* ── INFO TOOLTIP ── */
+.info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px; height: 18px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 10px;
+  vertical-align: middle;
+  position: relative;
+  transition: all 0.2s;
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  user-select: none;
+}
+.info-icon:hover { color: var(--accent); border-color: var(--accent); }
+.info-popover {
+  display: none;
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0e1118;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  width: 280px;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.6;
+  letter-spacing: 0;
+  text-transform: none;
+  z-index: 200;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  text-align: left;
+}
+.info-icon.open .info-popover { display: block; }
+.info-popover strong { color: var(--accent); font-weight: 600; }
+.info-popover::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px; height: 10px;
+  background: #0e1118;
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+}
+
+/* ── NOTIFICATION BELL ── */
+.bell-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+.bell-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 32px; height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+  position: relative;
+}
+.bell-btn:hover { color: var(--text); border-color: var(--muted); }
+.bell-btn.active { color: #2196F3; border-color: rgba(33,150,243,0.5); }
+.bell-btn.has-new {
+  animation: bell-pulse 2.5s ease-in-out infinite;
+}
+@keyframes bell-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(33,150,243,0); }
+  50%      { box-shadow: 0 0 12px rgba(33,150,243,0.6), 0 0 24px rgba(33,150,243,0.25); }
+}
+.bell-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #2196F3;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 10px;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg);
+  letter-spacing: 0;
+}
+.bell-panel {
+  display: none;
+  position: absolute;
+  top: 42px;
+  right: 0;
+  background: #0e1118;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  width: min(340px, calc(100vw - 32px));
+  z-index: 200;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.bell-panel.open { display: block; }
+.bell-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.bell-panel-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+.bell-panel-meta {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.bell-toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.bell-toggle-row label { cursor: pointer; }
+.bell-switch {
+  position: relative;
+  width: 34px; height: 18px;
+  background: var(--border);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.bell-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 14px; height: 14px;
+  background: var(--muted);
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+.bell-switch.on { background: rgba(33,150,243,0.35); }
+.bell-switch.on::after { left: 18px; background: #2196F3; }
+
+.bell-entry {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(28,32,48,0.5);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.bell-entry:last-child { border-bottom: none; }
+.bell-entry:hover { opacity: 0.85; }
+.bell-entry-poster {
+  width: 36px;
+  height: 54px;
+  border-radius: 4px;
+  background: var(--surface);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.bell-entry-info { flex: 1; min-width: 0; }
+.bell-entry-title {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bell-entry-meta {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.bell-entry-rank {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  color: #2196F3;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.bell-empty {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  padding: 24px 0;
+  line-height: 1.6;
+}
+
+/* ── NEW-ENTRY CARD GLOW ── */
+.card.is-new {
+  outline: 1.5px solid rgba(33,150,243,0.7);
+  outline-offset: -1.5px;
+  animation: new-pulse 2.8s ease-in-out infinite;
+  z-index: 2;
+}
+@keyframes new-pulse {
+  0%, 100% {
+    outline-color: rgba(33,150,243,0.35);
+    box-shadow: 0 0 0 rgba(33,150,243,0);
+  }
+  50% {
+    outline-color: rgba(33,150,243,0.95);
+    box-shadow: 0 0 18px rgba(33,150,243,0.4), 0 0 36px rgba(33,150,243,0.18);
+  }
+}
+.card-new-badge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(33,150,243,0.95);
+  color: #fff;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 3px 7px;
+  border-radius: 3px;
+  z-index: 3;
+  animation: new-badge-pulse 2.8s ease-in-out infinite;
+}
+@keyframes new-badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(33,150,243,0); }
+  50%      { box-shadow: 0 0 12px rgba(33,150,243,0.7); }
+}
+
+
+/* ── MODAL ── */
+#modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(5,7,12,0.88);
+  backdrop-filter: blur(12px);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#modal-overlay.open { display: flex; }
+#modal {
+  background: #0e1118;
+  border: 1px solid #1c2030;
+  border-radius: 10px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modal-in 0.25s ease;
+}
+@keyframes modal-in {
+  from { opacity:0; transform:scale(0.96) translateY(10px); }
+  to   { opacity:1; transform:scale(1) translateY(0); }
+}
+.modal-top { display:flex; }
+.modal-poster { width:180px; flex-shrink:0; overflow:hidden; border-radius:10px 0 0 0; }
+.modal-poster img { width:100%; height:100%; object-fit:cover; display:block; }
+.modal-poster-placeholder { width:100%; min-height:270px; background:#131620; display:flex; align-items:center; justify-content:center; color:#2a3050; }
+.modal-hero { flex:1; padding:24px 22px 20px; display:flex; flex-direction:column; gap:10px; background:linear-gradient(135deg,#0f1320,#0b0e18); border-radius:0 10px 0 0; }
+.modal-type-badge { font-size:9px; letter-spacing:0.15em; text-transform:uppercase; padding:3px 8px; border-radius:3px; font-weight:500; width:fit-content; }
+.modal-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(22px,4vw,34px); letter-spacing:0.04em; line-height:1.05; color:#fff; }
+.modal-meta { display:flex; flex-wrap:wrap; gap:10px; font-size:12px; color:var(--muted); }
+.modal-rating { color:#f5c518; font-weight:500; }
+.modal-pulse  { color:var(--accent); font-weight:500; }
+.modal-tagline { font-size:12px; color:var(--muted); font-style:italic; line-height:1.5; }
+.modal-body { padding:20px 22px 24px; display:flex; flex-direction:column; gap:16px; border-top:1px solid var(--border); }
+.modal-overview { font-size:13px; color:#b0b8cc; line-height:1.7; }
+.modal-credits { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; }
+.modal-credit-block { display:flex; flex-direction:column; gap:3px; }
+.modal-credit-label { font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); }
+.modal-credit-value { font-size:12px; color:var(--text); line-height:1.4; }
+.modal-genres { display:flex; flex-wrap:wrap; gap:6px; }
+.modal-genre-tag { font-size:10px; padding:3px 10px; border-radius:20px; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); }
+.modal-links { display:flex; gap:8px; flex-wrap:wrap; padding-top:4px; }
+.modal-link { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:5px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:500; text-decoration:none; letter-spacing:0.04em; transition:opacity 0.2s; cursor:pointer; border:none; }
+.modal-link:hover { opacity:0.8; }
+.link-tmdb   { background:rgba(1,210,119,0.15);  color:var(--tmdb);  border:1px solid rgba(1,210,119,0.3); }
+.link-imdb   { background:rgba(201,165,72,0.12); color:#f5c518;      border:1px solid rgba(201,165,72,0.3); }
+.link-google { background:rgba(255,255,255,0.06); color:var(--text);  border:1px solid var(--border); }
+.link-share  { background:rgba(33,150,243,0.15);  color:#2196F3;       border:1px solid rgba(33,150,243,0.35); font-family:'DM Sans',sans-serif; }
+.modal-close { position:absolute; top:12px; right:14px; background:rgba(255,255,255,0.07); border:1px solid var(--border); color:var(--muted); width:30px; height:30px; border-radius:50%; font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; z-index:10; line-height:1; }
+.modal-close:hover { background:rgba(255,255,255,0.14); color:var(--text); }
+.modal-loading { padding:60px 20px; text-align:center; color:var(--muted); font-size:13px; }
+.modal-spinner { width:28px; height:28px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto 14px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+@media (max-width:520px) { .modal-poster { width:110px; } .modal-hero { padding:14px 12px; } .modal-body { padding:14px 12px 20px; } }
+
+::-webkit-scrollbar       { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5XX60C0HK1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5XX60C0HK1');
+</script>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">EPHIX PULSE <span>What the World is Watching<br>Live TV &amp; Movie Trending Aggregator</span></div>
+  <div class="source-pills" id="source-pills">
+    <span class="source-pill pill-tmdb"   id="pill-tmdb">TMDB</span>
+    <span class="source-pill pill-trakt"  id="pill-trakt">Trakt</span>
+    <span class="source-pill pill-youtube"id="pill-youtube">YouTube</span>
+    <span class="source-pill pill-wikipedia" id="pill-wikipedia">Wikipedia</span>
+    <span class="source-pill pill-reddit" id="pill-reddit">Reddit</span>
+  </div>
+  <div class="bell-wrap" id="bell-wrap">
+    <button class="bell-btn" id="bell-btn" onclick="toggleBellPanel(event)" aria-label="New entry notifications">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+      </svg>
+      <span class="bell-badge" id="bell-badge" style="display:none">0</span>
+    </button>
+    <div class="bell-panel" id="bell-panel">
+      <div class="bell-panel-header">
+        <span class="bell-panel-title">New Entries</span>
+        <span class="bell-panel-meta" id="bell-meta">in Top 25</span>
+      </div>
+      <div class="bell-toggle-row">
+        <label for="bell-toggle">Notify me of new entries</label>
+        <div class="bell-switch" id="bell-toggle" onclick="toggleBellOptIn()"></div>
+      </div>
+      <div id="bell-list"></div>
+    </div>
+  </div>
+  <div class="live-indicator">
+    <div class="live-dot"></div>
+    <span class="live-label">Live</span>
+  </div>
+</header>
+
+<!-- ── SETUP PANEL ── -->
+<div id="setup-panel" style="display:none">
+  <div class="setup-title">Setup EPHIX PULSE</div>
+  <div class="setup-subtitle">EPHIX PULSE pulls from four sources into one ranked list. TMDB and Trakt are the core signals. YouTube and Reddit add buzz — both are optional and the site works fine without them.</div>
+
+  <div class="setup-grid">
+
+    <!-- TMDB -->
+    <div class="setup-card">
+      <div class="setup-card-header">
+        <div class="setup-source-dot dot-tmdb"></div>
+        <div class="setup-card-title">The Movie Database (TMDB)</div>
+        <div class="setup-card-weight">40%</div>
+      </div>
+      <div class="setup-card-desc">
+        Platform popularity score — what's trending on TMDB globally today.<br>
+        Free key at <a href="https://www.themoviedb.org/settings/api" target="_blank">themoviedb.org/settings/api</a>
+      </div>
+      <div class="setup-input-row">
+        <input class="setup-input" id="key-tmdb" type="text" placeholder="TMDB API key (v3)" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="setup-status status-opt" id="status-tmdb">Required</div>
+    </div>
+
+    <!-- Trakt -->
+    <div class="setup-card">
+      <div class="setup-card-header">
+        <div class="setup-source-dot dot-trakt"></div>
+        <div class="setup-card-title">Trakt.tv</div>
+        <div class="setup-card-weight">35%</div>
+      </div>
+      <div class="setup-card-desc">
+        Active viewing signal — number of people watching right now.<br>
+        Free app key at <a href="https://trakt.tv/oauth/applications/new" target="_blank">trakt.tv/oauth/applications</a> → Client ID
+      </div>
+      <div class="setup-input-row">
+        <input class="setup-input" id="key-trakt" type="text" placeholder="Trakt Client ID" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="setup-status status-opt" id="status-trakt">Optional — boosts accuracy</div>
+    </div>
+
+    <!-- YouTube -->
+    <div class="setup-card">
+      <div class="setup-card-header">
+        <div class="setup-source-dot" style="background:var(--youtube)"></div>
+        <div class="setup-card-title">YouTube</div>
+        <div class="setup-card-weight">12%</div>
+      </div>
+      <div class="setup-card-desc">
+        Trailer & buzz signal — trending film/TV video mentions.<br>
+        Free key at <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> → New project → Enable YouTube Data API v3 → Credentials → API Key
+      </div>
+      <div class="setup-input-row">
+        <input class="setup-input" id="key-youtube" type="text" placeholder="YouTube Data API v3 key" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="setup-status status-opt" id="status-youtube">Optional — adds pre-release hype signal</div>
+    </div>
+
+    <!-- Reddit -->
+    <div class="setup-card">
+      <div class="setup-card-header">
+        <div class="setup-source-dot dot-reddit"></div>
+        <div class="setup-card-title">Reddit</div>
+        <div class="setup-card-weight">8%</div>
+      </div>
+      <div class="setup-card-desc">
+        Social buzz — mention count across r/movies, r/television, r/NetflixBestOf.<br>
+        <strong style="color:var(--accent3)">No key needed</strong> — uses Reddit's public feed via CORS proxy.
+      </div>
+      <div class="setup-status status-ok" id="status-reddit">✓ No key required — always attempted</div>
+    </div>
+
+  </div>
+
+  <button class="load-btn" id="load-btn" onclick="startLoad()">Load Trending Data</button>
+  <div class="setup-footer-note">TMDB and Trakt keys are saved to localStorage. YouTube key is optional but recommended. Reddit loads automatically. If YouTube or Reddit fail, the site continues with the remaining sources — scores just redistribute.</div>
+</div>
+
+<!-- ── PROGRESS ── -->
+<div id="progress-bar-wrap">
+  <div class="progress-steps">
+    <div class="progress-step" id="step-tmdb">   <div class="step-dot"></div> TMDB    </div>
+    <div class="progress-step" id="step-trakt">  <div class="step-dot"></div> Trakt   </div>
+    <div class="progress-step" id="step-youtube"><div class="step-dot"></div> YouTube </div>
+    <div class="progress-step" id="step-wikipedia"><div class="step-dot"></div> Wikipedia </div>
+    <div class="progress-step" id="step-reddit"> <div class="step-dot"></div> Reddit  </div>
+    <div class="progress-step" id="step-merge">  <div class="step-dot"></div> Merging </div>
+  </div>
+</div>
+
+<!-- ── CONTROLS ── -->
+<div class="controls" id="controls" style="display:none">
+  <div class="tab-group">
+    <button class="tab active" data-filter="all">All</button>
+    <button class="tab" data-filter="movie">Movies</button>
+    <button class="tab" data-filter="tv">TV</button>
+  </div>
+  <span class="sort-label">Sort</span>
+  <div class="sort-group">
+    <button class="sort-btn active" data-sort="pulse">Pulse Score</button>
+    <button class="sort-btn" data-sort="rating">Rating</button>
+    <button class="sort-btn" data-sort="title">Title</button>
+  </div>
+  <span id="count-badge"></span>
+  <span id="last-updated"></span>
+</div>
+
+<!-- ── SECTION HEADER ── -->
+<div class="section-header" id="section-header" style="display:none">
+  <div class="section-title">Today's <em>Top 100</em><button class="info-icon" id="info-icon" onclick="toggleInfo(event)" aria-label="What is Pulse Score?">?<div class="info-popover" id="info-popover"><strong>Pulse Score</strong> aggregates four trending signals into a single 0–100 ranking: TMDB platform popularity (36%), Trakt active watchers (38%), YouTube buzz (10%), Wikipedia interest (8%), Reddit mentions (8%). Higher = trending stronger right now. Updated every page load.</div></button></div>
+  <div class="score-legend">
+    <span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);opacity:0.7;margin-right:4px">Signal mix</span>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--tmdb)"></div>TMDB 36%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--trakt)"></div>Trakt 38%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--youtube)"></div>YouTube 10%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--wikipedia)"></div>Wikipedia 8%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--reddit)"></div>Reddit 8%</div>
+  </div>
+</div>
+
+<div id="grid"></div>
+<div id="error-state">
+  <h2>Something went wrong</h2>
+  <p id="error-msg">Check your API keys and try again.</p>
+</div>
+
+<footer>
+  <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
+  <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="opacity:0.7;margin-right:6px">Signal mix</span><span style="color:var(--tmdb)">TMDB 36%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 38%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 10%</span> &nbsp;·&nbsp; <span style="color:var(--wikipedia)">Wikipedia 8%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p>
+  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator</p>
+</footer>
+
+<!-- ── MODAL ── -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Close">×</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+//  CONFIG — hardcode keys here if you prefer not to type them in
+// ════════════════════════════════════════════════════════════════
+// ── API proxy endpoints (keys live server-side on Netlify) ──────
+const API = {
+  tmdb:    '/api/tmdb',
+  trakt:   '/api/trakt',
+  youtube: '/api/youtube'
+  // reddit removed — Reddit blocks AWS IPs server-side
+};
+const IMG_BASE = 'https://image.tmdb.org/t/p/w342';
+
+// Score weights — TMDB+Trakt are core, YouTube+Reddit are soft bonus signals
+const W_TMDB      = 0.36;
+const W_TRAKT     = 0.38;
+const W_YOUTUBE   = 0.10;
+const W_WIKIPEDIA = 0.08;
+const W_REDDIT    = 0.08;
+
+const GENRE_MAP = {
+  28:'Action',10759:'Action & Adventure',12:'Adventure',16:'Animation',35:'Comedy',
+  80:'Crime',99:'Documentary',18:'Drama',10751:'Family',14:'Fantasy',36:'History',
+  27:'Horror',10762:'Kids',10402:'Music',9648:'Mystery',10763:'News',10764:'Reality',
+  10749:'Romance',878:'Sci-Fi',10765:'Sci-Fi & Fantasy',10766:'Soap',10767:'Talk',
+  53:'Thriller',10770:'TV Movie',10752:'War',10768:'War & Politics',37:'Western'
+};
+
+// Reddit communities to scan
+
+// ── STATE ────────────────────────────────────────────────────────
+let allItems     = [];
+let currentFilter = 'all';
+let currentSort   = 'pulse';
+// keys state removed — all auth handled server-side
+
+// ── LOAD SAVED KEYS ──────────────────────────────────────────────
+function loadKeys() {
+  // Keys are server-side now — nothing to load. Function kept for compatibility.
+  startLoad();
+}
+
+function setInput(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function markSaved(inputId, statusId) {
+  const el = document.getElementById(inputId);
+  if (el) el.classList.add('saved');
+  const st = document.getElementById(statusId);
+  if (st) { st.textContent = '✓ Saved'; st.className = 'setup-status status-ok'; }
+}
+
+// ── START LOAD ───────────────────────────────────────────────────
+async function startLoad() {
+  document.getElementById('setup-panel').style.display = 'none';
+  document.getElementById('progress-bar-wrap').style.display = 'block';
+  showSkeletons(20);
+
+  document.getElementById('pill-tmdb').classList.add('active');
+  document.getElementById('pill-trakt').classList.add('active');
+  document.getElementById('pill-youtube').classList.add('active');
+
+  try {
+    // ── Fire TMDB first — needed as base list ──
+    setStep('tmdb', 'loading');
+    const tmdbItems = await fetchTMDB();
+    setStep('tmdb', 'done');
+
+    // ── Fire Trakt, YouTube, Reddit all in parallel ──
+    setStep('trakt',   'loading');
+    setStep('youtube', 'loading');
+    setStep('reddit',  'loading');
+
+    setStep('wikipedia', 'loading');
+    // Reddit is disabled (Reddit blocks AWS IPs) — kept in weighting as silent dead weight
+    const [traktResult, youtubeResult, wikiResult] = await Promise.allSettled([
+      fetchTrakt(),
+      fetchYouTube(tmdbItems),
+      fetchWikipedia(tmdbItems)
+    ]);
+
+    const traktMap   = traktResult.status   === 'fulfilled' ? traktResult.value   : {};
+    const youtubeMap = youtubeResult.status === 'fulfilled' ? youtubeResult.value : {};
+    const wikiMap    = wikiResult.status    === 'fulfilled' ? wikiResult.value    : {};
+    const redditMap  = {};
+
+    if (traktResult.status   === 'rejected') console.warn('Trakt failed (non-fatal):',   traktResult.reason?.message);
+    if (youtubeResult.status === 'rejected') console.warn('YouTube failed (non-fatal):', youtubeResult.reason?.message);
+    if (wikiResult.status    === 'rejected') console.warn('Wikipedia failed (non-fatal):', wikiResult.reason?.message);
+
+    setStep('trakt',     Object.keys(traktMap).length   > 0 ? 'done' : 'error');
+    setStep('youtube',   Object.keys(youtubeMap).length > 0 ? 'done' : 'error');
+    setStep('wikipedia', Object.keys(wikiMap).length    > 0 ? 'done' : 'error');
+    setStep('reddit',    'error');  // Silently shown as inactive
+
+    if (Object.keys(youtubeMap).length > 0) document.getElementById('pill-youtube').classList.add('active');
+    if (Object.keys(wikiMap).length    > 0) document.getElementById('pill-wikipedia').classList.add('active');
+
+    const wikiMatches = Object.values(wikiMap).filter(v => v > 0).length;
+    if (Object.keys(wikiMap).length > 0) {
+      console.log(`%c[Wikipedia] ${wikiMatches} of ${Object.keys(wikiMap).length} titles have pageview data`, 'color:#b0b0b0;font-weight:bold');
+    }
+
+    // ── DEBUG: YouTube influence check ──
+    const ytMatches = Object.values(youtubeMap).filter(v => v > 0).length;
+    const ytTotal = Object.keys(youtubeMap).length;
+    if (ytTotal > 0) {
+      console.log(`%c[YouTube] ${ytMatches} of ${ytTotal} titles matched YouTube video mentions (${Math.round(ytMatches/ytTotal*100)}%)`, 'color:#ff0000;font-weight:bold');
+      const top = Object.entries(youtubeMap)
+        .filter(([k,v]) => v > 0)
+        .sort((a,b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([k,v]) => `  ${k}: ${(v*100).toFixed(0)}%`)
+        .join('\n');
+      if (top) console.log('[YouTube] Top 5 matches:\n' + top);
+    } else {
+      console.log('%c[YouTube] No data available — fallback skipped', 'color:#888');
+    }
+
+    setStep('merge', 'loading');
+allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, redditMap, {
+      trakt:     Object.keys(traktMap).length   > 0 ? 'ok' : 'fail',
+      youtube:   Object.keys(youtubeMap).length > 0 ? 'ok' : 'fail',
+      wikipedia: Object.keys(wikiMap).length    > 0 ? 'ok' : 'fail',
+      reddit:    Object.keys(redditMap).length  > 0 ? 'ok' : 'fail'
+    });
+
+    // Detect new entries to the top 25 since last visit
+    newEntries = detectNewEntries(allItems);
+    renderBellState();
+
+    setStep('merge', 'done');
+
+    setTimeout(() => {
+      document.getElementById('progress-bar-wrap').style.display = 'none';
+      document.getElementById('controls').style.display = 'flex';
+      document.getElementById('section-header').style.display = 'flex';
+
+      const now = new Date();
+      document.getElementById('last-updated').textContent =
+        `Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+
+      renderGrid();
+      // If URL contains ?t=type-id, auto-open that modal
+      checkUrlForModal();
+    }, 600);
+
+  } catch(err) {
+    document.getElementById('progress-bar-wrap').style.display = 'none';
+    showError(err.message);
+  }
+}
+
+function setStep(name, state) {
+  const el = document.getElementById('step-' + name);
+  if (!el) return;
+  el.className = 'progress-step ' + state;
+}
+
+// ── FETCH TMDB ───────────────────────────────────────────────────
+async function fetchTMDB() {
+  const pages = [1,2,3,4,5];
+  const results = await Promise.all(pages.map(p =>
+    fetch(`${API.tmdb}?path=trending/all/day&page=${p}`)
+      .then(r => {
+        if (r.status === 401) throw new Error('TMDB_401 — Invalid API key.');
+        if (r.status === 429) throw new Error('TMDB_429 — Rate limited.');
+        if (!r.ok) throw new Error(`TMDB_${r.status} — Unexpected error.`);
+        return r.json();
+      })
+  ));
+  return results.flatMap(r => r.results || []).slice(0, 100);
+}
+
+// ── FETCH TRAKT ──────────────────────────────────────────────────
+// Returns map: "Title Year" -> { watchers, type }
+async function fetchTrakt() {
+  const [moviesRes, showsRes] = await Promise.allSettled([
+    fetch(`${API.trakt}?path=movies/trending&limit=100&extended=full`).then(r => {
+      if (!r.ok) throw new Error(`TRAKT_${r.status} — Movies fetch failed.`);
+      return r.json();
+    }),
+    fetch(`${API.trakt}?path=shows/trending&limit=100&extended=full`).then(r => {
+      if (!r.ok) throw new Error(`TRAKT_${r.status} — Shows fetch failed.`);
+      return r.json();
+    })
+  ]);
+
+  const map = {};
+  const maxWatchers = { movie: 1, show: 1 };
+
+  if (moviesRes.status === 'fulfilled') {
+    moviesRes.value.forEach(item => {
+      if (item.watchers > maxWatchers.movie) maxWatchers.movie = item.watchers;
+    });
+    moviesRes.value.forEach(item => {
+      const key = normaliseTitle(item.movie?.title, item.movie?.year);
+      map[key] = { watchers: item.watchers, max: maxWatchers.movie, type: 'movie' };
+    });
+  }
+
+  if (showsRes.status === 'fulfilled') {
+    showsRes.value.forEach(item => {
+      if (item.watchers > maxWatchers.show) maxWatchers.show = item.watchers;
+    });
+    showsRes.value.forEach(item => {
+      const key = normaliseTitle(item.show?.title, item.show?.year);
+      map[key] = { watchers: item.watchers, max: maxWatchers.show, type: 'show' };
+    });
+  }
+
+  return map;
+}
+
+
+// ── FETCH WIKIPEDIA PAGEVIEWS ────────────────────────────────────
+// Uses Wikipedia REST API — free, no key, has CORS. Fetches 7-day pageview counts
+// for each TMDB title's likely Wikipedia article name. Caches 12h in localStorage.
+async function fetchWikipedia(tmdbItems) {
+  const CACHE_KEY = 'pulse_wiki_views';
+  const CACHE_TTL = 12 * 60 * 60 * 1000;
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (cached && Date.now() - cached.t < CACHE_TTL && cached.v) {
+      // Verify cache covers current items
+      const keys = Object.keys(cached.v);
+      const sample = tmdbItems.slice(0, 5).map(i =>
+        normaliseTitle(i.title || i.name, (i.release_date || i.first_air_date || '').slice(0,4))
+      );
+      if (sample.some(k => keys.includes(k))) {
+        return cached.v;
+      }
+    }
+  } catch(_) {}
+
+  // Date range: last 7 days
+  const end = new Date();
+  const start = new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const fmt = d => d.toISOString().slice(0,10).replace(/-/g,'');
+  const dateRange = `${fmt(start)}/${fmt(end)}`;
+
+  // Batch requests but cap concurrency to avoid hammering — 100 items, 10 at a time
+  const mentionMap = {};
+  let maxViews = 1;
+  const batches = [];
+  for (let i = 0; i < tmdbItems.length; i += 10) {
+    batches.push(tmdbItems.slice(i, i + 10));
+  }
+
+  for (const batch of batches) {
+    const results = await Promise.allSettled(batch.map(item => {
+      const rawTitle = item.title || item.name || '';
+      if (!rawTitle) return Promise.resolve(null);
+      // Wikipedia uses underscores in URL paths
+      const articleName = encodeURIComponent(rawTitle.replace(/ /g, '_'));
+      const url = `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/${articleName}/daily/${dateRange}`;
+      return fetch(url, {
+        headers: { 'Api-User-Agent': 'EphixPulse/1.0 (https://ephix.net)' }
+      }).then(r => {
+        if (!r.ok) return null;  // article doesn't exist or no data
+        return r.json();
+      }).then(data => ({
+        item,
+        views: data?.items?.reduce((sum, day) => sum + (day.views || 0), 0) || 0
+      })).catch(() => null);
+    }));
+
+    results.forEach(r => {
+      if (r.status === 'fulfilled' && r.value) {
+        const { item, views } = r.value;
+        const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
+        mentionMap[key] = views;
+        if (views > maxViews) maxViews = views;
+      }
+    });
+  }
+
+  // Normalise 0-1
+  Object.keys(mentionMap).forEach(k => {
+    mentionMap[k] = mentionMap[k] / maxViews;
+  });
+
+  if (Object.keys(mentionMap).length === 0) {
+    throw new Error('WIKI_EMPTY — No Wikipedia pageview data returned.');
+  }
+
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: mentionMap }));
+  } catch(_) {}
+
+  return mentionMap;
+}
+
+// ── FETCH YOUTUBE ────────────────────────────────────────────────
+// Fetches trending movies+entertainment videos, matches titles to TMDB items
+// Cost: ~3 quota units per load (well within 10,000/day free limit)
+// Helper — build mention map from a list of YouTube video items
+function _ytBuildMentionMap(videos, tmdbItems) {
+  const videoText = videos
+    .map(v => (v.snippet?.title || '') + ' ' + (v.snippet?.description || '').slice(0, 200))
+    .join(' ')
+    .toLowerCase();
+
+  const mentionMap = {};
+  let maxMentions = 1;
+
+  tmdbItems.forEach(item => {
+    const title = (item.title || item.name || '').toLowerCase();
+    if (!title || title.length < 3) return;
+    const escaped = title.replace(/[.*+?^${}()|\[\]]/g, '$&');
+    const matches = videoText.match(new RegExp(`\\b${escaped}\\b`, 'g'));
+    const count = matches ? matches.length : 0;
+    const key = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
+    mentionMap[key] = count;
+    if (count > maxMentions) maxMentions = count;
+  });
+
+  Object.keys(mentionMap).forEach(k => {
+    mentionMap[k] = mentionMap[k] / maxMentions;
+  });
+
+  return mentionMap;
+}
+
+async function fetchYouTube(tmdbItems) {
+  // ── 6-hour localStorage cache to minimise quota use ──
+  const CACHE_KEY = 'pulse_yt_videos';
+  const CACHE_TTL = 6 * 60 * 60 * 1000;
+  try {
+    const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (cached && Date.now() - cached.t < CACHE_TTL && Array.isArray(cached.v) && cached.v.length > 0) {
+      return _ytBuildMentionMap(cached.v, tmdbItems);
+    }
+  } catch(_) {}
+
+  // ── PRIMARY: search API (cost ~300 quota, high relevance) ──
+  const year = new Date().getFullYear();
+  const queries = [
+    `official trailer ${year}`,
+    `trailer official movie`,
+    `review ${year}`
+  ];
+  const searchQs = 'path=search&part=snippet&type=video&maxResults=50&order=viewCount';
+  const publishedAfter = encodeURIComponent(new Date(Date.now() - 60*24*60*60*1000).toISOString());
+
+  let quotaExhausted = false;
+  const searchResults = await Promise.allSettled(
+    queries.map(q =>
+      fetch(`${API.youtube}?${searchQs}&q=${encodeURIComponent(q)}&publishedAfter=${publishedAfter}`)
+        .then(r => {
+          if (r.status === 403) { quotaExhausted = true; throw new Error('YT_403'); }
+          if (!r.ok) throw new Error(`YT_${r.status}`);
+          return r.json();
+        })
+    )
+  );
+
+  let allVideos = searchResults
+    .filter(r => r.status === 'fulfilled')
+    .flatMap(r => r.value?.items || []);
+
+  // ── FALLBACK 1: chart=mostPopular (cheap, 1 quota each) ──
+  if (allVideos.length === 0 || quotaExhausted) {
+    console.warn('YouTube search unavailable — falling back to trending videos endpoint');
+    const trendingQs = 'path=videos&part=snippet&chart=mostPopular&maxResults=50';
+    const trendingResults = await Promise.allSettled([
+      fetch(`${API.youtube}?${trendingQs}&videoCategoryId=1`).then(r => r.ok ? r.json() : null),
+      fetch(`${API.youtube}?${trendingQs}&videoCategoryId=24`).then(r => r.ok ? r.json() : null)
+    ]);
+    allVideos = trendingResults
+      .filter(r => r.status === 'fulfilled' && r.value)
+      .flatMap(r => r.value?.items || []);
+  }
+
+  // ── FALLBACK 2: stale cache, even if expired ──
+  if (allVideos.length === 0) {
+    try {
+      const stale = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+      if (stale && Array.isArray(stale.v) && stale.v.length > 0) {
+        console.warn('YouTube using stale cache (all live calls failed)');
+        return _ytBuildMentionMap(stale.v, tmdbItems);
+      }
+    } catch(_) {}
+    throw new Error('YT_EMPTY — All YouTube sources exhausted.');
+  }
+
+  // ── Cache fresh results ──
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), v: allVideos }));
+  } catch(_) {}
+
+  return _ytBuildMentionMap(allVideos, tmdbItems);
+}
+
+// ── REDDIT removed — Reddit blocks AWS IPs server-side. Weighting kept for display.
+
+// ── MERGE & SCORE ────────────────────────────────────────────────
+function mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, redditMap, sourceStatus = {}) {
+  const total = tmdbItems.length;
+
+  return tmdbItems.map((item, idx) => {
+    const tmdbScore = 1 - (idx / total);
+    const tKey = normaliseTitle(item.title || item.name, (item.release_date || item.first_air_date || '').slice(0,4));
+
+    let traktScore = 0;
+    const traktEntry = traktMap[tKey];
+    if (traktEntry) traktScore = Math.min(traktEntry.watchers / traktEntry.max, 1);
+
+    const youtubeScore   = Math.min(youtubeMap[tKey] || 0, 1);
+    const wikipediaScore = Math.min(wikiMap[tKey]    || 0, 1);
+    const redditScore    = Math.min(redditMap[tKey]  || 0, 1);
+
+    const hasTrakt     = sourceStatus.trakt     === 'ok';
+    const hasYoutube   = sourceStatus.youtube   === 'ok';
+    const hasWikipedia = sourceStatus.wikipedia === 'ok';
+    const hasReddit    = sourceStatus.reddit    === 'ok';
+
+    const traktStatus     = sourceStatus.trakt     || 'skip';
+    const youtubeStatus   = sourceStatus.youtube   || 'skip';
+    const wikipediaStatus = sourceStatus.wikipedia || 'skip';
+    const redditStatus    = sourceStatus.reddit    || 'skip';
+
+    let activeW = W_TMDB;
+    let pulse   = tmdbScore * W_TMDB;
+    if (hasTrakt)     { pulse += traktScore     * W_TRAKT;     activeW += W_TRAKT;     }
+    if (hasYoutube)   { pulse += youtubeScore   * W_YOUTUBE;   activeW += W_YOUTUBE;   }
+    if (hasWikipedia) { pulse += wikipediaScore * W_WIKIPEDIA; activeW += W_WIKIPEDIA; }
+    if (hasReddit)    { pulse += redditScore    * W_REDDIT;    activeW += W_REDDIT;    }
+    if (activeW > 0) pulse = pulse / activeW;
+
+    return {
+      ...item,
+      _pulseScore:      Math.round(pulse * 1000) / 10,
+      _tmdbScore:       Math.round(tmdbScore      * 100),
+      _traktScore:      Math.round(traktScore     * 100),
+      _youtubeScore:    Math.round(youtubeScore   * 100),
+      _wikipediaScore:  Math.round(wikipediaScore * 100),
+      _redditScore:     Math.round(redditScore    * 100),
+      _hasTrakt:     hasTrakt,
+      _hasYoutube:   hasYoutube,
+      _hasWikipedia: hasWikipedia,
+      _hasReddit:    hasReddit,
+      _traktStatus:     traktStatus,
+      _youtubeStatus:   youtubeStatus,
+      _wikipediaStatus: wikipediaStatus,
+      _redditStatus:    redditStatus
+    };
+  }).sort((a,b) => b._pulseScore - a._pulseScore);
+}
+
+function normaliseTitle(title, year) {
+  if (!title) return '';
+  return (title.toLowerCase().replace(/[^a-z0-9]/g,'') + (year || '')).slice(0,40);
+}
+
+// ── RENDER ───────────────────────────────────────────────────────
+function renderGrid() {
+  const grid = document.getElementById('grid');
+  const errEl = document.getElementById('error-state');
+  grid.innerHTML = '';
+
+  let filtered = currentFilter === 'all'
+    ? [...allItems]
+    : allItems.filter(i => i.media_type === currentFilter);
+
+  if (currentSort === 'rating') {
+    filtered.sort((a,b) => (b.vote_average||0) - (a.vote_average||0));
+  } else if (currentSort === 'title') {
+    filtered.sort((a,b) => (a.title||a.name||'').localeCompare(b.title||b.name||''));
+  }
+
+  document.getElementById('count-badge').textContent =
+    `${filtered.length} title${filtered.length !== 1 ? 's' : ''}`;
+
+  if (filtered.length === 0) { errEl.style.display = 'block'; return; }
+  errEl.style.display = 'none';
+
+  filtered.forEach((item, idx) => {
+    const card = buildCard(item, idx + 1);
+    card.style.animationDelay = `${Math.min(idx * 14, 500)}ms`;
+    grid.appendChild(card);
+  });
+}
+
+function buildCard(item, rank) {
+  const card = document.createElement('div');
+  card.className = 'card' + (item._isNew ? ' is-new' : '');
+
+  const title   = item.title || item.name || 'Untitled';
+  const year    = (item.release_date || item.first_air_date || '').slice(0,4);
+  const rating  = item.vote_average ? item.vote_average.toFixed(1) : '—';
+  const type    = item.media_type;
+  const genres  = (item.genre_ids || []).slice(0,2).map(id => GENRE_MAP[id]).filter(Boolean).join(' · ');
+  const poster  = item.poster_path ? `${IMG_BASE}${item.poster_path}` : null;
+
+  const pulse   = item._pulseScore   ?? 0;
+  const tScore  = item._tmdbScore    ?? 0;
+  const trScore = item._traktScore   ?? 0;
+  const yScore  = item._youtubeScore ?? 0;
+  const rScore  = item._redditScore  ?? 0;
+
+  // Display helpers: 'ok' = show score, 'fail' = show ✗, 'skip' = show —
+  const trVal = item._traktStatus   === 'ok' ? trScore : (item._traktStatus   === 'fail' ? '✗' : '—');
+  const yVal  = item._youtubeStatus === 'ok' ? yScore  : (item._youtubeStatus === 'fail' ? '✗' : '—');
+  const rVal  = item._redditStatus  === 'ok' ? rScore  : (item._redditStatus  === 'fail' ? '✗' : '—');
+  const trW   = item._hasTrakt   ? trScore : 0;
+  const yW    = item._hasYoutube ? yScore  : 0;
+  const rW    = item._hasReddit  ? rScore  : 0;
+
+  // Image
+  if (poster) {
+    const img = document.createElement('img');
+    img.src = poster;
+    img.alt = title;
+    img.loading = 'lazy';
+    img.onerror = () => img.replaceWith(noPosterEl(title));
+    card.appendChild(img);
+  } else {
+    card.appendChild(noPosterEl(title));
+  }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'card-overlay';
+  card.appendChild(overlay);
+
+  const rankEl = document.createElement('div');
+  rankEl.className = 'card-rank' + (rank <= 3 ? ' top3' : '');
+  rankEl.textContent = rank;
+  card.appendChild(rankEl);
+
+  const badge = document.createElement('div');
+  badge.className = `card-type-badge ${type === 'movie' ? 'badge-movie' : 'badge-tv'}`;
+  badge.textContent = type === 'movie' ? 'Film' : 'TV';
+  card.appendChild(badge);
+
+  if (item._isNew) {
+    const newBadge = document.createElement('div');
+    newBadge.className = 'card-new-badge';
+    newBadge.textContent = 'NEW';
+    card.appendChild(newBadge);
+  }
+
+  const info = document.createElement('div');
+  info.className = 'card-info';
+  info.innerHTML = `
+    <div class="card-title">${escHtml(title)}</div>
+    <div class="card-meta">
+      <span class="card-imdb">${rating}</span>
+      ${year ? `<span>${year}</span>` : ''}
+    </div>
+    ${genres ? `<div style="font-size:10px;color:var(--muted);margin-bottom:4px">${genres}</div>` : ''}
+    <div class="pulse-score-wrap">
+      <div class="pulse-score-label">
+        <span>Pulse</span>
+        <strong>${pulse.toFixed(1)}</strong>
+      </div>
+    </div>
+  `;
+  card.appendChild(info);
+
+  // Open detail modal on click
+  card.addEventListener('click', () => openModal(item));
+
+  return card;
+}
+
+function noPosterEl(title) {
+  const div = document.createElement('div');
+  div.className = 'no-poster';
+  div.innerHTML = `
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+      <rect x="2" y="2" width="20" height="20" rx="2"/>
+      <path d="M7 8h10M7 12h6"/>
+    </svg>
+    <span>${escHtml(title)}</span>`;
+  return div;
+}
+
+function showSkeletons(n) {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  document.getElementById('error-state').style.display = 'none';
+  for (let i = 0; i < n; i++) {
+    const sk = document.createElement('div');
+    sk.className = 'skeleton';
+    grid.appendChild(sk);
+  }
+}
+
+function showError(msg) {
+  document.getElementById('grid').innerHTML = '';
+  const err = document.getElementById('error-state');
+  err.style.display = 'block';
+  document.getElementById('error-msg').textContent =
+    msg.includes('401') ? 'Invalid API key — check it and reload.' : msg;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── TAB / SORT LISTENERS ─────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.filter;
+    renderGrid();
+  });
+});
+
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSort = btn.dataset.sort;
+    renderGrid();
+  });
+});
+
+
+// ── MODAL ──────────────────────────────────────────────────────────
+const detailCache = {};
+
+async function openModal(item) {
+  const overlay = document.getElementById('modal-overlay');
+  const modalContent = document.getElementById('modal-content');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // Update URL for bookmarking/sharing
+  try {
+    const newUrl = `${window.location.pathname}?t=${item.media_type}-${item.id}`;
+    window.history.pushState({ modal: true, id: item.id, type: item.media_type }, '', newUrl);
+  } catch(_) {}
+
+  // Show skeleton immediately
+  modalContent.innerHTML = '<div class="modal-loading"><div class="modal-spinner"></div>Loading details…</div>';
+
+  const id = item.id;
+  const type = item.media_type;
+  const cacheKey = `${type}_${id}`;
+
+  let detail, credits;
+  try {
+    if (detailCache[cacheKey]) {
+      ({ detail, credits } = detailCache[cacheKey]);
+    } else {
+      // For movies imdb_id is on the main detail. For TV we need external_ids.
+      const appendParam = type === 'tv' ? '&append_to_response=external_ids' : '';
+      const [d, c] = await Promise.all([
+        fetch(`${API.tmdb}?path=${type}/${id}${appendParam}`).then(r => r.json()),
+        fetch(`${API.tmdb}?path=${type}/${id}/credits`).then(r => r.json())
+      ]);
+      detail = d;
+      credits = c;
+      detailCache[cacheKey] = { detail, credits };
+    }
+  } catch(err) {
+    modalContent.innerHTML = `<div class="modal-loading">Failed to load details — ${escHtml(err.message)}</div>`;
+    return;
+  }
+
+  renderModal(item, detail, credits);
+}
+
+function renderModal(item, detail, credits) {
+  const title    = detail.title || detail.name || item.title || item.name || 'Untitled';
+  const tagline  = detail.tagline || '';
+  const overview = detail.overview || 'No synopsis available.';
+  const year     = (detail.release_date || detail.first_air_date || '').slice(0,4);
+  const rating   = detail.vote_average ? detail.vote_average.toFixed(1) : null;
+  const pulse    = item._pulseScore ? item._pulseScore.toFixed(1) : null;
+  const runtime  = detail.runtime || (detail.episode_run_time?.[0]);
+  const type     = item.media_type;
+  const poster   = detail.poster_path ? `https://image.tmdb.org/t/p/w500${detail.poster_path}` : null;
+  const imdbId   = detail.imdb_id || detail.external_ids?.imdb_id;
+  const genres   = (detail.genres || []).map(g => g.name);
+
+  // Credits
+  let director = '';
+  let writers  = '';
+  let creators = '';
+  let starring = '';
+
+  if (type === 'movie') {
+    director = (credits.crew || []).filter(c => c.job === 'Director').map(c => c.name).slice(0,3).join(', ');
+    writers  = (credits.crew || []).filter(c => c.department === 'Writing').map(c => c.name).slice(0,3).join(', ');
+  } else {
+    creators = (detail.created_by || []).map(c => c.name).slice(0,3).join(', ');
+  }
+  starring = (credits.cast || []).slice(0,5).map(c => c.name).join(', ');
+
+  // Links
+  const tmdbUrl   = `https://www.themoviedb.org/${type}/${item.id}`;
+  const imdbUrl   = imdbId ? `https://www.imdb.com/title/${imdbId}` : null;
+  const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(title + ' ' + (year || '') + (type === 'tv' ? ' tv series' : ' movie'))}`;
+
+  const html = `
+    <div class="modal-top">
+      <div class="modal-poster">
+        ${poster
+          ? `<img src="${poster}" alt="${escHtml(title)}">`
+          : `<div class="modal-poster-placeholder"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 8h10M7 12h6"/></svg></div>`
+        }
+      </div>
+      <div class="modal-hero">
+        <span class="modal-type-badge ${type === 'movie' ? 'badge-movie' : 'badge-tv'}">${type === 'movie' ? 'Film' : 'TV Series'}</span>
+        <div class="modal-title">${escHtml(title)}</div>
+        <div class="modal-meta">
+          ${rating ? `<span class="modal-rating">★ ${rating}</span>` : ''}
+          ${pulse  ? `<span class="modal-pulse">PULSE ${pulse}</span>` : ''}
+          ${year   ? `<span>${year}</span>` : ''}
+          ${runtime ? `<span>${runtime} min</span>` : ''}
+        </div>
+        ${tagline ? `<div class="modal-tagline">"${escHtml(tagline)}"</div>` : ''}
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-overview">${escHtml(overview)}</div>
+      ${genres.length ? `<div class="modal-genres">${genres.map(g => `<span class="modal-genre-tag">${escHtml(g)}</span>`).join('')}</div>` : ''}
+      <div class="modal-credits">
+        ${director ? `<div class="modal-credit-block"><span class="modal-credit-label">Director</span><span class="modal-credit-value">${escHtml(director)}</span></div>` : ''}
+        ${writers  ? `<div class="modal-credit-block"><span class="modal-credit-label">Writer${writers.includes(',') ? 's' : ''}</span><span class="modal-credit-value">${escHtml(writers)}</span></div>` : ''}
+        ${creators ? `<div class="modal-credit-block"><span class="modal-credit-label">Creator${creators.includes(',') ? 's' : ''}</span><span class="modal-credit-value">${escHtml(creators)}</span></div>` : ''}
+        ${starring ? `<div class="modal-credit-block" style="grid-column: 1 / -1"><span class="modal-credit-label">Starring</span><span class="modal-credit-value">${escHtml(starring)}</span></div>` : ''}
+      </div>
+      <div class="modal-links">
+        <button class="modal-link link-share" onclick="shareTitle(${item.id}, '${item.media_type}', '${escHtml(title).replace(/'/g,"\\'")}')">↗ Share</button>
+        <a class="modal-link link-tmdb" href="${tmdbUrl}" target="_blank" rel="noopener">↗ TMDB</a>
+        ${imdbUrl ? `<a class="modal-link link-imdb" href="${imdbUrl}" target="_blank" rel="noopener">↗ IMDb</a>` : ''}
+        <a class="modal-link link-google" href="${googleUrl}" target="_blank" rel="noopener">↗ Google</a>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('modal-content').innerHTML = html;
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  // Clean URL — remove ?t= param
+  try {
+    if (window.location.search.includes('t=')) {
+      window.history.pushState({}, '', window.location.pathname);
+    }
+  } catch(_) {}
+}
+
+// Handle browser back/forward navigation
+window.addEventListener('popstate', () => {
+  const overlay = document.getElementById('modal-overlay');
+  if (overlay.classList.contains('open')) {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  // Re-check URL — if there's a ?t= param, open that modal
+  checkUrlForModal();
+});
+
+// Open modal from URL param (?t=movie-12345)
+function checkUrlForModal() {
+  const params = new URLSearchParams(window.location.search);
+  const t = params.get('t');
+  if (!t) return;
+  const match = t.match(/^(movie|tv)-(\d+)$/);
+  if (!match) return;
+  const [, type, idStr] = match;
+  const id = parseInt(idStr, 10);
+  const item = allItems.find(i => i.media_type === type && i.id === id);
+  if (item) openModal(item);
+}
+
+// ESC key to close
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+
+
+// ── WEB SHARE ──────────────────────────────────────────────────────
+async function shareTitle(id, type, title) {
+  const item = allItems.find(i => i.id === id && i.media_type === type);
+  const rank = item ? allItems.indexOf(item) + 1 : null;
+  const pulse = item?._pulseScore?.toFixed(1);
+  const url = `${window.location.origin}/?t=${type}-${id}`;
+  const text = rank
+    ? `${title} is #${rank} trending right now on EPHIX PULSE${pulse ? ` (Pulse ${pulse})` : ''}`
+    : `${title} is trending on EPHIX PULSE`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: 'EPHIX PULSE', text, url });
+    } catch(_) { /* user cancelled */ }
+  } else {
+    // Desktop fallback — copy link with toast
+    try {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      showToast('Link copied to clipboard');
+    } catch(_) {
+      showToast('Could not copy — share URL: ' + url);
+    }
+  }
+}
+
+let toastTimer;
+function showToast(msg) {
+  let toast = document.getElementById('toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'toast';
+    toast.style.cssText = `
+      position:fixed; bottom:30px; left:50%; transform:translateX(-50%);
+      background:#0e1118; color:var(--text); padding:12px 20px;
+      border:1px solid #2196F3; border-radius:6px; font-size:13px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.6), 0 0 20px rgba(33,150,243,0.3);
+      z-index:1000; opacity:0; transition:opacity 0.25s, transform 0.25s;
+      pointer-events:none;
+    `;
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(10px)';
+  }, 2500);
+}
+
+// ═════════════════════════════════════════════════════════════
+//  NEW-ENTRY DETECTION + BELL NOTIFICATIONS
+// ═════════════════════════════════════════════════════════════
+const NEW_ENTRY_THRESHOLD = 25;  // top N to watch for new entries
+const STORE_KEY_PREV       = 'pulse_prev_top25';
+const STORE_KEY_OPTIN      = 'pulse_bell_optin';
+const STORE_KEY_BASELINE   = 'pulse_bell_baseline_set';
+
+let newEntries = [];
+
+function detectNewEntries(rankedItems) {
+  // First-ever opt-in: just record baseline, don't show notifications
+  const optedIn = localStorage.getItem(STORE_KEY_OPTIN) === '1';
+  const baselineSet = localStorage.getItem(STORE_KEY_BASELINE) === '1';
+
+  const currentTop = rankedItems.slice(0, NEW_ENTRY_THRESHOLD);
+  const currentIds = currentTop.map(i => `${i.media_type}_${i.id}`);
+
+  let prevIds = [];
+  try {
+    prevIds = JSON.parse(localStorage.getItem(STORE_KEY_PREV) || '[]');
+  } catch(_) {}
+
+  // Find new entries (in current but not previous)
+  const newOnes = currentTop.filter((item, idx) => {
+    const id = `${item.media_type}_${item.id}`;
+    return !prevIds.includes(id);
+  });
+
+  // Save current as new "previous" baseline
+  try {
+    localStorage.setItem(STORE_KEY_PREV, JSON.stringify(currentIds));
+    if (!baselineSet) localStorage.setItem(STORE_KEY_BASELINE, '1');
+  } catch(_) {}
+
+  // Mark new ones on the items themselves for card rendering
+  newOnes.forEach(item => { item._isNew = true; });
+
+  // If this is the user's first visit, or they haven't opted in, don't surface notifications
+  if (!optedIn || !baselineSet) {
+    return [];
+  }
+
+  return newOnes;
+}
+
+function renderBellState() {
+  const optedIn = localStorage.getItem(STORE_KEY_OPTIN) === '1';
+  const btn     = document.getElementById('bell-btn');
+  const badge   = document.getElementById('bell-badge');
+  const toggle  = document.getElementById('bell-toggle');
+  const list    = document.getElementById('bell-list');
+
+  // Toggle switch state
+  if (optedIn) toggle.classList.add('on');
+  else         toggle.classList.remove('on');
+
+  if (optedIn) btn.classList.add('active');
+  else         btn.classList.remove('active');
+
+  // Badge count
+  if (optedIn && newEntries.length > 0) {
+    badge.style.display = 'flex';
+    badge.textContent = newEntries.length > 9 ? '9+' : newEntries.length;
+    btn.classList.add('has-new');
+  } else {
+    badge.style.display = 'none';
+    btn.classList.remove('has-new');
+  }
+
+  // Panel list
+  if (!optedIn) {
+    list.innerHTML = '<div class="bell-empty">Enable notifications above to see when new titles enter the top 25.</div>';
+  } else if (newEntries.length === 0) {
+    list.innerHTML = '<div class="bell-empty">No new entries since your last visit.<br><br>Check back later — the chart updates throughout the day.</div>';
+  } else {
+    list.innerHTML = newEntries.map(item => {
+      const title  = item.title || item.name || 'Untitled';
+      const year   = (item.release_date || item.first_air_date || '').slice(0,4);
+      const poster = item.poster_path ? `${IMG_BASE}${item.poster_path}` : '';
+      const rank   = allItems.findIndex(i => i.id === item.id && i.media_type === item.media_type) + 1;
+      return `
+        <div class="bell-entry" onclick="openModalById('${item.media_type}', ${item.id})">
+          ${poster ? `<img class="bell-entry-poster" src="${poster}" alt="" loading="lazy">` : '<div class="bell-entry-poster"></div>'}
+          <div class="bell-entry-info">
+            <div class="bell-entry-title">${escHtml(title)}</div>
+            <div class="bell-entry-meta">${year || ''} · ${item.media_type === 'movie' ? 'Film' : 'TV'}</div>
+          </div>
+          <div class="bell-entry-rank">#${rank}</div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+function toggleBellOptIn() {
+  const cur = localStorage.getItem(STORE_KEY_OPTIN) === '1';
+  if (cur) {
+    localStorage.setItem(STORE_KEY_OPTIN, '0');
+  } else {
+    localStorage.setItem(STORE_KEY_OPTIN, '1');
+    // First opt-in: don't show retroactive entries — set baseline = "now"
+    if (localStorage.getItem(STORE_KEY_BASELINE) !== '1') {
+      // baseline already set by detectNewEntries; this is just safety
+      localStorage.setItem(STORE_KEY_BASELINE, '1');
+    }
+    newEntries = [];  // clear any backlog
+  }
+  renderBellState();
+}
+
+function toggleBellPanel(e) {
+  e.stopPropagation();
+  const panel = document.getElementById('bell-panel');
+  panel.classList.toggle('open');
+}
+
+function openModalById(type, id) {
+  const item = allItems.find(i => i.media_type === type && i.id === id);
+  if (item) {
+    document.getElementById('bell-panel').classList.remove('open');
+    openModal(item);
+  }
+}
+
+// Close panels on outside click
+document.addEventListener('click', e => {
+  const bellPanel = document.getElementById('bell-panel');
+  const bellWrap  = document.getElementById('bell-wrap');
+  if (bellPanel && bellPanel.classList.contains('open') && !bellWrap.contains(e.target)) {
+    bellPanel.classList.remove('open');
+  }
+  const infoIcon = document.getElementById('info-icon');
+  if (infoIcon && infoIcon.classList.contains('open') && !infoIcon.contains(e.target)) {
+    infoIcon.classList.remove('open');
+  }
+});
+
+function toggleInfo(e) {
+  e.stopPropagation();
+  document.getElementById('info-icon').classList.toggle('open');
+}
+
+// ── BOOT ─────────────────────────────────────────────────────────
+// All auth is server-side via Netlify functions — just start loading
+startLoad();
+</script>
+</body>
+</html>

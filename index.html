@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EPHIX PULSE — What the World is Watching</title>
 <link rel="icon" type="image/png" href="E.png">
-<meta name="description" content="What the world is watching today — live TV and movie trending, scored across five sources (TMDB, Trakt, YouTube, Wikipedia, Reddit) into a single Pulse Score.">
+<meta name="description" content="What the world is watching today — live TV and movie trending, scored across four sources (TMDB, Trakt, YouTube, Wikipedia) into a single Pulse Score.">
 
 <!-- Open Graph (Facebook, LinkedIn, Discord, etc) -->
 <meta property="og:type" content="website">
@@ -40,7 +40,6 @@
   --card-hover: #141824;
   --tmdb: #01d277;
   --trakt: #ed1c24;
-  --reddit: #ff4500;
   --youtube: #ff0000;
   --wikipedia: #b0b0b0;
 }
@@ -166,7 +165,6 @@ header {
 .source-pill.active { opacity: 1; }
 .pill-tmdb  { background: rgba(1,210,119,0.12);  color: var(--tmdb);   border: 1px solid rgba(1,210,119,0.28); }
 .pill-trakt { background: rgba(237,28,36,0.15);  color: var(--trakt);  border: 1px solid rgba(237,28,36,0.3); }
-.pill-reddit { background: rgba(255,69,0,0.15);   color: var(--reddit);  border: 1px solid rgba(255,69,0,0.3);   }
 .pill-youtube{ background: rgba(255,0,0,0.12);    color: var(--youtube); border: 1px solid rgba(255,0,0,0.28);   }
 .pill-wikipedia{background: rgba(176,176,176,0.10); color: var(--wikipedia); border: 1px solid rgba(176,176,176,0.3); }
 
@@ -252,7 +250,6 @@ header {
 
 .dot-tmdb   { background: var(--tmdb); }
 .dot-trakt  { background: var(--trakt); }
-.dot-reddit { background: var(--reddit); }
 
 .setup-card-title {
   font-size: 13px;
@@ -733,7 +730,7 @@ footer a:hover { color: var(--text); }
 /* ── WATCHLIST STAR ── */
 .card-star {
   position: absolute;
-  top: 32px; right: 8px;
+  top: 40px; right: 8px;
   background: rgba(0,0,0,0.55);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 50%;
@@ -1335,7 +1332,6 @@ footer a:hover { color: var(--text); }
     <span class="source-pill pill-trakt"  id="pill-trakt">Trakt</span>
     <span class="source-pill pill-youtube"id="pill-youtube">YouTube</span>
     <span class="source-pill pill-wikipedia" id="pill-wikipedia">Wiki Queries</span>
-    <span class="source-pill pill-reddit" id="pill-reddit">Reddit</span>
   </div>
   <div class="bell-wrap" id="bell-wrap">
     <button class="bell-btn" id="bell-btn" onclick="toggleBellPanel(event)" aria-label="New entry notifications">
@@ -1366,7 +1362,7 @@ footer a:hover { color: var(--text); }
 <!-- ── SETUP PANEL ── -->
 <div id="setup-panel" style="display:none">
   <div class="setup-title">Setup EPHIX PULSE</div>
-  <div class="setup-subtitle">EPHIX PULSE pulls from four sources into one ranked list. TMDB and Trakt are the core signals. YouTube and Reddit add buzz — both are optional and the site works fine without them.</div>
+  <div class="setup-subtitle">EPHIX PULSE pulls from four sources into one ranked list: TMDB, Trakt, YouTube and Wikipedia. TMDB and Trakt are the core signals; YouTube and Wikipedia add buzz and search interest.</div>
 
   <div class="setup-grid">
 
@@ -1421,24 +1417,12 @@ footer a:hover { color: var(--text); }
       <div class="setup-status status-opt" id="status-youtube">Optional — adds pre-release hype signal</div>
     </div>
 
-    <!-- Reddit -->
-    <div class="setup-card">
-      <div class="setup-card-header">
-        <div class="setup-source-dot dot-reddit"></div>
-        <div class="setup-card-title">Reddit</div>
-        <div class="setup-card-weight">8%</div>
-      </div>
-      <div class="setup-card-desc">
-        Social buzz — mention count across r/movies, r/television, r/NetflixBestOf.<br>
-        <strong style="color:var(--accent3)">No key needed</strong> — uses Reddit's public feed via CORS proxy.
-      </div>
-      <div class="setup-status status-ok" id="status-reddit">✓ No key required — always attempted</div>
-    </div>
+
 
   </div>
 
   <button class="load-btn" id="load-btn" onclick="startLoad()">Load Trending Data</button>
-  <div class="setup-footer-note">TMDB and Trakt keys are saved to localStorage. YouTube key is optional but recommended. Reddit loads automatically. If YouTube or Reddit fail, the site continues with the remaining sources — scores just redistribute.</div>
+  <div class="setup-footer-note">TMDB and Trakt keys are saved to localStorage. YouTube key is optional but recommended. If a source fails, the site continues with the rest — scores just redistribute.</div>
 </div>
 
 <!-- ── PROGRESS ── -->
@@ -1448,7 +1432,6 @@ footer a:hover { color: var(--text); }
     <div class="progress-step" id="step-trakt">  <div class="step-dot"></div> Trakt   </div>
     <div class="progress-step" id="step-youtube"><div class="step-dot"></div> YouTube </div>
     <div class="progress-step" id="step-wikipedia"><div class="step-dot"></div> Wiki Queries </div>
-    <div class="progress-step" id="step-reddit"> <div class="step-dot"></div> Reddit  </div>
     <div class="progress-step" id="step-merge">  <div class="step-dot"></div> Merging </div>
   </div>
 </div>
@@ -1464,6 +1447,10 @@ footer a:hover { color: var(--text); }
   <span class="sort-label">Sort</span>
   <div class="sort-group">
     <button class="sort-btn active" data-sort="pulse">Pulse</button>
+    <button class="sort-btn" data-sort="tmdb">TMDB</button>
+    <button class="sort-btn" data-sort="trakt">Trakt</button>
+    <button class="sort-btn" data-sort="youtube">YouTube</button>
+    <button class="sort-btn" data-sort="wiki">Wiki</button>
     <button class="sort-btn" data-sort="rating">Rating</button>
     <button class="sort-btn" data-sort="title">Title</button>
   </div>
@@ -1503,14 +1490,13 @@ footer a:hover { color: var(--text); }
 
 <!-- ── SECTION HEADER ── -->
 <div class="section-header" id="section-header" style="display:none">
-  <div class="section-title">Today's <em>Top 100</em><button class="info-icon" id="info-icon" onclick="toggleInfo(event)" aria-label="What is Pulse Score?">?<div class="info-popover" id="info-popover"><strong>Pulse Score</strong> aggregates five trending signals into a single 0–100 ranking: TMDB platform popularity (36%), Trakt active watchers (38%), YouTube buzz (10%), Wiki Queries (8%), Reddit mentions (8%). Higher = trending stronger right now. Updated every page load.</div></button></div>
+  <div class="section-title">Today's <em>Top 100</em><button class="info-icon" id="info-icon" onclick="toggleInfo(event)" aria-label="What is Pulse Score?">?<div class="info-popover" id="info-popover"><strong>Pulse Score</strong> aggregates four trending signals into a single 0–100 ranking: TMDB platform popularity (38%), Trakt active watchers (42%), YouTube buzz (12%), Wiki Queries (8%). Higher = trending stronger right now. Updated every page load.</div></button></div>
   <div class="score-legend">
     <span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);opacity:0.7;margin-right:4px">Signal mix</span>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--tmdb)"></div>TMDB 36%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--trakt)"></div>Trakt 38%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--youtube)"></div>YouTube 10%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--tmdb)"></div>TMDB 38%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--trakt)"></div>Trakt 42%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--youtube)"></div>YouTube 12%</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--wikipedia)"></div>Wiki Queries 8%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--reddit)"></div>Reddit 8%</div>
   </div>
 </div>
 
@@ -1521,8 +1507,8 @@ footer a:hover { color: var(--text); }
 </div>
 
 <footer>
-  <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
-  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.8.0</span></p>
+  <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a></p>
+  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.9.0</span></p>
 </footer>
 
 <!-- ── MODAL ── -->
@@ -1548,16 +1534,14 @@ const API = {
   trakt:   '/api/trakt',
   youtube: '/api/youtube',
   wikipedia: '/api/wikipedia'
-  // reddit removed — Reddit blocks AWS IPs server-side
 };
 const IMG_BASE = 'https://image.tmdb.org/t/p/w342';
 
-// Score weights — TMDB+Trakt are core, YouTube+Reddit are soft bonus signals
-const W_TMDB      = 0.36;
-const W_TRAKT     = 0.38;
-const W_YOUTUBE   = 0.10;
+// Score weights — TMDB+Trakt are core, YouTube+Wiki add buzz & search interest
+const W_TMDB      = 0.38;
+const W_TRAKT     = 0.42;
+const W_YOUTUBE   = 0.12;
 const W_WIKIPEDIA = 0.08;
-const W_REDDIT    = 0.08;
 
 const GENRE_MAP = {
   28:'Action',10759:'Action & Adventure',12:'Adventure',16:'Animation',35:'Comedy',
@@ -1567,7 +1551,6 @@ const GENRE_MAP = {
   53:'Thriller',10770:'TV Movie',10752:'War',10768:'War & Politics',37:'Western'
 };
 
-// Reddit communities to scan
 
 // ── STATE ────────────────────────────────────────────────────────
 let allItems     = [];
@@ -1609,13 +1592,11 @@ async function startLoad() {
     const tmdbItems = await fetchTMDB();
     setStep('tmdb', 'done');
 
-    // ── Fire Trakt, YouTube, Reddit all in parallel ──
+    // ── Fire Trakt, YouTube, Wiki all in parallel ──
     setStep('trakt',   'loading');
     setStep('youtube', 'loading');
-    setStep('reddit',  'loading');
 
     setStep('wikipedia', 'loading');
-    // Reddit is disabled (Reddit blocks AWS IPs) — kept in weighting as silent dead weight
     const [traktResult, youtubeResult, wikiResult] = await Promise.allSettled([
       fetchTrakt(),
       fetchYouTube(tmdbItems),
@@ -1625,7 +1606,6 @@ async function startLoad() {
     const traktMap   = traktResult.status   === 'fulfilled' ? traktResult.value   : {};
     const youtubeMap = youtubeResult.status === 'fulfilled' ? youtubeResult.value : {};
     const wikiMap    = wikiResult.status    === 'fulfilled' ? wikiResult.value    : {};
-    const redditMap  = {};
 
     if (traktResult.status   === 'rejected') console.warn('Trakt failed (non-fatal):',   traktResult.reason?.message);
     if (youtubeResult.status === 'rejected') console.warn('YouTube failed (non-fatal):', youtubeResult.reason?.message);
@@ -1634,7 +1614,6 @@ async function startLoad() {
     setStep('trakt',     Object.keys(traktMap).length   > 0 ? 'done' : 'error');
     setStep('youtube',   Object.keys(youtubeMap).length > 0 ? 'done' : 'error');
     setStep('wikipedia', Object.keys(wikiMap).length    > 0 ? 'done' : 'error');
-    setStep('reddit',    'error');  // Silently shown as inactive
 
     if (Object.keys(youtubeMap).length > 0) document.getElementById('pill-youtube').classList.add('active');
     if (Object.keys(wikiMap).length    > 0) document.getElementById('pill-wikipedia').classList.add('active');
@@ -1661,11 +1640,10 @@ async function startLoad() {
     }
 
     setStep('merge', 'loading');
-allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, redditMap, {
+allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, {
       trakt:     Object.keys(traktMap).length   > 0 ? 'ok' : 'fail',
       youtube:   Object.keys(youtubeMap).length > 0 ? 'ok' : 'fail',
-      wikipedia: Object.keys(wikiMap).length    > 0 ? 'ok' : 'fail',
-      reddit:    Object.keys(redditMap).length  > 0 ? 'ok' : 'fail'
+      wikipedia: Object.keys(wikiMap).length    > 0 ? 'ok' : 'fail'
     });
 
     // Detect new entries to the top 25 since last visit
@@ -1950,10 +1928,9 @@ async function fetchYouTube(tmdbItems) {
   return _ytBuildMentionMap(allVideos, tmdbItems);
 }
 
-// ── REDDIT removed — Reddit blocks AWS IPs server-side. Weighting kept for display.
 
 // ── MERGE & SCORE ────────────────────────────────────────────────
-function mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, redditMap, sourceStatus = {}) {
+function mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, sourceStatus = {}) {
   const total = tmdbItems.length;
 
   return tmdbItems.map((item, idx) => {
@@ -1966,24 +1943,20 @@ function mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, redditMap, sour
 
     const youtubeScore   = Math.min(youtubeMap[tKey] || 0, 1);
     const wikipediaScore = Math.min(wikiMap[tKey]    || 0, 1);
-    const redditScore    = Math.min(redditMap[tKey]  || 0, 1);
 
     const hasTrakt     = sourceStatus.trakt     === 'ok';
     const hasYoutube   = sourceStatus.youtube   === 'ok';
     const hasWikipedia = sourceStatus.wikipedia === 'ok';
-    const hasReddit    = sourceStatus.reddit    === 'ok';
 
     const traktStatus     = sourceStatus.trakt     || 'skip';
     const youtubeStatus   = sourceStatus.youtube   || 'skip';
     const wikipediaStatus = sourceStatus.wikipedia || 'skip';
-    const redditStatus    = sourceStatus.reddit    || 'skip';
 
     let activeW = W_TMDB;
     let pulse   = tmdbScore * W_TMDB;
     if (hasTrakt)     { pulse += traktScore     * W_TRAKT;     activeW += W_TRAKT;     }
     if (hasYoutube)   { pulse += youtubeScore   * W_YOUTUBE;   activeW += W_YOUTUBE;   }
     if (hasWikipedia) { pulse += wikipediaScore * W_WIKIPEDIA; activeW += W_WIKIPEDIA; }
-    if (hasReddit)    { pulse += redditScore    * W_REDDIT;    activeW += W_REDDIT;    }
     if (activeW > 0) pulse = pulse / activeW;
 
     return {
@@ -1993,15 +1966,12 @@ function mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, redditMap, sour
       _traktScore:      Math.round(traktScore     * 100),
       _youtubeScore:    Math.round(youtubeScore   * 100),
       _wikipediaScore:  Math.round(wikipediaScore * 100),
-      _redditScore:     Math.round(redditScore    * 100),
       _hasTrakt:     hasTrakt,
       _hasYoutube:   hasYoutube,
       _hasWikipedia: hasWikipedia,
-      _hasReddit:    hasReddit,
       _traktStatus:     traktStatus,
       _youtubeStatus:   youtubeStatus,
-      _wikipediaStatus: wikipediaStatus,
-      _redditStatus:    redditStatus
+      _wikipediaStatus: wikipediaStatus
     };
   }).sort((a,b) => b._pulseScore - a._pulseScore);
 }
@@ -2035,6 +2005,14 @@ function renderGrid() {
     filtered.sort((a,b) => (b.vote_average||0) - (a.vote_average||0));
   } else if (currentSort === 'title') {
     filtered.sort((a,b) => (a.title||a.name||'').localeCompare(b.title||b.name||''));
+  } else if (currentSort === 'tmdb') {
+    filtered.sort((a,b) => (b._tmdbScore||0) - (a._tmdbScore||0));
+  } else if (currentSort === 'trakt') {
+    filtered.sort((a,b) => (b._traktScore||0) - (a._traktScore||0));
+  } else if (currentSort === 'youtube') {
+    filtered.sort((a,b) => (b._youtubeScore||0) - (a._youtubeScore||0));
+  } else if (currentSort === 'wiki') {
+    filtered.sort((a,b) => (b._wikipediaScore||0) - (a._wikipediaScore||0));
   }
 
   document.getElementById('count-badge').textContent =
@@ -2077,15 +2055,12 @@ function buildCard(item, rank) {
   const tScore  = item._tmdbScore    ?? 0;
   const trScore = item._traktScore   ?? 0;
   const yScore  = item._youtubeScore ?? 0;
-  const rScore  = item._redditScore  ?? 0;
 
   // Display helpers: 'ok' = show score, 'fail' = show ✗, 'skip' = show —
   const trVal = item._traktStatus   === 'ok' ? trScore : (item._traktStatus   === 'fail' ? '✗' : '—');
   const yVal  = item._youtubeStatus === 'ok' ? yScore  : (item._youtubeStatus === 'fail' ? '✗' : '—');
-  const rVal  = item._redditStatus  === 'ok' ? rScore  : (item._redditStatus  === 'fail' ? '✗' : '—');
   const trW   = item._hasTrakt   ? trScore : 0;
   const yW    = item._hasYoutube ? yScore  : 0;
-  const rW    = item._hasReddit  ? rScore  : 0;
 
   // Image
   if (poster) {
@@ -2549,11 +2524,10 @@ async function backgroundRefresh() {
     const youtubeMap = youtubeResult.status === 'fulfilled' ? youtubeResult.value : {};
     const wikiMap    = wikiResult.status    === 'fulfilled' ? wikiResult.value    : {};
 
-    const refreshed = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, {}, {
+    const refreshed = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, {
       trakt:     Object.keys(traktMap).length   > 0 ? 'ok' : 'fail',
       youtube:   Object.keys(youtubeMap).length > 0 ? 'ok' : 'fail',
-      wikipedia: Object.keys(wikiMap).length    > 0 ? 'ok' : 'fail',
-      reddit:    'fail'
+      wikipedia: Object.keys(wikiMap).length    > 0 ? 'ok' : 'fail'
     });
 
     // Detect entries new since the LAST refresh (separate from visit baseline)

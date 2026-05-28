@@ -1308,7 +1308,8 @@ const SUPABASE_REST = `${SUPABASE_URL}/rest/v1/pulse_snapshots`;
 const API = {
   tmdb:    '/api/tmdb',
   trakt:   '/api/trakt',
-  youtube: '/api/youtube'
+  youtube: '/api/youtube',
+  wikipedia: '/api/wikipedia'
   // reddit removed — Reddit blocks AWS IPs server-side
 };
 const IMG_BASE = 'https://image.tmdb.org/t/p/w342';
@@ -1446,7 +1447,7 @@ allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, redditMap, {
 
       renderGrid();
       saveCurrentRanks();
-      writeSnapshot(allItems);  // store history (rate-limited to 1/hour)
+      writeSnapshot(allItems).catch(()=>{});  // store history (rate-limited to 1/hour)
       // If URL contains ?t=type-id, auto-open that modal
       checkUrlForModal();
     }, 600);
@@ -1559,10 +1560,8 @@ async function fetchWikipedia(tmdbItems) {
       if (!rawTitle) return Promise.resolve(null);
       // Wikipedia uses underscores in URL paths
       const articleName = encodeURIComponent(rawTitle.replace(/ /g, '_'));
-      const url = `https://wikimedia.org/api/rest_v1/metrics/pageviews/per-article/en.wikipedia/all-access/user/${articleName}/daily/${dateRange}`;
-      return fetch(url, {
-        headers: { 'Api-User-Agent': 'EphixPulse/1.0 (https://ephix.net)' }
-      }).then(r => {
+      const url = `${API.wikipedia}?article=${articleName}&range=${dateRange}`;
+      return fetch(url).then(r => {
         if (!r.ok) return null;  // article doesn't exist or no data
         return r.json();
       }).then(data => ({
@@ -2022,7 +2021,7 @@ async function openModal(item) {
       sparkEl.innerHTML = svg;
       histWrap.style.display = 'block';
     }
-  });
+  }).catch(()=>{});
 }
 
 function renderModal(item, detail, credits) {

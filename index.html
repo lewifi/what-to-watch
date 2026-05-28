@@ -511,13 +511,14 @@ header {
 
 .card-type-badge {
   position: absolute;
-  top: 8px; right: 8px;
+  top: 9px; right: 40px;
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   padding: 3px 7px;
   border-radius: 3px;
   font-weight: 500;
+  z-index: 3;
 }
 
 .badge-movie { background: rgba(255,71,87,0.85);  color:#fff; }
@@ -652,25 +653,27 @@ footer a:hover { color: var(--text); }
 /* ── WATCHLIST STAR ── */
 .card-star {
   position: absolute;
-  bottom: 8px; right: 8px;
+  top: 6px; right: 6px;
   background: rgba(0,0,0,0.55);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 50%;
-  width: 28px; height: 28px;
+  width: 26px; height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 4;
-  color: rgba(255,255,255,0.6);
+  z-index: 5;
+  color: rgba(255,255,255,0.65);
   font-size: 13px;
   transition: all 0.2s;
   padding: 0;
   line-height: 1;
+  opacity: 0;
 }
+.card:hover .card-star { opacity: 1; }
+.card-star.saved { opacity: 1; color: #2196F3; border-color: rgba(33,150,243,0.6); background: rgba(33,150,243,0.18); }
 .card-star:hover { background: rgba(0,0,0,0.8); color: #fff; transform: scale(1.1); }
-.card-star.saved { color: #2196F3; border-color: rgba(33,150,243,0.6); background: rgba(33,150,243,0.18); }
-.card.is-new .card-star { bottom: 32px; }  /* push above NEW badge */
+.card-star.saved:hover { color: #2196F3; }
 
 .tab-count {
   margin-left: 4px;
@@ -1005,8 +1008,8 @@ footer a:hover { color: var(--text); }
 }
 .card-new-badge {
   position: absolute;
-  bottom: 8px;
-  right: 8px;
+  top: 38px;
+  right: 6px;
   background: rgba(33,150,243,0.95);
   color: #fff;
   font-size: 8px;
@@ -1014,7 +1017,7 @@ footer a:hover { color: var(--text); }
   letter-spacing: 0.15em;
   padding: 3px 7px;
   border-radius: 3px;
-  z-index: 3;
+  z-index: 4;
   animation: new-badge-pulse 2.8s ease-in-out infinite;
 }
 @keyframes new-badge-pulse {
@@ -1107,7 +1110,7 @@ footer a:hover { color: var(--text); }
     <span class="source-pill pill-tmdb"   id="pill-tmdb">TMDB</span>
     <span class="source-pill pill-trakt"  id="pill-trakt">Trakt</span>
     <span class="source-pill pill-youtube"id="pill-youtube">YouTube</span>
-    <span class="source-pill pill-wikipedia" id="pill-wikipedia">Wikipedia</span>
+    <span class="source-pill pill-wikipedia" id="pill-wikipedia">Wiki</span>
     <span class="source-pill pill-reddit" id="pill-reddit">Reddit</span>
   </div>
   <div class="bell-wrap" id="bell-wrap">
@@ -1220,7 +1223,7 @@ footer a:hover { color: var(--text); }
     <div class="progress-step" id="step-tmdb">   <div class="step-dot"></div> TMDB    </div>
     <div class="progress-step" id="step-trakt">  <div class="step-dot"></div> Trakt   </div>
     <div class="progress-step" id="step-youtube"><div class="step-dot"></div> YouTube </div>
-    <div class="progress-step" id="step-wikipedia"><div class="step-dot"></div> Wikipedia </div>
+    <div class="progress-step" id="step-wikipedia"><div class="step-dot"></div> Wiki </div>
     <div class="progress-step" id="step-reddit"> <div class="step-dot"></div> Reddit  </div>
     <div class="progress-step" id="step-merge">  <div class="step-dot"></div> Merging </div>
   </div>
@@ -1261,13 +1264,13 @@ footer a:hover { color: var(--text); }
 
 <!-- ── SECTION HEADER ── -->
 <div class="section-header" id="section-header" style="display:none">
-  <div class="section-title">Today's <em>Top 100</em><button class="info-icon" id="info-icon" onclick="toggleInfo(event)" aria-label="What is Pulse Score?">?<div class="info-popover" id="info-popover"><strong>Pulse Score</strong> aggregates four trending signals into a single 0–100 ranking: TMDB platform popularity (36%), Trakt active watchers (38%), YouTube buzz (10%), Wikipedia interest (8%), Reddit mentions (8%). Higher = trending stronger right now. Updated every page load.</div></button></div>
+  <div class="section-title">Today's <em>Top 100</em><button class="info-icon" id="info-icon" onclick="toggleInfo(event)" aria-label="What is Pulse Score?">?<div class="info-popover" id="info-popover"><strong>Pulse Score</strong> aggregates four trending signals into a single 0–100 ranking: TMDB platform popularity (36%), Trakt active watchers (38%), YouTube buzz (10%), Wiki interest (8%), Reddit mentions (8%). Higher = trending stronger right now. Updated every page load.</div></button></div>
   <div class="score-legend">
     <span style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);opacity:0.7;margin-right:4px">Signal mix</span>
     <div class="legend-item"><div class="legend-dot" style="background:var(--tmdb)"></div>TMDB 36%</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--trakt)"></div>Trakt 38%</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--youtube)"></div>YouTube 10%</div>
-    <div class="legend-item"><div class="legend-dot" style="background:var(--wikipedia)"></div>Wikipedia 8%</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--wikipedia)"></div>Wiki 8%</div>
     <div class="legend-item"><div class="legend-dot" style="background:var(--reddit)"></div>Reddit 8%</div>
   </div>
 </div>
@@ -1280,7 +1283,7 @@ footer a:hover { color: var(--text); }
 
 <footer>
   <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
-  <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="opacity:0.7;margin-right:6px">Signal mix</span><span style="color:var(--tmdb)">TMDB 36%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 38%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 10%</span> &nbsp;·&nbsp; <span style="color:var(--wikipedia)">Wikipedia 8%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p>
+  <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="opacity:0.7;margin-right:6px">Signal mix</span><span style="color:var(--tmdb)">TMDB 36%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 38%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 10%</span> &nbsp;·&nbsp; <span style="color:var(--wikipedia)">Wiki 8%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p>
   <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator</p>
 </footer>
 

@@ -511,7 +511,7 @@ header {
 
 .card-type-badge {
   position: absolute;
-  top: 9px; right: 40px;
+  top: 8px; right: 8px;
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -519,7 +519,10 @@ header {
   border-radius: 3px;
   font-weight: 500;
   z-index: 3;
+  opacity: 0;
+  transition: opacity 0.25s ease;
 }
+.card:hover .card-type-badge { opacity: 1; }
 
 .badge-movie { background: rgba(255,71,87,0.85);  color:#fff; }
 .badge-tv    { background: rgba(126,184,212,0.85); color:#0a1520; }
@@ -545,6 +548,30 @@ header {
   font-size: 11px;
   color: var(--muted);
   margin-bottom: 5px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease;
+}
+.card:hover .card-meta {
+  max-height: 30px;
+  opacity: 1;
+}
+
+.card-genres {
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 4px;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-height 0.3s ease, opacity 0.25s ease, margin 0.3s ease;
+}
+.card:hover .card-genres {
+  max-height: 20px;
+  opacity: 1;
 }
 
 .card-imdb {
@@ -653,7 +680,7 @@ footer a:hover { color: var(--text); }
 /* ── WATCHLIST STAR ── */
 .card-star {
   position: absolute;
-  top: 6px; right: 6px;
+  top: 32px; right: 8px;
   background: rgba(0,0,0,0.55);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 50%;
@@ -1008,8 +1035,8 @@ footer a:hover { color: var(--text); }
 }
 .card-new-badge {
   position: absolute;
-  top: 38px;
-  right: 6px;
+  bottom: 8px;
+  left: 8px;
   background: rgba(33,150,243,0.95);
   color: #fff;
   font-size: 8px;
@@ -1284,7 +1311,7 @@ footer a:hover { color: var(--text); }
 <footer>
   <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
   <p style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5"><span style="opacity:0.7;margin-right:6px">Signal mix</span><span style="color:var(--tmdb)">TMDB 36%</span> &nbsp;·&nbsp; <span style="color:var(--trakt)">Trakt 38%</span> &nbsp;·&nbsp; <span style="color:var(--youtube)">YouTube 10%</span> &nbsp;·&nbsp; <span style="color:var(--wikipedia)">Wiki Queries 8%</span> &nbsp;·&nbsp; <span style="color:var(--reddit)">Reddit 8%</span></p>
-  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.4.0</span></p>
+  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.5.0</span></p>
 </footer>
 
 <!-- ── MODAL ── -->
@@ -1816,7 +1843,9 @@ function buildCard(item, rank) {
   const rating  = item.vote_average ? item.vote_average.toFixed(1) : '—';
   const type    = item.media_type;
   const genres  = (item.genre_ids || []).slice(0,2).map(id => GENRE_MAP[id]).filter(Boolean).join(' · ');
-  const poster  = item.poster_path ? `${IMG_BASE}${item.poster_path}` : null;
+  const poster  = item.poster_path
+    ? `${IMG_BASE}${item.poster_path}`
+    : (item.backdrop_path ? `https://image.tmdb.org/t/p/w780${item.backdrop_path}` : null);
 
   const pulse   = item._pulseScore   ?? 0;
   const tScore  = item._tmdbScore    ?? 0;
@@ -1881,7 +1910,8 @@ function buildCard(item, rank) {
   const star = document.createElement('button');
   star.className = 'card-star' + (isSaved ? ' saved' : '');
   star.innerHTML = isSaved ? '★' : '☆';
-  star.setAttribute('aria-label', isSaved ? 'Remove from list' : 'Add to list');
+  star.setAttribute('aria-label', isSaved ? 'Remove from My List' : 'Add to My List');
+  star.setAttribute('title', isSaved ? 'Remove from My List' : 'Save to My List');
   star.addEventListener('click', e => {
     e.stopPropagation();
     toggleWatchlist(item, star);
@@ -1896,7 +1926,7 @@ function buildCard(item, rank) {
       <span class="card-imdb">${rating}</span>
       ${year ? `<span>${year}</span>` : ''}
     </div>
-    ${genres ? `<div style="font-size:10px;color:var(--muted);margin-bottom:4px">${genres}</div>` : ''}
+    ${genres ? `<div class="card-genres">${genres}</div>` : ''}
     <div class="pulse-score-wrap">
       <div class="pulse-score-label">
         <span>Pulse</span>
@@ -2328,10 +2358,14 @@ function toggleWatchlist(item, btn) {
     watchlist.delete(k);
     btn.classList.remove('saved');
     btn.innerHTML = '☆';
+    btn.setAttribute('title', 'Save to My List');
+    btn.setAttribute('aria-label', 'Add to My List');
   } else {
     watchlist.add(k);
     btn.classList.add('saved');
     btn.innerHTML = '★';
+    btn.setAttribute('title', 'Remove from My List');
+    btn.setAttribute('aria-label', 'Remove from My List');
   }
   saveWatchlist();
   // If currently on watchlist tab, re-render to reflect removal

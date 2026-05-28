@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" type="image/x-icon" href="/E.png">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EPHIX PULSE — What the World is Watching</title>
@@ -74,29 +73,21 @@ header {
   transition: transform 0.2s ease;
 }
 .logo:hover {
-  animation: logo-burst 0.6s ease-out;
+  animation: logo-rapid 0.45s steps(2, jump-none) infinite;
   transform: scale(1.02);
 }
-@keyframes logo-burst {
-  0% {
+@keyframes logo-rapid {
+  0%, 100% {
     color: #2196F3;
-    text-shadow: 0 0 8px rgba(33,150,243,0.6);
+    text-shadow: 0 0 6px rgba(33,150,243,0.5), 0 0 16px rgba(33,150,243,0.25);
   }
-  40% {
+  50% {
     color: #ffffff;
     text-shadow:
       0 0 14px rgba(255,255,255,1),
-      0 0 35px rgba(100,190,255,0.95),
-      0 0 75px rgba(33,150,243,0.8),
-      0 0 130px rgba(33,130,243,0.5),
-      0 0 200px rgba(20,100,230,0.3);
-  }
-  100% {
-    color: #f0f8ff;
-    text-shadow:
-      0 0 10px rgba(255,255,255,0.95),
-      0 0 28px rgba(100,190,255,0.85),
-      0 0 60px rgba(33,150,243,0.65);
+      0 0 38px rgba(100,190,255,0.95),
+      0 0 80px rgba(33,150,243,0.8),
+      0 0 140px rgba(33,130,243,0.45);
   }
 }
 
@@ -374,6 +365,17 @@ header {
 .progress-step.loading .step-dot { background: var(--accent); animation: pulse-dot 1s infinite; }
 .progress-step.done    .step-dot { background: var(--accent3); }
 .progress-step.error   .step-dot { background: var(--accent2); }
+
+/* Merging step — inverted to read as the final payoff */
+#step-merge {
+  background: var(--surface2);
+  font-weight: 600;
+}
+#step-merge.done {
+  background: var(--accent3);
+  color: #06120d;
+}
+#step-merge.done .step-dot { background: #06120d; }
 
 /* ── CONTROLS ── */
 .controls {
@@ -829,10 +831,108 @@ footer a:hover { color: var(--text); }
 .watchlist-empty strong { color: var(--text); font-weight: 500; display: block; margin-bottom: 8px; font-size: 16px; }
 
 
+
+/* ── VIEW TOGGLE + SOUND + REFRESH ── */
+.icon-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  width: 32px; height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+.icon-btn:hover { color: var(--text); border-color: var(--muted); }
+.icon-btn.active { color: #2196F3; border-color: rgba(33,150,243,0.5); background: rgba(33,150,243,0.1); }
+
+/* List view layout */
+#grid.list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+#grid.list-view .card {
+  aspect-ratio: auto;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  opacity: 1;
+  transform: none;
+  animation: none;
+  content-visibility: visible;
+}
+#grid.list-view .card img,
+#grid.list-view .no-poster {
+  width: 44px;
+  height: 64px;
+  flex-shrink: 0;
+}
+#grid.list-view .card-overlay { display: none; }
+#grid.list-view .card-rank {
+  position: static;
+  font-size: 24px;
+  width: 48px;
+  text-align: center;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+#grid.list-view .card-rank.top3 { color: var(--accent); }
+#grid.list-view .card-info {
+  position: static;
+  flex: 1;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+#grid.list-view .card-title {
+  margin: 0;
+  flex: 1;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#grid.list-view .card-meta {
+  max-height: none;
+  opacity: 1;
+  margin: 0;
+}
+#grid.list-view .card-genres { display: none; }
+#grid.list-view .pulse-score-wrap { margin: 0; min-width: 70px; }
+#grid.list-view .card-type-badge,
+#grid.list-view .card-star {
+  position: static;
+  opacity: 1;
+}
+#grid.list-view .card-new-badge { position: static; }
+#grid.list-view .rank-change { position: static; }
+
+/* Refresh pulse indicator on the Live dot */
+.live-dot.refreshing {
+  animation: refresh-flash 0.8s ease-out;
+}
+@keyframes refresh-flash {
+  0%   { box-shadow: 0 0 0 rgba(56,217,169,0); background: var(--accent2); }
+  50%  { box-shadow: 0 0 12px rgba(56,217,169,0.9); background: var(--accent3); }
+  100% { box-shadow: 0 0 0 rgba(56,217,169,0); background: var(--accent2); }
+}
+
+/* Card slide animation for rank changes on refresh */
+.card.shifting {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
 /* ── BACK TO TOP ── */
 #back-to-top {
   position: fixed;
-  bottom: 24px;
+  bottom: 70px;
   right: 24px;
   width: 44px;
   height: 44px;
@@ -871,7 +971,7 @@ footer a:hover { color: var(--text); }
   100% { box-shadow: 0 0 16px rgba(33,150,243,0.6), 0 0 36px rgba(33,150,243,0.3); }
 }
 @media (max-width: 600px) {
-  #back-to-top { bottom: 16px; right: 16px; width: 40px; height: 40px; }
+  #back-to-top { bottom: 70px; right: 16px; width: 40px; height: 40px; }
 }
 
 /* ── INFO TOOLTIP ── */
@@ -1362,6 +1462,21 @@ footer a:hover { color: var(--text); }
       <circle cx="16" cy="16" r="1.2" fill="currentColor"/>
     </svg>
   </button>
+  <button class="icon-btn" id="view-toggle" onclick="toggleView()" title="Toggle list view" aria-label="Toggle list view">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+      <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+    </svg>
+  </button>
+  <button class="icon-btn" id="sound-toggle" onclick="toggleSound()" title="Sound effects" aria-label="Toggle sound">
+    <svg id="sound-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <line x1="23" y1="9" x2="17" y2="15" class="sound-off-mark" style="display:none"/>
+      <line x1="17" y1="9" x2="23" y2="15" class="sound-off-mark" style="display:none"/>
+      <path class="sound-on-mark" d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+      <path class="sound-on-mark" d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    </svg>
+  </button>
   <span id="count-badge"></span>
   <span id="last-updated"></span>
 </div>
@@ -1387,7 +1502,7 @@ footer a:hover { color: var(--text); }
 
 <footer>
   <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a> · <a href="https://www.reddit.com" target="_blank">Reddit</a></p>
-  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.6.2</span></p>
+  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.7.0</span></p>
 </footer>
 
 <!-- ── MODAL ── -->
@@ -1536,6 +1651,7 @@ allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, redditMap, {
     // Detect new entries to the top 25 since last visit
     newEntries = detectNewEntries(allItems);
     renderBellState();
+    if (newEntries.length > 0) playNewEntryChime();
 
     setStep('merge', 'done');
 
@@ -1548,9 +1664,11 @@ allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, redditMap, {
       document.getElementById('last-updated').textContent =
         `Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
 
+      applyViewMode();
       renderGrid();
       saveCurrentRanks();
       writeSnapshot(allItems).catch(()=>{});  // store history (rate-limited to 1/hour)
+      startAutoRefresh();
       // If URL contains ?t=type-id, auto-open that modal
       checkUrlForModal();
     }, 600);
@@ -2315,6 +2433,137 @@ function showToast(msg) {
 
 
 
+
+// ═════════════════════════════════════════════════════════════
+//  VIEW TOGGLE + SOUND + AUTO-REFRESH
+// ═════════════════════════════════════════════════════════════
+const STORE_KEY_VIEW  = 'pulse_view_mode';
+const STORE_KEY_SOUND = 'pulse_sound';
+
+let viewMode = localStorage.getItem(STORE_KEY_VIEW) || 'grid';
+let soundOn  = localStorage.getItem(STORE_KEY_SOUND) === '1';
+
+function applyViewMode() {
+  const grid = document.getElementById('grid');
+  const btn  = document.getElementById('view-toggle');
+  if (viewMode === 'list') {
+    grid.classList.add('list-view');
+    btn.classList.add('active');
+  } else {
+    grid.classList.remove('list-view');
+    btn.classList.remove('active');
+  }
+}
+
+function toggleView() {
+  viewMode = viewMode === 'grid' ? 'list' : 'grid';
+  localStorage.setItem(STORE_KEY_VIEW, viewMode);
+  applyViewMode();
+  playTick(viewMode === 'list' ? 520 : 660);
+}
+
+function applySoundState() {
+  const btn = document.getElementById('sound-toggle');
+  document.querySelectorAll('.sound-on-mark').forEach(e => e.style.display = soundOn ? '' : 'none');
+  document.querySelectorAll('.sound-off-mark').forEach(e => e.style.display = soundOn ? 'none' : '');
+  if (soundOn) btn.classList.add('active'); else btn.classList.remove('active');
+}
+
+function toggleSound() {
+  soundOn = !soundOn;
+  localStorage.setItem(STORE_KEY_SOUND, soundOn ? '1' : '0');
+  applySoundState();
+  if (soundOn) playTick(660);  // confirmation blip
+}
+
+// ── Tiny synthesised tick using Web Audio (no files, near-zero cost) ──
+let audioCtx;
+function playTick(freq = 600, dur = 0.07, vol = 0.04) {
+  if (!soundOn) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + dur);
+  } catch(_) {}
+}
+
+// Pleasant two-note chime for new entries
+function playNewEntryChime() {
+  if (!soundOn) return;
+  playTick(660, 0.08, 0.05);
+  setTimeout(() => playTick(880, 0.10, 0.05), 90);
+}
+
+// ── AUTO-REFRESH ──
+const AUTO_REFRESH_INTERVAL = 5 * 60 * 1000;  // 5 minutes
+let refreshTimer = null;
+let isRefreshing = false;
+
+function startAutoRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(backgroundRefresh, AUTO_REFRESH_INTERVAL);
+}
+
+async function backgroundRefresh() {
+  if (isRefreshing || document.hidden) return;  // skip if tab not visible
+  isRefreshing = true;
+
+  // Flash the live dot to signal a refresh is happening
+  const dot = document.querySelector('.live-dot');
+  if (dot) { dot.classList.add('refreshing'); setTimeout(() => dot.classList.remove('refreshing'), 800); }
+
+  try {
+    const tmdbItems = await fetchTMDB();
+    const [traktResult, youtubeResult, wikiResult] = await Promise.allSettled([
+      fetchTrakt(), fetchYouTube(tmdbItems), fetchWikipedia(tmdbItems)
+    ]);
+    const traktMap   = traktResult.status   === 'fulfilled' ? traktResult.value   : {};
+    const youtubeMap = youtubeResult.status === 'fulfilled' ? youtubeResult.value : {};
+    const wikiMap    = wikiResult.status    === 'fulfilled' ? wikiResult.value    : {};
+
+    const refreshed = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, {}, {
+      trakt:     Object.keys(traktMap).length   > 0 ? 'ok' : 'fail',
+      youtube:   Object.keys(youtubeMap).length > 0 ? 'ok' : 'fail',
+      wikipedia: Object.keys(wikiMap).length    > 0 ? 'ok' : 'fail',
+      reddit:    'fail'
+    });
+
+    // Detect entries new since the LAST refresh (separate from visit baseline)
+    const prevTop = new Set(allItems.slice(0, NEW_ENTRY_THRESHOLD).map(i => `${i.media_type}_${i.id}`));
+    const freshNew = refreshed.slice(0, NEW_ENTRY_THRESHOLD).filter(i => !prevTop.has(`${i.media_type}_${i.id}`));
+    freshNew.forEach(i => { i._isNew = true; });
+
+    allItems = refreshed;
+
+    // If opted into notifications, add fresh new entries to the bell
+    const optedIn = localStorage.getItem(STORE_KEY_OPTIN) === '1';
+    if (optedIn && freshNew.length > 0) {
+      newEntries = [...freshNew, ...newEntries];
+      renderBellState();
+      playNewEntryChime();
+    }
+
+    renderGrid();
+    saveCurrentRanks();
+
+    const now = new Date();
+    const lu = document.getElementById('last-updated');
+    if (lu) lu.textContent = `Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+  } catch(err) {
+    console.warn('[AutoRefresh] failed (non-fatal):', err.message);
+  } finally {
+    isRefreshing = false;
+  }
+}
+
 // ═════════════════════════════════════════════════════════════
 //  SUPABASE HISTORY — write snapshots, read trajectories
 // ═════════════════════════════════════════════════════════════
@@ -2690,6 +2939,7 @@ document.addEventListener('keydown', e => {
 // ── BOOT ─────────────────────────────────────────────────────────
 loadWatchlist();
 loadPrevRanks();
+applySoundState();
 startLoad();
 </script>
 <button id="back-to-top" onclick="scrollToTop()" aria-label="Back to top" title="Back to top">

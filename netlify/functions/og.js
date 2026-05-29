@@ -160,6 +160,7 @@ exports.handler = async () => {
           h('div', {
             key: 'h1',
             style: {
+              fontFamily: 'sans-serif',
               fontSize: '64px',
               fontWeight: 900,
               lineHeight: 1.05,
@@ -187,9 +188,10 @@ exports.handler = async () => {
           h('div', {
             key: 'title',
             style: {
-              fontSize: '44px',
-              fontWeight: 700,
-              lineHeight: 1.1
+              fontFamily: 'Bebas Neue',
+              fontSize: '56px',
+              letterSpacing: '2px',
+              lineHeight: 1.05
             }
           }, headline),
           year ? h('div', {

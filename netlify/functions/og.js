@@ -5,8 +5,8 @@ const React = require('react');
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w342';
 
-// Google Fonts direct .ttf — Bebas Neue 400 weight
-const BEBAS_URL = 'https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXoo9Wlhyw.ttf';
+// jsDelivr mirror — reliable for server-side font fetching
+const BEBAS_URL = 'https://cdn.jsdelivr.net/fontsource/fonts/bebas-neue@latest/latin-400-normal.ttf';
 
 let cache = null;
 let cacheTime = 0;
@@ -23,10 +23,14 @@ async function fetchTopTitles() {
 
 async function loadBebas() {
   if (bebasFont) return bebasFont;
-  const res = await fetch(BEBAS_URL);
-  if (!res.ok) throw new Error('Failed to load Bebas Neue font');
-  bebasFont = await res.arrayBuffer();
-  return bebasFont;
+  try {
+    const res = await fetch(BEBAS_URL);
+    if (!res.ok) return null;
+    bebasFont = await res.arrayBuffer();
+    return bebasFont;
+  } catch (_) {
+    return null;
+  }
 }
 
 function truncate(s, n) {
@@ -224,14 +228,14 @@ exports.handler = async () => {
     const response = new ImageResponse(root, {
       width: 1200,
       height: 630,
-      fonts: [
+      fonts: bebas ? [
         {
           name: 'Bebas Neue',
           data: bebas,
           style: 'normal',
           weight: 400
         }
-      ]
+      ] : []
     });
 
     const arrayBuffer = await response.arrayBuffer();

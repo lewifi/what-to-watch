@@ -5,8 +5,12 @@ const React = require('react');
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w342';
 
+// Google Fonts direct .ttf — Bebas Neue 400 weight
+const BEBAS_URL = 'https://fonts.gstatic.com/s/bebasneue/v14/JTUSjIg69CK48gW7PXoo9Wlhyw.ttf';
+
 let cache = null;
 let cacheTime = 0;
+let bebasFont = null;
 const CACHE_TTL = 60 * 60 * 1000;
 
 async function fetchTopTitles() {
@@ -15,6 +19,14 @@ async function fetchTopTitles() {
   const res = await fetch(`${TMDB_BASE}/trending/all/day?api_key=${key}&page=1`);
   const data = await res.json();
   return (data.results || []).slice(0, 3);
+}
+
+async function loadBebas() {
+  if (bebasFont) return bebasFont;
+  const res = await fetch(BEBAS_URL);
+  if (!res.ok) throw new Error('Failed to load Bebas Neue font');
+  bebasFont = await res.arrayBuffer();
+  return bebasFont;
 }
 
 function truncate(s, n) {
@@ -40,7 +52,7 @@ exports.handler = async () => {
     // Dynamic ESM import — @vercel/og is ESM-only
     const { ImageResponse } = await import('@vercel/og');
 
-    const titles = await fetchTopTitles();
+    const [titles, bebas] = await Promise.all([fetchTopTitles(), loadBebas()]);
     const top1 = titles[0] || {};
     const headline = truncate(top1.title || top1.name || 'EPHIX PULSE', 26);
     const year = (top1.release_date || top1.first_air_date || '').slice(0, 4);
@@ -140,7 +152,7 @@ exports.handler = async () => {
               letterSpacing: '6px',
               marginBottom: '24px'
             }
-          }, 'LIVE · WORLDWIDE'),
+          }, 'LIVE TOP 100'),
           h('div', {
             key: 'h1',
             style: {
@@ -189,10 +201,11 @@ exports.handler = async () => {
           h('div', {
             key: 'logo',
             style: {
-              fontSize: '34px',
-              fontWeight: 900,
+              fontFamily: 'Bebas Neue',
+              fontSize: '54px',
               color: '#2196F3',
-              letterSpacing: '6px'
+              letterSpacing: '8px',
+              lineHeight: 1
             }
           }, 'EPHIX PULSE'),
           h('div', {
@@ -201,7 +214,7 @@ exports.handler = async () => {
               fontSize: '15px',
               color: 'rgba(255,255,255,0.4)',
               letterSpacing: '2px',
-              marginTop: '6px'
+              marginTop: '10px'
             }
           }, 'ephix.net · live tv & movie trending')
         ])
@@ -210,7 +223,15 @@ exports.handler = async () => {
 
     const response = new ImageResponse(root, {
       width: 1200,
-      height: 630
+      height: 630,
+      fonts: [
+        {
+          name: 'Bebas Neue',
+          data: bebas,
+          style: 'normal',
+          weight: 400
+        }
+      ]
     });
 
     const arrayBuffer = await response.arrayBuffer();

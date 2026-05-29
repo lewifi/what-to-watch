@@ -152,7 +152,7 @@ exports.handler = async () => {
               letterSpacing: '6px',
               marginBottom: '24px'
             }
-          }, 'LIVE TOP 100'),
+          }, 'LIVE TOP 100 · WORLDWIDE'),
           h('div', {
             key: 'h1',
             style: {

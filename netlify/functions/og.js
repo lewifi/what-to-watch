@@ -1,9 +1,6 @@
-// Netlify Function: dynamic OG image for share previews
-// Uses @vercel/og (Satori) which handles fonts and HTML/CSS-like layout properly
-//
-// Layout (Hybrid C):
-//  - Left: stacked top 3 posters with rank circles
-//  - Right: tagline + #1 title headline + EPHIX PULSE logo
+// Netlify Function: dynamic OG image
+// Uses @vercel/og (Satori) — requires explicit fonts and strict display:flex
+// Layout: top 3 posters stacked left, headline + #1 title + logo on right
 
 const { ImageResponse } = require('@vercel/og');
 const React = require('react');
@@ -11,9 +8,9 @@ const React = require('react');
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w342';
 
-// In-memory cache: regenerate at most once per hour
 let cache = null;
 let cacheTime = 0;
+let fontCache = null;
 const CACHE_TTL = 60 * 60 * 1000;
 
 async function fetchTopTitles() {
@@ -22,6 +19,35 @@ async function fetchTopTitles() {
   const res = await fetch(`${TMDB_BASE}/trending/all/day?api_key=${key}&page=1`);
   const data = await res.json();
   return (data.results || []).slice(0, 3);
+}
+
+async function fetchPosterDataUri(posterPath) {
+  if (!posterPath) return null;
+  try {
+    const res = await fetch(`${POSTER_BASE}${posterPath}`);
+    if (!res.ok) return null;
+    const buf = Buffer.from(await res.arrayBuffer());
+    return `data:image/jpeg;base64,${buf.toString('base64')}`;
+  } catch (_) { return null; }
+}
+
+// Load Inter font — Satori needs explicit font data
+async function loadFonts() {
+  if (fontCache) return fontCache;
+  try {
+    const url = 'https://github.com/google/fonts/raw/main/ofl/inter/Inter%5Bslnt%2Cwght%5D.ttf';
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const data = await res.arrayBuffer();
+    fontCache = [
+      { name: 'Inter', data, weight: 400, style: 'normal' },
+      { name: 'Inter', data, weight: 700, style: 'normal' },
+      { name: 'Inter', data, weight: 900, style: 'normal' }
+    ];
+    return fontCache;
+  } catch (_) {
+    return [];
+  }
 }
 
 function truncate(s, n) {
@@ -44,175 +70,182 @@ exports.handler = async () => {
       };
     }
 
-    const titles = await fetchTopTitles();
+    const [titles, fonts] = await Promise.all([fetchTopTitles(), loadFonts()]);
+    const posterUris = await Promise.all(
+      titles.slice(0, 3).map(t => fetchPosterDataUri(t.poster_path))
+    );
+
     const top1 = titles[0] || {};
     const headline = truncate(top1.title || top1.name || 'EPHIX PULSE', 26);
     const year = (top1.release_date || top1.first_air_date || '').slice(0, 4);
 
-    // Build the JSX-equivalent using React.createElement so we don't need JSX transform
     const h = React.createElement;
 
-    const poster = (item, rank) => h('div', {
+    const poster = (uri, rank) => h('div', {
       style: {
         position: 'relative',
-        width: '200px',
-        height: '300px',
-        borderRadius: '10px',
-        overflow: 'hidden',
-        backgroundColor: '#13182a',
         display: 'flex',
-        border: '1px solid rgba(255,255,255,0.08)'
-      }
-    }, [
-      item.poster_path ? h('img', {
-        key: 'img',
-        src: `${POSTER_BASE}${item.poster_path}`,
         width: 200,
         height: 300,
-        style: { objectFit: 'cover' }
-      }) : null,
+        borderRadius: 10,
+        overflow: 'hidden',
+        backgroundColor: '#13182a'
+      }
+    },
+      uri && h('img', {
+        src: uri,
+        width: 200,
+        height: 300,
+        style: { width: 200, height: 300, objectFit: 'cover' }
+      }),
       h('div', {
-        key: 'rank',
         style: {
           position: 'absolute',
-          top: '10px',
-          left: '10px',
-          width: '36px',
-          height: '36px',
-          borderRadius: '50%',
-          backgroundColor: 'rgba(8,10,15,0.85)',
+          top: 10,
+          left: 10,
+          width: 36,
+          height: 36,
+          borderRadius: 18,
+          backgroundColor: 'rgba(8,10,15,0.88)',
           border: '1.5px solid rgba(33,150,243,0.55)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: '#2196F3',
-          fontSize: '18px',
+          fontSize: 20,
           fontWeight: 700
         }
       }, String(rank))
-    ]);
+    );
 
     const root = h('div', {
       style: {
-        width: '1200px',
-        height: '630px',
+        width: 1200,
+        height: 630,
         display: 'flex',
         backgroundColor: '#080a0f',
         backgroundImage: 'linear-gradient(135deg, #080a0f 0%, #0a1424 100%)',
-        fontFamily: 'sans-serif',
-        padding: '60px',
-        color: '#ffffff'
+        padding: 60,
+        color: '#ffffff',
+        fontFamily: 'Inter'
       }
-    }, [
-      // Left column: three posters stacked
+    },
       h('div', {
-        key: 'left',
-        style: {
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px',
-          justifyContent: 'center'
-        }
-      }, titles.slice(0, 3).map((t, i) => poster(t, i + 1))),
+        style: { display: 'flex', flexDirection: 'column' }
+      },
+        posterUris.map((uri, i) =>
+          h('div', {
+            key: 'p' + i,
+            style: { display: 'flex', marginBottom: i < 2 ? 10 : 0 }
+          }, poster(uri, i + 1))
+        )
+      ),
 
-      // Vertical divider
       h('div', {
-        key: 'divider',
         style: {
-          width: '1px',
+          width: 1,
           backgroundColor: 'rgba(33,150,243,0.2)',
-          margin: '40px 50px'
+          margin: '40px 50px',
+          display: 'flex'
         }
       }),
 
-      // Right column: text content
       h('div', {
-        key: 'right',
         style: {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           flex: 1,
-          paddingTop: '40px',
-          paddingBottom: '20px'
+          paddingTop: 30
         }
-      }, [
-        h('div', { key: 'top', style: { display: 'flex', flexDirection: 'column' } }, [
+      },
+        h('div', { style: { display: 'flex', flexDirection: 'column' } },
           h('div', {
-            key: 'label',
             style: {
-              fontSize: '20px',
-              fontWeight: 500,
+              fontSize: 20,
+              fontWeight: 400,
               color: '#2196F3',
-              letterSpacing: '6px',
-              marginBottom: '24px'
+              letterSpacing: 6,
+              marginBottom: 22,
+              display: 'flex'
             }
           }, 'LIVE · WORLDWIDE'),
           h('div', {
-            key: 'h1',
             style: {
-              fontSize: '64px',
+              fontSize: 62,
               fontWeight: 900,
               lineHeight: 1.05,
-              letterSpacing: '-1px',
-              marginBottom: '40px'
+              letterSpacing: -1,
+              display: 'flex'
             }
-          }, 'What the World\nis Watching')
-        ]),
-        h('div', { key: 'mid', style: { display: 'flex', flexDirection: 'column' } }, [
+          }, 'What the World'),
           h('div', {
-            key: 'subtle',
             style: {
-              fontSize: '18px',
-              fontWeight: 500,
+              fontSize: 62,
+              fontWeight: 900,
+              lineHeight: 1.05,
+              letterSpacing: -1,
+              display: 'flex'
+            }
+          }, 'is Watching')
+        ),
+
+        h('div', { style: { display: 'flex', flexDirection: 'column' } },
+          h('div', {
+            style: {
+              fontSize: 18,
+              fontWeight: 400,
               color: 'rgba(255,255,255,0.5)',
-              letterSpacing: '4px',
-              marginBottom: '16px'
+              letterSpacing: 4,
+              marginBottom: 14,
+              display: 'flex'
             }
           }, 'TRENDING #1'),
           h('div', {
-            key: 'title',
             style: {
-              fontSize: '44px',
+              fontSize: 42,
               fontWeight: 700,
-              lineHeight: 1.1
+              lineHeight: 1.1,
+              display: 'flex'
             }
           }, headline),
-          year ? h('div', {
-            key: 'year',
+          year && h('div', {
             style: {
-              fontSize: '22px',
+              fontSize: 20,
               color: 'rgba(255,255,255,0.45)',
-              marginTop: '10px'
+              marginTop: 8,
+              display: 'flex'
             }
-          }, year) : null
-        ]),
-        h('div', { key: 'bottom', style: { display: 'flex', flexDirection: 'column' } }, [
+          }, year)
+        ),
+
+        h('div', { style: { display: 'flex', flexDirection: 'column' } },
           h('div', {
-            key: 'logo',
             style: {
-              fontSize: '34px',
+              fontSize: 34,
               fontWeight: 900,
               color: '#2196F3',
-              letterSpacing: '6px'
+              letterSpacing: 6,
+              display: 'flex'
             }
           }, 'EPHIX PULSE'),
           h('div', {
-            key: 'tagline',
             style: {
-              fontSize: '15px',
+              fontSize: 14,
               color: 'rgba(255,255,255,0.4)',
-              letterSpacing: '2px',
-              marginTop: '6px'
+              letterSpacing: 2,
+              marginTop: 6,
+              display: 'flex'
             }
           }, 'ephix.net · live tv & movie trending')
-        ])
-      ])
-    ]);
+        )
+      )
+    );
 
     const response = new ImageResponse(root, {
       width: 1200,
-      height: 630
+      height: 630,
+      fonts: fonts.length > 0 ? fonts : undefined
     });
 
     const arrayBuffer = await response.arrayBuffer();

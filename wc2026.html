@@ -15,11 +15,11 @@ body { background: #0d1520; font-family: system-ui, -apple-system, sans-serif; c
 .header .trophy { font-size: 40px; margin-bottom: 6px; }
 .header h1 { font-size: 26px; font-weight: 800; letter-spacing: 1px; color: #f0b429; }
 .header .sub { font-size: 13px; color: #94a3b8; margin-top: 4px; }
-.header .rem { font-size: 12px; color: #64748b; margin-top: 2px; }
 
 .tzbar { padding: 12px 16px; background: #111c2d; border-bottom: 1px solid #1e2d3d; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .tzbar span { font-size: 13px; color: #94a3b8; flex-shrink: 0; }
 .tzbar select { background: #1e2d3d; color: #f1f5f9; border: 1px solid #334155; border-radius: 6px; padding: 6px 10px; font-size: 14px; flex: 1; min-width: 0; }
+.tzbar .saved { font-size: 11px; color: #22c55e; flex-shrink: 0; display: none; }
 
 .filters { padding: 10px 12px; background: #0d1520; border-bottom: 1px solid #1e2d3d; overflow-x: auto; display: flex; gap: 6px; -webkit-overflow-scrolling: touch; }
 .filters button { border: none; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; flex-shrink: 0; background: #1e2d3d; color: #94a3b8; }
@@ -41,14 +41,6 @@ body { background: #0d1520; font-family: system-ui, -apple-system, sans-serif; c
 .badge-m { background: rgba(255,255,255,0.06); color: #94a3b8; padding: 1px 6px; border-radius: 4px; font-size: 11px; }
 .gcal { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb; border-radius: 7px; padding: 8px 12px; font-size: 13px; font-weight: 600; text-decoration: none; flex-shrink: 0; white-space: nowrap; }
 </style>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-5XX60C0HK1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-5XX60C0HK1');
-</script>
 </head>
 <body>
 <div class="header">
@@ -59,8 +51,9 @@ body { background: #0d1520; font-family: system-ui, -apple-system, sans-serif; c
 </div>
 
 <div class="tzbar">
-  <span>Your timezone:</span>
+  <span>Timezone:</span>
   <select id="tzSelect"></select>
+  <span class="saved" id="savedLabel">✓ Saved</span>
 </div>
 
 <div class="filters" id="filters"></div>
@@ -180,18 +173,448 @@ var MATCHES = [
   {date:'2026-07-19',etH:15,etM:0,teams:'🏆 World Cup Final',group:'',venue:'MetLife Stadium, NY/NJ',stage:'Final',match:'104'}
 ];
 
+// All IANA timezones grouped by region, with UTC offset labels
+// Offsets are standard offsets; DST-aware display uses Intl.DateTimeFormat
 var TIMEZONES = [
-  {label:'AEST (UTC+10)', offset:10},
-  {label:'AEDT (UTC+11)', offset:11},
-  {label:'AWST (UTC+8)',  offset:8},
-  {label:'ACST (UTC+9.5)',offset:9.5},
-  {label:'PHT (UTC+8)',   offset:8},
-  {label:'ICT (UTC+7)',   offset:7},
-  {label:'UTC+0',         offset:0},
-  {label:'ET (UTC-4)',    offset:-4},
-  {label:'CT (UTC-5)',    offset:-5},
-  {label:'PT (UTC-7)',    offset:-7},
-  {label:'BST (UTC+1)',   offset:1}
+  // Africa
+  {label:'Africa/Abidjan (UTC+0)', iana:'Africa/Abidjan', offset:0},
+  {label:'Africa/Accra (UTC+0)', iana:'Africa/Accra', offset:0},
+  {label:'Africa/Addis_Ababa (UTC+3)', iana:'Africa/Addis_Ababa', offset:3},
+  {label:'Africa/Algiers (UTC+1)', iana:'Africa/Algiers', offset:1},
+  {label:'Africa/Asmara (UTC+3)', iana:'Africa/Asmara', offset:3},
+  {label:'Africa/Bamako (UTC+0)', iana:'Africa/Bamako', offset:0},
+  {label:'Africa/Bangui (UTC+1)', iana:'Africa/Bangui', offset:1},
+  {label:'Africa/Banjul (UTC+0)', iana:'Africa/Banjul', offset:0},
+  {label:'Africa/Bissau (UTC+0)', iana:'Africa/Bissau', offset:0},
+  {label:'Africa/Blantyre (UTC+2)', iana:'Africa/Blantyre', offset:2},
+  {label:'Africa/Brazzaville (UTC+1)', iana:'Africa/Brazzaville', offset:1},
+  {label:'Africa/Bujumbura (UTC+2)', iana:'Africa/Bujumbura', offset:2},
+  {label:'Africa/Cairo (UTC+2)', iana:'Africa/Cairo', offset:2},
+  {label:'Africa/Casablanca (UTC+1)', iana:'Africa/Casablanca', offset:1},
+  {label:'Africa/Ceuta (UTC+2)', iana:'Africa/Ceuta', offset:2},
+  {label:'Africa/Conakry (UTC+0)', iana:'Africa/Conakry', offset:0},
+  {label:'Africa/Dakar (UTC+0)', iana:'Africa/Dakar', offset:0},
+  {label:'Africa/Dar_es_Salaam (UTC+3)', iana:'Africa/Dar_es_Salaam', offset:3},
+  {label:'Africa/Djibouti (UTC+3)', iana:'Africa/Djibouti', offset:3},
+  {label:'Africa/Douala (UTC+1)', iana:'Africa/Douala', offset:1},
+  {label:'Africa/El_Aaiun (UTC+1)', iana:'Africa/El_Aaiun', offset:1},
+  {label:'Africa/Freetown (UTC+0)', iana:'Africa/Freetown', offset:0},
+  {label:'Africa/Gaborone (UTC+2)', iana:'Africa/Gaborone', offset:2},
+  {label:'Africa/Harare (UTC+2)', iana:'Africa/Harare', offset:2},
+  {label:'Africa/Johannesburg (UTC+2)', iana:'Africa/Johannesburg', offset:2},
+  {label:'Africa/Juba (UTC+2)', iana:'Africa/Juba', offset:2},
+  {label:'Africa/Kampala (UTC+3)', iana:'Africa/Kampala', offset:3},
+  {label:'Africa/Khartoum (UTC+2)', iana:'Africa/Khartoum', offset:2},
+  {label:'Africa/Kigali (UTC+2)', iana:'Africa/Kigali', offset:2},
+  {label:'Africa/Kinshasa (UTC+1)', iana:'Africa/Kinshasa', offset:1},
+  {label:'Africa/Lagos (UTC+1)', iana:'Africa/Lagos', offset:1},
+  {label:'Africa/Libreville (UTC+1)', iana:'Africa/Libreville', offset:1},
+  {label:'Africa/Lome (UTC+0)', iana:'Africa/Lome', offset:0},
+  {label:'Africa/Luanda (UTC+1)', iana:'Africa/Luanda', offset:1},
+  {label:'Africa/Lubumbashi (UTC+2)', iana:'Africa/Lubumbashi', offset:2},
+  {label:'Africa/Lusaka (UTC+2)', iana:'Africa/Lusaka', offset:2},
+  {label:'Africa/Malabo (UTC+1)', iana:'Africa/Malabo', offset:1},
+  {label:'Africa/Maputo (UTC+2)', iana:'Africa/Maputo', offset:2},
+  {label:'Africa/Maseru (UTC+2)', iana:'Africa/Maseru', offset:2},
+  {label:'Africa/Mbabane (UTC+2)', iana:'Africa/Mbabane', offset:2},
+  {label:'Africa/Mogadishu (UTC+3)', iana:'Africa/Mogadishu', offset:3},
+  {label:'Africa/Monrovia (UTC+0)', iana:'Africa/Monrovia', offset:0},
+  {label:'Africa/Nairobi (UTC+3)', iana:'Africa/Nairobi', offset:3},
+  {label:'Africa/Ndjamena (UTC+1)', iana:'Africa/Ndjamena', offset:1},
+  {label:'Africa/Niamey (UTC+1)', iana:'Africa/Niamey', offset:1},
+  {label:'Africa/Nouakchott (UTC+0)', iana:'Africa/Nouakchott', offset:0},
+  {label:'Africa/Ouagadougou (UTC+0)', iana:'Africa/Ouagadougou', offset:0},
+  {label:'Africa/Porto-Novo (UTC+1)', iana:'Africa/Porto-Novo', offset:1},
+  {label:'Africa/Sao_Tome (UTC+0)', iana:'Africa/Sao_Tome', offset:0},
+  {label:'Africa/Tripoli (UTC+2)', iana:'Africa/Tripoli', offset:2},
+  {label:'Africa/Tunis (UTC+1)', iana:'Africa/Tunis', offset:1},
+  {label:'Africa/Windhoek (UTC+2)', iana:'Africa/Windhoek', offset:2},
+  // Americas
+  {label:'America/Adak (UTC-9)', iana:'America/Adak', offset:-9},
+  {label:'America/Anchorage (UTC-8)', iana:'America/Anchorage', offset:-8},
+  {label:'America/Anguilla (UTC-4)', iana:'America/Anguilla', offset:-4},
+  {label:'America/Antigua (UTC-4)', iana:'America/Antigua', offset:-4},
+  {label:'America/Araguaina (UTC-3)', iana:'America/Araguaina', offset:-3},
+  {label:'America/Argentina/Buenos_Aires (UTC-3)', iana:'America/Argentina/Buenos_Aires', offset:-3},
+  {label:'America/Argentina/Catamarca (UTC-3)', iana:'America/Argentina/Catamarca', offset:-3},
+  {label:'America/Argentina/Cordoba (UTC-3)', iana:'America/Argentina/Cordoba', offset:-3},
+  {label:'America/Argentina/Jujuy (UTC-3)', iana:'America/Argentina/Jujuy', offset:-3},
+  {label:'America/Argentina/La_Rioja (UTC-3)', iana:'America/Argentina/La_Rioja', offset:-3},
+  {label:'America/Argentina/Mendoza (UTC-3)', iana:'America/Argentina/Mendoza', offset:-3},
+  {label:'America/Argentina/Rio_Gallegos (UTC-3)', iana:'America/Argentina/Rio_Gallegos', offset:-3},
+  {label:'America/Argentina/Salta (UTC-3)', iana:'America/Argentina/Salta', offset:-3},
+  {label:'America/Argentina/San_Juan (UTC-3)', iana:'America/Argentina/San_Juan', offset:-3},
+  {label:'America/Argentina/San_Luis (UTC-3)', iana:'America/Argentina/San_Luis', offset:-3},
+  {label:'America/Argentina/Tucuman (UTC-3)', iana:'America/Argentina/Tucuman', offset:-3},
+  {label:'America/Argentina/Ushuaia (UTC-3)', iana:'America/Argentina/Ushuaia', offset:-3},
+  {label:'America/Aruba (UTC-4)', iana:'America/Aruba', offset:-4},
+  {label:'America/Asuncion (UTC-4)', iana:'America/Asuncion', offset:-4},
+  {label:'America/Atikokan (UTC-5)', iana:'America/Atikokan', offset:-5},
+  {label:'America/Bahia (UTC-3)', iana:'America/Bahia', offset:-3},
+  {label:'America/Bahia_Banderas (UTC-5)', iana:'America/Bahia_Banderas', offset:-5},
+  {label:'America/Barbados (UTC-4)', iana:'America/Barbados', offset:-4},
+  {label:'America/Belem (UTC-3)', iana:'America/Belem', offset:-3},
+  {label:'America/Belize (UTC-6)', iana:'America/Belize', offset:-6},
+  {label:'America/Blanc-Sablon (UTC-4)', iana:'America/Blanc-Sablon', offset:-4},
+  {label:'America/Boa_Vista (UTC-4)', iana:'America/Boa_Vista', offset:-4},
+  {label:'America/Bogota (UTC-5)', iana:'America/Bogota', offset:-5},
+  {label:'America/Boise (UTC-6)', iana:'America/Boise', offset:-6},
+  {label:'America/Cambridge_Bay (UTC-6)', iana:'America/Cambridge_Bay', offset:-6},
+  {label:'America/Campo_Grande (UTC-4)', iana:'America/Campo_Grande', offset:-4},
+  {label:'America/Cancun (UTC-5)', iana:'America/Cancun', offset:-5},
+  {label:'America/Caracas (UTC-4)', iana:'America/Caracas', offset:-4},
+  {label:'America/Cayenne (UTC-3)', iana:'America/Cayenne', offset:-3},
+  {label:'America/Cayman (UTC-5)', iana:'America/Cayman', offset:-5},
+  {label:'America/Chicago (UTC-5)', iana:'America/Chicago', offset:-5},
+  {label:'America/Chihuahua (UTC-6)', iana:'America/Chihuahua', offset:-6},
+  {label:'America/Costa_Rica (UTC-6)', iana:'America/Costa_Rica', offset:-6},
+  {label:'America/Creston (UTC-7)', iana:'America/Creston', offset:-7},
+  {label:'America/Cuiaba (UTC-4)', iana:'America/Cuiaba', offset:-4},
+  {label:'America/Curacao (UTC-4)', iana:'America/Curacao', offset:-4},
+  {label:'America/Danmarkshavn (UTC+0)', iana:'America/Danmarkshavn', offset:0},
+  {label:'America/Dawson (UTC-7)', iana:'America/Dawson', offset:-7},
+  {label:'America/Dawson_Creek (UTC-7)', iana:'America/Dawson_Creek', offset:-7},
+  {label:'America/Denver (UTC-6)', iana:'America/Denver', offset:-6},
+  {label:'America/Detroit (UTC-4)', iana:'America/Detroit', offset:-4},
+  {label:'America/Dominica (UTC-4)', iana:'America/Dominica', offset:-4},
+  {label:'America/Edmonton (UTC-6)', iana:'America/Edmonton', offset:-6},
+  {label:'America/Eirunepe (UTC-5)', iana:'America/Eirunepe', offset:-5},
+  {label:'America/El_Salvador (UTC-6)', iana:'America/El_Salvador', offset:-6},
+  {label:'America/Fortaleza (UTC-3)', iana:'America/Fortaleza', offset:-3},
+  {label:'America/Glace_Bay (UTC-3)', iana:'America/Glace_Bay', offset:-3},
+  {label:'America/Godthab (UTC-2)', iana:'America/Godthab', offset:-2},
+  {label:'America/Goose_Bay (UTC-3)', iana:'America/Goose_Bay', offset:-3},
+  {label:'America/Grand_Turk (UTC-4)', iana:'America/Grand_Turk', offset:-4},
+  {label:'America/Grenada (UTC-4)', iana:'America/Grenada', offset:-4},
+  {label:'America/Guadeloupe (UTC-4)', iana:'America/Guadeloupe', offset:-4},
+  {label:'America/Guatemala (UTC-6)', iana:'America/Guatemala', offset:-6},
+  {label:'America/Guayaquil (UTC-5)', iana:'America/Guayaquil', offset:-5},
+  {label:'America/Guyana (UTC-4)', iana:'America/Guyana', offset:-4},
+  {label:'America/Halifax (UTC-3)', iana:'America/Halifax', offset:-3},
+  {label:'America/Havana (UTC-4)', iana:'America/Havana', offset:-4},
+  {label:'America/Hermosillo (UTC-7)', iana:'America/Hermosillo', offset:-7},
+  {label:'America/Indiana/Indianapolis (UTC-4)', iana:'America/Indiana/Indianapolis', offset:-4},
+  {label:'America/Indiana/Knox (UTC-5)', iana:'America/Indiana/Knox', offset:-5},
+  {label:'America/Indiana/Marengo (UTC-4)', iana:'America/Indiana/Marengo', offset:-4},
+  {label:'America/Indiana/Petersburg (UTC-4)', iana:'America/Indiana/Petersburg', offset:-4},
+  {label:'America/Indiana/Tell_City (UTC-5)', iana:'America/Indiana/Tell_City', offset:-5},
+  {label:'America/Indiana/Vevay (UTC-4)', iana:'America/Indiana/Vevay', offset:-4},
+  {label:'America/Indiana/Vincennes (UTC-4)', iana:'America/Indiana/Vincennes', offset:-4},
+  {label:'America/Indiana/Winamac (UTC-4)', iana:'America/Indiana/Winamac', offset:-4},
+  {label:'America/Inuvik (UTC-6)', iana:'America/Inuvik', offset:-6},
+  {label:'America/Iqaluit (UTC-4)', iana:'America/Iqaluit', offset:-4},
+  {label:'America/Jamaica (UTC-5)', iana:'America/Jamaica', offset:-5},
+  {label:'America/Juneau (UTC-8)', iana:'America/Juneau', offset:-8},
+  {label:'America/Kentucky/Louisville (UTC-4)', iana:'America/Kentucky/Louisville', offset:-4},
+  {label:'America/Kentucky/Monticello (UTC-4)', iana:'America/Kentucky/Monticello', offset:-4},
+  {label:'America/Kralendijk (UTC-4)', iana:'America/Kralendijk', offset:-4},
+  {label:'America/La_Paz (UTC-4)', iana:'America/La_Paz', offset:-4},
+  {label:'America/Lima (UTC-5)', iana:'America/Lima', offset:-5},
+  {label:'America/Los_Angeles (UTC-7)', iana:'America/Los_Angeles', offset:-7},
+  {label:'America/Lower_Princes (UTC-4)', iana:'America/Lower_Princes', offset:-4},
+  {label:'America/Maceio (UTC-3)', iana:'America/Maceio', offset:-3},
+  {label:'America/Managua (UTC-6)', iana:'America/Managua', offset:-6},
+  {label:'America/Manaus (UTC-4)', iana:'America/Manaus', offset:-4},
+  {label:'America/Marigot (UTC-4)', iana:'America/Marigot', offset:-4},
+  {label:'America/Martinique (UTC-4)', iana:'America/Martinique', offset:-4},
+  {label:'America/Matamoros (UTC-5)', iana:'America/Matamoros', offset:-5},
+  {label:'America/Mazatlan (UTC-6)', iana:'America/Mazatlan', offset:-6},
+  {label:'America/Menominee (UTC-5)', iana:'America/Menominee', offset:-5},
+  {label:'America/Merida (UTC-5)', iana:'America/Merida', offset:-5},
+  {label:'America/Metlakatla (UTC-8)', iana:'America/Metlakatla', offset:-8},
+  {label:'America/Mexico_City (UTC-5)', iana:'America/Mexico_City', offset:-5},
+  {label:'America/Miquelon (UTC-2)', iana:'America/Miquelon', offset:-2},
+  {label:'America/Moncton (UTC-3)', iana:'America/Moncton', offset:-3},
+  {label:'America/Monterrey (UTC-5)', iana:'America/Monterrey', offset:-5},
+  {label:'America/Montevideo (UTC-3)', iana:'America/Montevideo', offset:-3},
+  {label:'America/Montserrat (UTC-4)', iana:'America/Montserrat', offset:-4},
+  {label:'America/Nassau (UTC-4)', iana:'America/Nassau', offset:-4},
+  {label:'America/New_York (UTC-4)', iana:'America/New_York', offset:-4},
+  {label:'America/Nipigon (UTC-4)', iana:'America/Nipigon', offset:-4},
+  {label:'America/Nome (UTC-8)', iana:'America/Nome', offset:-8},
+  {label:'America/Noronha (UTC-2)', iana:'America/Noronha', offset:-2},
+  {label:'America/North_Dakota/Beulah (UTC-5)', iana:'America/North_Dakota/Beulah', offset:-5},
+  {label:'America/North_Dakota/Center (UTC-5)', iana:'America/North_Dakota/Center', offset:-5},
+  {label:'America/North_Dakota/New_Salem (UTC-5)', iana:'America/North_Dakota/New_Salem', offset:-5},
+  {label:'America/Ojinaga (UTC-5)', iana:'America/Ojinaga', offset:-5},
+  {label:'America/Panama (UTC-5)', iana:'America/Panama', offset:-5},
+  {label:'America/Pangnirtung (UTC-4)', iana:'America/Pangnirtung', offset:-4},
+  {label:'America/Paramaribo (UTC-3)', iana:'America/Paramaribo', offset:-3},
+  {label:'America/Phoenix (UTC-7)', iana:'America/Phoenix', offset:-7},
+  {label:'America/Port-au-Prince (UTC-4)', iana:'America/Port-au-Prince', offset:-4},
+  {label:'America/Port_of_Spain (UTC-4)', iana:'America/Port_of_Spain', offset:-4},
+  {label:'America/Porto_Velho (UTC-4)', iana:'America/Porto_Velho', offset:-4},
+  {label:'America/Puerto_Rico (UTC-4)', iana:'America/Puerto_Rico', offset:-4},
+  {label:'America/Punta_Arenas (UTC-3)', iana:'America/Punta_Arenas', offset:-3},
+  {label:'America/Rainy_River (UTC-5)', iana:'America/Rainy_River', offset:-5},
+  {label:'America/Rankin_Inlet (UTC-5)', iana:'America/Rankin_Inlet', offset:-5},
+  {label:'America/Recife (UTC-3)', iana:'America/Recife', offset:-3},
+  {label:'America/Regina (UTC-6)', iana:'America/Regina', offset:-6},
+  {label:'America/Resolute (UTC-5)', iana:'America/Resolute', offset:-5},
+  {label:'America/Rio_Branco (UTC-5)', iana:'America/Rio_Branco', offset:-5},
+  {label:'America/Santa_Isabel (UTC-7)', iana:'America/Santa_Isabel', offset:-7},
+  {label:'America/Santarem (UTC-3)', iana:'America/Santarem', offset:-3},
+  {label:'America/Santiago (UTC-4)', iana:'America/Santiago', offset:-4},
+  {label:'America/Santo_Domingo (UTC-4)', iana:'America/Santo_Domingo', offset:-4},
+  {label:'America/Sao_Paulo (UTC-3)', iana:'America/Sao_Paulo', offset:-3},
+  {label:'America/Scoresbysund (UTC+0)', iana:'America/Scoresbysund', offset:0},
+  {label:'America/Sitka (UTC-8)', iana:'America/Sitka', offset:-8},
+  {label:'America/St_Barthelemy (UTC-4)', iana:'America/St_Barthelemy', offset:-4},
+  {label:'America/St_Johns (UTC-2.5)', iana:'America/St_Johns', offset:-2.5},
+  {label:'America/St_Kitts (UTC-4)', iana:'America/St_Kitts', offset:-4},
+  {label:'America/St_Lucia (UTC-4)', iana:'America/St_Lucia', offset:-4},
+  {label:'America/St_Thomas (UTC-4)', iana:'America/St_Thomas', offset:-4},
+  {label:'America/St_Vincent (UTC-4)', iana:'America/St_Vincent', offset:-4},
+  {label:'America/Swift_Current (UTC-6)', iana:'America/Swift_Current', offset:-6},
+  {label:'America/Tegucigalpa (UTC-6)', iana:'America/Tegucigalpa', offset:-6},
+  {label:'America/Thule (UTC-3)', iana:'America/Thule', offset:-3},
+  {label:'America/Thunder_Bay (UTC-4)', iana:'America/Thunder_Bay', offset:-4},
+  {label:'America/Tijuana (UTC-7)', iana:'America/Tijuana', offset:-7},
+  {label:'America/Toronto (UTC-4)', iana:'America/Toronto', offset:-4},
+  {label:'America/Tortola (UTC-4)', iana:'America/Tortola', offset:-4},
+  {label:'America/Vancouver (UTC-7)', iana:'America/Vancouver', offset:-7},
+  {label:'America/Whitehorse (UTC-7)', iana:'America/Whitehorse', offset:-7},
+  {label:'America/Winnipeg (UTC-5)', iana:'America/Winnipeg', offset:-5},
+  {label:'America/Yakutat (UTC-8)', iana:'America/Yakutat', offset:-8},
+  {label:'America/Yellowknife (UTC-6)', iana:'America/Yellowknife', offset:-6},
+  // Antarctica
+  {label:'Antarctica/Casey (UTC+11)', iana:'Antarctica/Casey', offset:11},
+  {label:'Antarctica/Davis (UTC+7)', iana:'Antarctica/Davis', offset:7},
+  {label:'Antarctica/DumontDUrville (UTC+10)', iana:'Antarctica/DumontDUrville', offset:10},
+  {label:'Antarctica/Macquarie (UTC+11)', iana:'Antarctica/Macquarie', offset:11},
+  {label:'Antarctica/Mawson (UTC+5)', iana:'Antarctica/Mawson', offset:5},
+  {label:'Antarctica/McMurdo (UTC+12)', iana:'Antarctica/McMurdo', offset:12},
+  {label:'Antarctica/Palmer (UTC-3)', iana:'Antarctica/Palmer', offset:-3},
+  {label:'Antarctica/Rothera (UTC-3)', iana:'Antarctica/Rothera', offset:-3},
+  {label:'Antarctica/Syowa (UTC+3)', iana:'Antarctica/Syowa', offset:3},
+  {label:'Antarctica/Troll (UTC+2)', iana:'Antarctica/Troll', offset:2},
+  {label:'Antarctica/Vostok (UTC+6)', iana:'Antarctica/Vostok', offset:6},
+  // Arctic
+  {label:'Arctic/Longyearbyen (UTC+2)', iana:'Arctic/Longyearbyen', offset:2},
+  // Asia
+  {label:'Asia/Aden (UTC+3)', iana:'Asia/Aden', offset:3},
+  {label:'Asia/Almaty (UTC+6)', iana:'Asia/Almaty', offset:6},
+  {label:'Asia/Amman (UTC+3)', iana:'Asia/Amman', offset:3},
+  {label:'Asia/Anadyr (UTC+12)', iana:'Asia/Anadyr', offset:12},
+  {label:'Asia/Aqtau (UTC+5)', iana:'Asia/Aqtau', offset:5},
+  {label:'Asia/Aqtobe (UTC+5)', iana:'Asia/Aqtobe', offset:5},
+  {label:'Asia/Ashgabat (UTC+5)', iana:'Asia/Ashgabat', offset:5},
+  {label:'Asia/Atyrau (UTC+5)', iana:'Asia/Atyrau', offset:5},
+  {label:'Asia/Baghdad (UTC+3)', iana:'Asia/Baghdad', offset:3},
+  {label:'Asia/Bahrain (UTC+3)', iana:'Asia/Bahrain', offset:3},
+  {label:'Asia/Baku (UTC+4)', iana:'Asia/Baku', offset:4},
+  {label:'Asia/Bangkok (UTC+7)', iana:'Asia/Bangkok', offset:7},
+  {label:'Asia/Barnaul (UTC+7)', iana:'Asia/Barnaul', offset:7},
+  {label:'Asia/Beirut (UTC+3)', iana:'Asia/Beirut', offset:3},
+  {label:'Asia/Bishkek (UTC+6)', iana:'Asia/Bishkek', offset:6},
+  {label:'Asia/Brunei (UTC+8)', iana:'Asia/Brunei', offset:8},
+  {label:'Asia/Chita (UTC+9)', iana:'Asia/Chita', offset:9},
+  {label:'Asia/Choibalsan (UTC+8)', iana:'Asia/Choibalsan', offset:8},
+  {label:'Asia/Colombo (UTC+5.5)', iana:'Asia/Colombo', offset:5.5},
+  {label:'Asia/Damascus (UTC+3)', iana:'Asia/Damascus', offset:3},
+  {label:'Asia/Dhaka (UTC+6)', iana:'Asia/Dhaka', offset:6},
+  {label:'Asia/Dili (UTC+9)', iana:'Asia/Dili', offset:9},
+  {label:'Asia/Dubai (UTC+4)', iana:'Asia/Dubai', offset:4},
+  {label:'Asia/Dushanbe (UTC+5)', iana:'Asia/Dushanbe', offset:5},
+  {label:'Asia/Famagusta (UTC+3)', iana:'Asia/Famagusta', offset:3},
+  {label:'Asia/Gaza (UTC+3)', iana:'Asia/Gaza', offset:3},
+  {label:'Asia/Hebron (UTC+3)', iana:'Asia/Hebron', offset:3},
+  {label:'Asia/Ho_Chi_Minh (UTC+7)', iana:'Asia/Ho_Chi_Minh', offset:7},
+  {label:'Asia/Hong_Kong (UTC+8)', iana:'Asia/Hong_Kong', offset:8},
+  {label:'Asia/Hovd (UTC+7)', iana:'Asia/Hovd', offset:7},
+  {label:'Asia/Irkutsk (UTC+8)', iana:'Asia/Irkutsk', offset:8},
+  {label:'Asia/Jakarta (UTC+7)', iana:'Asia/Jakarta', offset:7},
+  {label:'Asia/Jayapura (UTC+9)', iana:'Asia/Jayapura', offset:9},
+  {label:'Asia/Jerusalem (UTC+3)', iana:'Asia/Jerusalem', offset:3},
+  {label:'Asia/Kabul (UTC+4.5)', iana:'Asia/Kabul', offset:4.5},
+  {label:'Asia/Kamchatka (UTC+12)', iana:'Asia/Kamchatka', offset:12},
+  {label:'Asia/Karachi (UTC+5)', iana:'Asia/Karachi', offset:5},
+  {label:'Asia/Kathmandu (UTC+5.75)', iana:'Asia/Kathmandu', offset:5.75},
+  {label:'Asia/Khandyga (UTC+9)', iana:'Asia/Khandyga', offset:9},
+  {label:'Asia/Kolkata (UTC+5.5)', iana:'Asia/Kolkata', offset:5.5},
+  {label:'Asia/Krasnoyarsk (UTC+7)', iana:'Asia/Krasnoyarsk', offset:7},
+  {label:'Asia/Kuala_Lumpur (UTC+8)', iana:'Asia/Kuala_Lumpur', offset:8},
+  {label:'Asia/Kuching (UTC+8)', iana:'Asia/Kuching', offset:8},
+  {label:'Asia/Kuwait (UTC+3)', iana:'Asia/Kuwait', offset:3},
+  {label:'Asia/Macau (UTC+8)', iana:'Asia/Macau', offset:8},
+  {label:'Asia/Magadan (UTC+11)', iana:'Asia/Magadan', offset:11},
+  {label:'Asia/Makassar (UTC+8)', iana:'Asia/Makassar', offset:8},
+  {label:'Asia/Manila (UTC+8)', iana:'Asia/Manila', offset:8},
+  {label:'Asia/Muscat (UTC+4)', iana:'Asia/Muscat', offset:4},
+  {label:'Asia/Nicosia (UTC+3)', iana:'Asia/Nicosia', offset:3},
+  {label:'Asia/Novokuznetsk (UTC+7)', iana:'Asia/Novokuznetsk', offset:7},
+  {label:'Asia/Novosibirsk (UTC+7)', iana:'Asia/Novosibirsk', offset:7},
+  {label:'Asia/Omsk (UTC+6)', iana:'Asia/Omsk', offset:6},
+  {label:'Asia/Oral (UTC+5)', iana:'Asia/Oral', offset:5},
+  {label:'Asia/Phnom_Penh (UTC+7)', iana:'Asia/Phnom_Penh', offset:7},
+  {label:'Asia/Pontianak (UTC+7)', iana:'Asia/Pontianak', offset:7},
+  {label:'Asia/Pyongyang (UTC+9)', iana:'Asia/Pyongyang', offset:9},
+  {label:'Asia/Qatar (UTC+3)', iana:'Asia/Qatar', offset:3},
+  {label:'Asia/Qostanay (UTC+6)', iana:'Asia/Qostanay', offset:6},
+  {label:'Asia/Qyzylorda (UTC+5)', iana:'Asia/Qyzylorda', offset:5},
+  {label:'Asia/Riyadh (UTC+3)', iana:'Asia/Riyadh', offset:3},
+  {label:'Asia/Sakhalin (UTC+11)', iana:'Asia/Sakhalin', offset:11},
+  {label:'Asia/Samarkand (UTC+5)', iana:'Asia/Samarkand', offset:5},
+  {label:'Asia/Seoul (UTC+9)', iana:'Asia/Seoul', offset:9},
+  {label:'Asia/Shanghai (UTC+8)', iana:'Asia/Shanghai', offset:8},
+  {label:'Asia/Singapore (UTC+8)', iana:'Asia/Singapore', offset:8},
+  {label:'Asia/Srednekolymsk (UTC+11)', iana:'Asia/Srednekolymsk', offset:11},
+  {label:'Asia/Taipei (UTC+8)', iana:'Asia/Taipei', offset:8},
+  {label:'Asia/Tashkent (UTC+5)', iana:'Asia/Tashkent', offset:5},
+  {label:'Asia/Tbilisi (UTC+4)', iana:'Asia/Tbilisi', offset:4},
+  {label:'Asia/Tehran (UTC+3.5)', iana:'Asia/Tehran', offset:3.5},
+  {label:'Asia/Thimphu (UTC+6)', iana:'Asia/Thimphu', offset:6},
+  {label:'Asia/Tokyo (UTC+9)', iana:'Asia/Tokyo', offset:9},
+  {label:'Asia/Tomsk (UTC+7)', iana:'Asia/Tomsk', offset:7},
+  {label:'Asia/Ulaanbaatar (UTC+8)', iana:'Asia/Ulaanbaatar', offset:8},
+  {label:'Asia/Urumqi (UTC+6)', iana:'Asia/Urumqi', offset:6},
+  {label:'Asia/Ust-Nera (UTC+10)', iana:'Asia/Ust-Nera', offset:10},
+  {label:'Asia/Vientiane (UTC+7)', iana:'Asia/Vientiane', offset:7},
+  {label:'Asia/Vladivostok (UTC+10)', iana:'Asia/Vladivostok', offset:10},
+  {label:'Asia/Yakutsk (UTC+9)', iana:'Asia/Yakutsk', offset:9},
+  {label:'Asia/Yangon (UTC+6.5)', iana:'Asia/Yangon', offset:6.5},
+  {label:'Asia/Yekaterinburg (UTC+5)', iana:'Asia/Yekaterinburg', offset:5},
+  {label:'Asia/Yerevan (UTC+4)', iana:'Asia/Yerevan', offset:4},
+  // Atlantic
+  {label:'Atlantic/Azores (UTC+0)', iana:'Atlantic/Azores', offset:0},
+  {label:'Atlantic/Bermuda (UTC-3)', iana:'Atlantic/Bermuda', offset:-3},
+  {label:'Atlantic/Canary (UTC+1)', iana:'Atlantic/Canary', offset:1},
+  {label:'Atlantic/Cape_Verde (UTC-1)', iana:'Atlantic/Cape_Verde', offset:-1},
+  {label:'Atlantic/Faroe (UTC+1)', iana:'Atlantic/Faroe', offset:1},
+  {label:'Atlantic/Madeira (UTC+1)', iana:'Atlantic/Madeira', offset:1},
+  {label:'Atlantic/Reykjavik (UTC+0)', iana:'Atlantic/Reykjavik', offset:0},
+  {label:'Atlantic/South_Georgia (UTC-2)', iana:'Atlantic/South_Georgia', offset:-2},
+  {label:'Atlantic/St_Helena (UTC+0)', iana:'Atlantic/St_Helena', offset:0},
+  {label:'Atlantic/Stanley (UTC-3)', iana:'Atlantic/Stanley', offset:-3},
+  // Australia
+  {label:'Australia/Adelaide (UTC+9.5)', iana:'Australia/Adelaide', offset:9.5},
+  {label:'Australia/Brisbane (UTC+10)', iana:'Australia/Brisbane', offset:10},
+  {label:'Australia/Broken_Hill (UTC+9.5)', iana:'Australia/Broken_Hill', offset:9.5},
+  {label:'Australia/Currie (UTC+10)', iana:'Australia/Currie', offset:10},
+  {label:'Australia/Darwin (UTC+9.5)', iana:'Australia/Darwin', offset:9.5},
+  {label:'Australia/Eucla (UTC+8.75)', iana:'Australia/Eucla', offset:8.75},
+  {label:'Australia/Hobart (UTC+10)', iana:'Australia/Hobart', offset:10},
+  {label:'Australia/Lindeman (UTC+10)', iana:'Australia/Lindeman', offset:10},
+  {label:'Australia/Lord_Howe (UTC+10.5)', iana:'Australia/Lord_Howe', offset:10.5},
+  {label:'Australia/Melbourne (UTC+10)', iana:'Australia/Melbourne', offset:10},
+  {label:'Australia/Perth (UTC+8)', iana:'Australia/Perth', offset:8},
+  {label:'Australia/Sydney (UTC+10)', iana:'Australia/Sydney', offset:10},
+  // Europe
+  {label:'Europe/Amsterdam (UTC+2)', iana:'Europe/Amsterdam', offset:2},
+  {label:'Europe/Andorra (UTC+2)', iana:'Europe/Andorra', offset:2},
+  {label:'Europe/Astrakhan (UTC+4)', iana:'Europe/Astrakhan', offset:4},
+  {label:'Europe/Athens (UTC+3)', iana:'Europe/Athens', offset:3},
+  {label:'Europe/Belgrade (UTC+2)', iana:'Europe/Belgrade', offset:2},
+  {label:'Europe/Berlin (UTC+2)', iana:'Europe/Berlin', offset:2},
+  {label:'Europe/Bratislava (UTC+2)', iana:'Europe/Bratislava', offset:2},
+  {label:'Europe/Brussels (UTC+2)', iana:'Europe/Brussels', offset:2},
+  {label:'Europe/Bucharest (UTC+3)', iana:'Europe/Bucharest', offset:3},
+  {label:'Europe/Budapest (UTC+2)', iana:'Europe/Budapest', offset:2},
+  {label:'Europe/Busingen (UTC+2)', iana:'Europe/Busingen', offset:2},
+  {label:'Europe/Chisinau (UTC+3)', iana:'Europe/Chisinau', offset:3},
+  {label:'Europe/Copenhagen (UTC+2)', iana:'Europe/Copenhagen', offset:2},
+  {label:'Europe/Dublin (UTC+1)', iana:'Europe/Dublin', offset:1},
+  {label:'Europe/Gibraltar (UTC+2)', iana:'Europe/Gibraltar', offset:2},
+  {label:'Europe/Guernsey (UTC+1)', iana:'Europe/Guernsey', offset:1},
+  {label:'Europe/Helsinki (UTC+3)', iana:'Europe/Helsinki', offset:3},
+  {label:'Europe/Isle_of_Man (UTC+1)', iana:'Europe/Isle_of_Man', offset:1},
+  {label:'Europe/Istanbul (UTC+3)', iana:'Europe/Istanbul', offset:3},
+  {label:'Europe/Jersey (UTC+1)', iana:'Europe/Jersey', offset:1},
+  {label:'Europe/Kaliningrad (UTC+2)', iana:'Europe/Kaliningrad', offset:2},
+  {label:'Europe/Kiev (UTC+3)', iana:'Europe/Kiev', offset:3},
+  {label:'Europe/Kirov (UTC+3)', iana:'Europe/Kirov', offset:3},
+  {label:'Europe/Lisbon (UTC+1)', iana:'Europe/Lisbon', offset:1},
+  {label:'Europe/Ljubljana (UTC+2)', iana:'Europe/Ljubljana', offset:2},
+  {label:'Europe/London (UTC+1)', iana:'Europe/London', offset:1},
+  {label:'Europe/Luxembourg (UTC+2)', iana:'Europe/Luxembourg', offset:2},
+  {label:'Europe/Madrid (UTC+2)', iana:'Europe/Madrid', offset:2},
+  {label:'Europe/Malta (UTC+2)', iana:'Europe/Malta', offset:2},
+  {label:'Europe/Mariehamn (UTC+3)', iana:'Europe/Mariehamn', offset:3},
+  {label:'Europe/Minsk (UTC+3)', iana:'Europe/Minsk', offset:3},
+  {label:'Europe/Monaco (UTC+2)', iana:'Europe/Monaco', offset:2},
+  {label:'Europe/Moscow (UTC+3)', iana:'Europe/Moscow', offset:3},
+  {label:'Europe/Nicosia (UTC+3)', iana:'Europe/Nicosia', offset:3},
+  {label:'Europe/Oslo (UTC+2)', iana:'Europe/Oslo', offset:2},
+  {label:'Europe/Paris (UTC+2)', iana:'Europe/Paris', offset:2},
+  {label:'Europe/Podgorica (UTC+2)', iana:'Europe/Podgorica', offset:2},
+  {label:'Europe/Prague (UTC+2)', iana:'Europe/Prague', offset:2},
+  {label:'Europe/Riga (UTC+3)', iana:'Europe/Riga', offset:3},
+  {label:'Europe/Rome (UTC+2)', iana:'Europe/Rome', offset:2},
+  {label:'Europe/Samara (UTC+4)', iana:'Europe/Samara', offset:4},
+  {label:'Europe/San_Marino (UTC+2)', iana:'Europe/San_Marino', offset:2},
+  {label:'Europe/Sarajevo (UTC+2)', iana:'Europe/Sarajevo', offset:2},
+  {label:'Europe/Saratov (UTC+3)', iana:'Europe/Saratov', offset:3},
+  {label:'Europe/Simferopol (UTC+3)', iana:'Europe/Simferopol', offset:3},
+  {label:'Europe/Skopje (UTC+2)', iana:'Europe/Skopje', offset:2},
+  {label:'Europe/Sofia (UTC+3)', iana:'Europe/Sofia', offset:3},
+  {label:'Europe/Stockholm (UTC+2)', iana:'Europe/Stockholm', offset:2},
+  {label:'Europe/Tallinn (UTC+3)', iana:'Europe/Tallinn', offset:3},
+  {label:'Europe/Tirane (UTC+2)', iana:'Europe/Tirane', offset:2},
+  {label:'Europe/Ulyanovsk (UTC+3)', iana:'Europe/Ulyanovsk', offset:3},
+  {label:'Europe/Uzhgorod (UTC+3)', iana:'Europe/Uzhgorod', offset:3},
+  {label:'Europe/Vaduz (UTC+2)', iana:'Europe/Vaduz', offset:2},
+  {label:'Europe/Vatican (UTC+2)', iana:'Europe/Vatican', offset:2},
+  {label:'Europe/Vienna (UTC+2)', iana:'Europe/Vienna', offset:2},
+  {label:'Europe/Vilnius (UTC+3)', iana:'Europe/Vilnius', offset:3},
+  {label:'Europe/Volgograd (UTC+3)', iana:'Europe/Volgograd', offset:3},
+  {label:'Europe/Warsaw (UTC+2)', iana:'Europe/Warsaw', offset:2},
+  {label:'Europe/Zagreb (UTC+2)', iana:'Europe/Zagreb', offset:2},
+  {label:'Europe/Zaporozhye (UTC+3)', iana:'Europe/Zaporozhye', offset:3},
+  {label:'Europe/Zurich (UTC+2)', iana:'Europe/Zurich', offset:2},
+  // Indian Ocean
+  {label:'Indian/Antananarivo (UTC+3)', iana:'Indian/Antananarivo', offset:3},
+  {label:'Indian/Chagos (UTC+6)', iana:'Indian/Chagos', offset:6},
+  {label:'Indian/Christmas (UTC+7)', iana:'Indian/Christmas', offset:7},
+  {label:'Indian/Cocos (UTC+6.5)', iana:'Indian/Cocos', offset:6.5},
+  {label:'Indian/Comoro (UTC+3)', iana:'Indian/Comoro', offset:3},
+  {label:'Indian/Kerguelen (UTC+5)', iana:'Indian/Kerguelen', offset:5},
+  {label:'Indian/Mahe (UTC+4)', iana:'Indian/Mahe', offset:4},
+  {label:'Indian/Maldives (UTC+5)', iana:'Indian/Maldives', offset:5},
+  {label:'Indian/Mauritius (UTC+4)', iana:'Indian/Mauritius', offset:4},
+  {label:'Indian/Mayotte (UTC+3)', iana:'Indian/Mayotte', offset:3},
+  {label:'Indian/Reunion (UTC+4)', iana:'Indian/Reunion', offset:4},
+  // Pacific
+  {label:'Pacific/Apia (UTC+13)', iana:'Pacific/Apia', offset:13},
+  {label:'Pacific/Auckland (UTC+12)', iana:'Pacific/Auckland', offset:12},
+  {label:'Pacific/Bougainville (UTC+11)', iana:'Pacific/Bougainville', offset:11},
+  {label:'Pacific/Chatham (UTC+12.75)', iana:'Pacific/Chatham', offset:12.75},
+  {label:'Pacific/Chuuk (UTC+10)', iana:'Pacific/Chuuk', offset:10},
+  {label:'Pacific/Easter (UTC-5)', iana:'Pacific/Easter', offset:-5},
+  {label:'Pacific/Efate (UTC+11)', iana:'Pacific/Efate', offset:11},
+  {label:'Pacific/Enderbury (UTC+13)', iana:'Pacific/Enderbury', offset:13},
+  {label:'Pacific/Fakaofo (UTC+13)', iana:'Pacific/Fakaofo', offset:13},
+  {label:'Pacific/Fiji (UTC+12)', iana:'Pacific/Fiji', offset:12},
+  {label:'Pacific/Funafuti (UTC+12)', iana:'Pacific/Funafuti', offset:12},
+  {label:'Pacific/Galapagos (UTC-6)', iana:'Pacific/Galapagos', offset:-6},
+  {label:'Pacific/Gambier (UTC-9)', iana:'Pacific/Gambier', offset:-9},
+  {label:'Pacific/Guadalcanal (UTC+11)', iana:'Pacific/Guadalcanal', offset:11},
+  {label:'Pacific/Guam (UTC+10)', iana:'Pacific/Guam', offset:10},
+  {label:'Pacific/Honolulu (UTC-10)', iana:'Pacific/Honolulu', offset:-10},
+  {label:'Pacific/Johnston (UTC-10)', iana:'Pacific/Johnston', offset:-10},
+  {label:'Pacific/Kiritimati (UTC+14)', iana:'Pacific/Kiritimati', offset:14},
+  {label:'Pacific/Kosrae (UTC+11)', iana:'Pacific/Kosrae', offset:11},
+  {label:'Pacific/Kwajalein (UTC+12)', iana:'Pacific/Kwajalein', offset:12},
+  {label:'Pacific/Majuro (UTC+12)', iana:'Pacific/Majuro', offset:12},
+  {label:'Pacific/Marquesas (UTC-9.5)', iana:'Pacific/Marquesas', offset:-9.5},
+  {label:'Pacific/Midway (UTC-11)', iana:'Pacific/Midway', offset:-11},
+  {label:'Pacific/Nauru (UTC+12)', iana:'Pacific/Nauru', offset:12},
+  {label:'Pacific/Niue (UTC-11)', iana:'Pacific/Niue', offset:-11},
+  {label:'Pacific/Norfolk (UTC+11)', iana:'Pacific/Norfolk', offset:11},
+  {label:'Pacific/Noumea (UTC+11)', iana:'Pacific/Noumea', offset:11},
+  {label:'Pacific/Pago_Pago (UTC-11)', iana:'Pacific/Pago_Pago', offset:-11},
+  {label:'Pacific/Palau (UTC+9)', iana:'Pacific/Palau', offset:9},
+  {label:'Pacific/Pitcairn (UTC-8)', iana:'Pacific/Pitcairn', offset:-8},
+  {label:'Pacific/Pohnpei (UTC+11)', iana:'Pacific/Pohnpei', offset:11},
+  {label:'Pacific/Port_Moresby (UTC+10)', iana:'Pacific/Port_Moresby', offset:10},
+  {label:'Pacific/Rarotonga (UTC-10)', iana:'Pacific/Rarotonga', offset:-10},
+  {label:'Pacific/Saipan (UTC+10)', iana:'Pacific/Saipan', offset:10},
+  {label:'Pacific/Tahiti (UTC-10)', iana:'Pacific/Tahiti', offset:-10},
+  {label:'Pacific/Tarawa (UTC+12)', iana:'Pacific/Tarawa', offset:12},
+  {label:'Pacific/Tongatapu (UTC+13)', iana:'Pacific/Tongatapu', offset:13},
+  {label:'Pacific/Wake (UTC+12)', iana:'Pacific/Wake', offset:12},
+  {label:'Pacific/Wallis (UTC+12)', iana:'Pacific/Wallis', offset:12},
+  // UTC
+  {label:'UTC (UTC+0)', iana:'UTC', offset:0}
 ];
 
 var STAGES = ['All','Group Stage','Round of 32','Round of 16','Quarter-final','Semi-final','Final'];
@@ -200,25 +623,84 @@ var STAGE_COLOR = {
   'Quarter-final':'#f97316','Semi-final':'#ef4444','Final':'#f0b429'
 };
 
-var state = { tz: 10, stage: 'All' };
+var LS_KEY = 'wc2026_tz';
+
+// Try to detect browser timezone, fall back to UTC+10
+function detectDefaultTz() {
+  try {
+    var bTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    for (var i = 0; i < TIMEZONES.length; i++) {
+      if (TIMEZONES[i].iana === bTz) return TIMEZONES[i].iana;
+    }
+  } catch(e) {}
+  return 'Australia/Brisbane';
+}
+
+function loadSavedTz() {
+  try { return localStorage.getItem(LS_KEY) || null; } catch(e) { return null; }
+}
+function saveTz(iana) {
+  try { localStorage.setItem(LS_KEY, iana); } catch(e) {}
+}
+
+var state = {
+  tzIana: loadSavedTz() || detectDefaultTz(),
+  stage: 'All'
+};
+
+function getTzOffset(iana) {
+  for (var i = 0; i < TIMEZONES.length; i++) {
+    if (TIMEZONES[i].iana === iana) return TIMEZONES[i].offset;
+  }
+  return 0;
+}
+
+// Use Intl to get a DST-aware time display when possible
+function fmtTimeIana(utcDate, iana) {
+  try {
+    var fmt = new Intl.DateTimeFormat('en-AU', {
+      timeZone: iana,
+      hour: 'numeric', minute: '2-digit', hour12: true
+    });
+    return fmt.format(utcDate);
+  } catch(e) {
+    var offset = getTzOffset(iana);
+    var local = new Date(utcDate.getTime() + offset * 3600000);
+    return fmtTimeManual(local);
+  }
+}
+
+function fmtDateIana(utcDate, iana) {
+  try {
+    var fmt = new Intl.DateTimeFormat('en-AU', {
+      timeZone: iana,
+      weekday: 'short', day: 'numeric', month: 'short'
+    });
+    return fmt.format(utcDate);
+  } catch(e) {
+    var offset = getTzOffset(iana);
+    var local = new Date(utcDate.getTime() + offset * 3600000);
+    return fmtDateManual(local);
+  }
+}
+
+function fmtTimeManual(d) {
+  var h = d.getUTCHours(), mn = d.getUTCMinutes();
+  var ap = h >= 12 ? 'PM' : 'AM';
+  return (h % 12 || 12) + ':' + pad(mn) + ' ' + ap;
+}
+function fmtDateManual(d) {
+  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return days[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + months[d.getUTCMonth()];
+}
 
 function getUTC(m) {
   var d = new Date(m.date + 'T00:00:00Z');
   d.setUTCHours(m.etH + 4, m.etM, 0, 0);
   return d;
 }
-function toLocal(utc, offset) { return new Date(utc.getTime() + offset * 3600000); }
 function pad(n) { return (n < 10 ? '0' : '') + n; }
-function fmtTime(d) {
-  var h = d.getUTCHours(), mn = d.getUTCMinutes();
-  var ap = h >= 12 ? 'PM' : 'AM';
-  return (h % 12 || 12) + ':' + pad(mn) + ' ' + ap;
-}
-function fmtDate(d) {
-  var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return days[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + months[d.getUTCMonth()];
-}
 function icsFmt(d) { return d.toISOString().replace(/[-:.]/g,'').slice(0,15) + 'Z'; }
 
 function gcalUrl(m) {
@@ -226,7 +708,7 @@ function gcalUrl(m) {
   var end = new Date(start.getTime() + 7200000);
   var title = encodeURIComponent('⚽ WC2026: ' + m.teams);
   var loc = encodeURIComponent(m.venue);
-  var det = encodeURIComponent('FIFA World Cup 2026 — ' + m.stage + (m.group ? ' Group ' + m.group : '') + (m.match ? ' Match ' + m.match : '') + '\n\nTip: set a 1-hour notification after the event opens.');
+  var det = encodeURIComponent('FIFA World Cup 2026 — ' + m.stage + (m.group ? ' Group ' + m.group : '') + (m.match ? ' Match ' + m.match : ''));
   return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + title +
     '&dates=' + icsFmt(start) + '/' + icsFmt(end) + '&location=' + loc + '&details=' + det;
 }
@@ -264,10 +746,9 @@ function renderList() {
   var order = [];
   matches.forEach(function(m) {
     var utc = getUTC(m);
-    var local = toLocal(utc, state.tz);
-    var key = fmtDate(local);
+    var key = fmtDateIana(utc, state.tzIana);
     if (!groups[key]) { groups[key] = []; order.push(key); }
-    groups[key].push({ m: m, local: local });
+    groups[key].push({ m: m, utc: utc });
   });
 
   var html = '';
@@ -278,10 +759,11 @@ function renderList() {
       var col = STAGE_COLOR[m.stage] || '#94a3b8';
       var badge = m.group ? '<span class="badge-g">Grp ' + esc(m.group) + '</span>'
         : (m.match ? '<span class="badge-m">M' + esc(m.match) + '</span>' : '');
+      var timeStr = fmtTimeIana(item.utc, state.tzIana);
       html += '<div class="card">' +
         '<div class="dot" style="background:' + col + '"></div>' +
         '<div class="info"><div class="teams">' + esc(m.teams) + '</div>' +
-        '<div class="meta"><span class="time">' + fmtTime(item.local) + '</span><span>·</span><span>' + esc(m.venue) + '</span>' + badge + '</div></div>' +
+        '<div class="meta"><span class="time">' + esc(timeStr) + '</span><span>·</span><span>' + esc(m.venue) + '</span>' + badge + '</div></div>' +
         '<a class="gcal" href="' + gcalUrl(m) + '" target="_blank" rel="noopener noreferrer">+ GCal</a>' +
         '</div>';
     });
@@ -305,16 +787,27 @@ function renderFilters() {
   });
 }
 
+function showSaved() {
+  var el = document.getElementById('savedLabel');
+  el.style.display = 'inline';
+  setTimeout(function() { el.style.display = 'none'; }, 2000);
+}
+
 function init() {
   var sel = document.getElementById('tzSelect');
   TIMEZONES.forEach(function(t) {
     var o = document.createElement('option');
-    o.value = t.offset;
+    o.value = t.iana;
     o.textContent = t.label;
+    if (t.iana === state.tzIana) o.selected = true;
     sel.appendChild(o);
   });
-  sel.value = state.tz;
-  sel.onchange = function() { state.tz = parseFloat(sel.value); renderList(); };
+  sel.onchange = function() {
+    state.tzIana = sel.value;
+    saveTz(sel.value);
+    showSaved();
+    renderList();
+  };
   document.getElementById('dlBtn').onclick = download;
   renderFilters();
   renderList();

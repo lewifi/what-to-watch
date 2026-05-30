@@ -1040,21 +1040,33 @@ footer a:hover { color: var(--text); }
 
 /* ── MOVERS ROW ── */
 .movers-row {
-  padding: 0 clamp(16px,4vw,48px) 28px;
+  padding: 14px clamp(16px,4vw,48px) 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
 .movers-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 0;
+  color: var(--text);
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
 }
+.movers-header:hover .movers-title { color: var(--hero, #2196F3); }
 .movers-title {
   font-family: 'Bebas Neue', sans-serif;
   font-size: 22px;
   letter-spacing: 0.08em;
   color: var(--text);
+  transition: color 0.2s;
 }
 .movers-sub {
   font-size: 10px;
@@ -1062,6 +1074,15 @@ footer a:hover { color: var(--text); }
   text-transform: uppercase;
   color: var(--muted);
 }
+.movers-chevron {
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform 0.25s ease, color 0.2s;
+  display: flex;
+  align-items: center;
+}
+.movers-header[aria-expanded="true"] .movers-chevron { transform: rotate(180deg); }
+.movers-header:hover .movers-chevron { color: var(--text); }
 .movers-scroll {
   display: flex;
   gap: 10px;
@@ -1069,6 +1090,16 @@ footer a:hover { color: var(--text); }
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   padding-bottom: 4px;
+  max-height: 0;
+  opacity: 0;
+  overflow-y: hidden;
+  transition: max-height 0.35s ease, opacity 0.25s ease;
+  pointer-events: none;
+}
+.movers-row.open .movers-scroll {
+  max-height: 220px;
+  opacity: 1;
+  pointer-events: auto;
 }
 .movers-scroll::-webkit-scrollbar { display: none; }
 .mover-card {
@@ -1743,10 +1774,13 @@ footer a:hover { color: var(--text); }
 </div>
 
 <div id="movers-row" class="movers-row" style="display:none">
-  <div class="movers-header">
+  <button class="movers-header" id="movers-toggle" onclick="toggleMovers()" aria-expanded="false" aria-controls="movers-scroll">
     <span class="movers-title">Biggest Movers</span>
     <span class="movers-sub">last 24h</span>
-  </div>
+    <span class="movers-chevron" id="movers-chevron" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </span>
+  </button>
   <div class="movers-scroll" id="movers-scroll"></div>
 </div>
 
@@ -1758,7 +1792,7 @@ footer a:hover { color: var(--text); }
 
 <footer>
   <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a></p>
-  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.13.0</span></p>
+  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.13.1</span></p>
 </footer>
 
 <!-- ── MODAL ── -->
@@ -2736,6 +2770,16 @@ function showToast(msg) {
 // ═════════════════════════════════════════════════════════════
 //  MOVERS — biggest climbers in the last 24h
 // ═════════════════════════════════════════════════════════════
+
+function toggleMovers() {
+  const row = document.getElementById('movers-row');
+  const btn = document.getElementById('movers-toggle');
+  if (!row || !btn) return;
+  const isOpen = row.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  try { localStorage.setItem('pulse_movers_open', isOpen ? '1' : '0'); } catch(_) {}
+}
+
 async function loadMovers() {
   try {
     // Get one snapshot from ~24h ago (oldest in the 22-26h window)
@@ -2815,6 +2859,13 @@ async function loadMovers() {
     });
 
     row.style.display = 'flex';
+    // Restore open/closed preference (default = closed)
+    const wasOpen = (() => { try { return localStorage.getItem('pulse_movers_open') === '1'; } catch(_) { return false; } })();
+    if (wasOpen) {
+      row.classList.add('open');
+      const btn = document.getElementById('movers-toggle');
+      if (btn) btn.setAttribute('aria-expanded', 'true');
+    }
   } catch (_) {
     // Silent — Movers is an enhancement, not critical
   }

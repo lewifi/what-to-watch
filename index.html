@@ -476,7 +476,22 @@ header {
 .sort-btn:hover  { color: var(--text); }
 
 #count-badge    { font-size: 12px; color: var(--muted); }
-#last-updated   { font-size: 12px; color: var(--muted); margin-left: auto; }
+#last-updated   {
+  font-size: 12px;
+  color: var(--muted);
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s;
+}
+#last-updated.flash { color: var(--accent3); }
+.refresh-countdown {
+  font-size: 11px;
+  color: var(--muted);
+  opacity: 0.7;
+  letter-spacing: 0.04em;
+}
 
 /* ── SECTION HEADER ── */
 .section-header {
@@ -516,6 +531,124 @@ header {
   width: 6px; height: 6px;
   border-radius: 50%;
 }
+
+
+/* ── FEATURED TILE (World Cup 2026 etc) ── */
+.featured-tile {
+  position: relative;
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(33,150,243,0.08), rgba(33,150,243,0.02));
+  border: 2px solid #2196F3;
+  border-radius: 10px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--text);
+  overflow: hidden;
+  animation: featured-glow 3s ease-in-out infinite, fadeUp 0.4s ease forwards;
+  transition: transform 0.3s ease, opacity 0.3s ease, max-height 0.4s ease, padding 0.4s ease, margin 0.4s ease, border-width 0.4s ease;
+  margin-bottom: 8px;
+}
+.featured-tile:hover {
+  transform: translateY(-2px);
+}
+.featured-tile.dismissing {
+  opacity: 0;
+  transform: translateY(-8px);
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
+  border-width: 0;
+  pointer-events: none;
+}
+@keyframes featured-glow {
+  0%, 100% { box-shadow: 0 0 0 rgba(33,150,243,0); }
+  50%      { box-shadow: 0 0 24px rgba(33,150,243,0.35), 0 0 48px rgba(33,150,243,0.15); }
+}
+.featured-emoji {
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.featured-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.featured-label {
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #2196F3;
+  font-weight: 600;
+}
+.featured-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  color: var(--text);
+}
+.featured-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.featured-arrow {
+  flex-shrink: 0;
+  color: #2196F3;
+  font-size: 20px;
+  margin-right: 8px;
+  opacity: 0.7;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.featured-tile:hover .featured-arrow { transform: translateX(4px); opacity: 1; }
+.featured-dismiss {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
+  transition: all 0.2s;
+  z-index: 2;
+}
+.featured-dismiss:hover {
+  background: rgba(255,255,255,0.08);
+  color: var(--text);
+}
+[data-theme="light"] .featured-tile {
+  background: linear-gradient(135deg, rgba(33,150,243,0.06), rgba(33,150,243,0.01));
+}
+[data-theme="light"] .featured-dismiss:hover { background: rgba(0,0,0,0.06); }
+
+@media (max-width: 600px) {
+  .featured-tile {
+    padding: 14px 16px 14px 14px;
+    gap: 12px;
+  }
+  .featured-emoji { font-size: 28px; }
+  .featured-title { font-size: 18px; }
+  .featured-subtitle { font-size: 11px; }
+  .featured-arrow { display: none; }
+}
+
 
 /* ── GRID ── */
 #grid {
@@ -745,7 +878,7 @@ footer a:hover { color: var(--text); }
 /* ── WATCHLIST STAR ── */
 .card-star {
   position: absolute;
-  top: 40px; right: 8px;
+  top: 48px; right: 8px;
   background: rgba(0,0,0,0.55);
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 50%;
@@ -1050,15 +1183,21 @@ footer a:hover { color: var(--text); }
 .movers-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: transparent;
-  border: none;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 8px 14px;
   color: var(--text);
   font-family: inherit;
   text-align: left;
-  width: 100%;
+  width: fit-content;
+  transition: background 0.2s, border-color 0.2s;
+}
+.movers-header:hover {
+  background: var(--surface2);
+  border-color: var(--muted);
 }
 .movers-header:hover .movers-title { color: var(--hero, #2196F3); }
 .movers-title {
@@ -1075,13 +1214,13 @@ footer a:hover { color: var(--text); }
   color: var(--muted);
 }
 .movers-chevron {
-  margin-left: auto;
   color: var(--muted);
   transition: transform 0.25s ease, color 0.2s;
   display: flex;
   align-items: center;
+  transform: rotate(-90deg);  /* points right when closed */
 }
-.movers-header[aria-expanded="true"] .movers-chevron { transform: rotate(180deg); }
+.movers-header[aria-expanded="true"] .movers-chevron { transform: rotate(0deg); }  /* points down when open */
 .movers-header:hover .movers-chevron { color: var(--text); }
 .movers-scroll {
   display: flex;
@@ -1581,6 +1720,13 @@ footer a:hover { color: var(--text); }
   gtag('js', new Date());
   gtag('config', 'G-5XX60C0HK1');
 </script>
+<script>
+  // Set theme before first paint to avoid flash
+  try {
+    const t = localStorage.getItem('pulse_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  } catch(_) {}
+</script>
 </head>
 <body>
 
@@ -1775,11 +1921,11 @@ footer a:hover { color: var(--text); }
 
 <div id="movers-row" class="movers-row" style="display:none">
   <button class="movers-header" id="movers-toggle" onclick="toggleMovers()" aria-expanded="false" aria-controls="movers-scroll">
-    <span class="movers-title">Biggest Movers</span>
-    <span class="movers-sub">last 24h</span>
     <span class="movers-chevron" id="movers-chevron" aria-hidden="true">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </span>
+    <span class="movers-title">Biggest Movers</span>
+    <span class="movers-sub">last 24h</span>
   </button>
   <div class="movers-scroll" id="movers-scroll"></div>
 </div>
@@ -1792,7 +1938,7 @@ footer a:hover { color: var(--text); }
 
 <footer>
   <p>Data: <a href="https://www.themoviedb.org" target="_blank">TMDB</a> · <a href="https://trakt.tv" target="_blank">Trakt.tv</a> · <a href="https://youtube.com" target="_blank">YouTube</a></p>
-  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.13.1</span></p>
+  <p>EPHIX PULSE — What the World is Watching · Live TV &amp; Movie Trending Aggregator <span style="opacity:0.4;margin-left:6px">v1.14.0</span></p>
 </footer>
 
 <!-- ── MODAL ── -->
@@ -1943,9 +2089,8 @@ allItems = mergeAndScore(tmdbItems, traktMap, youtubeMap, wikiMap, {
       document.getElementById('section-header').style.display = 'flex';
       loadMovers();  // async, non-blocking
 
-      const now = new Date();
-      document.getElementById('last-updated').textContent =
-        `Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+      lastRefreshTime = Date.now();
+      startCountdown();
 
       applyViewMode();
       renderGrid();
@@ -2266,6 +2411,49 @@ function normaliseTitle(title, year) {
   return (title.toLowerCase().replace(/[^a-z0-9]/g,'') + (year || '')).slice(0,40);
 }
 
+
+// ═════════════════════════════════════════════════════════════
+//  FEATURED TILE — World Cup 2026
+// ═════════════════════════════════════════════════════════════
+const WC_TILE_KEY = 'wc2026_tile_dismissed';
+const WC_START = new Date('2026-06-04T00:00:00Z');  // show from a week before
+const WC_END   = new Date('2026-07-20T00:00:00Z');  // hide day after final
+
+function shouldShowWcTile() {
+  let dismissed = false;
+  try { dismissed = localStorage.getItem(WC_TILE_KEY) === '1'; } catch(_) {}
+  if (dismissed) return false;
+  const now = new Date();
+  return now >= WC_START && now < WC_END;
+}
+
+function renderFeaturedTile() {
+  if (!shouldShowWcTile()) return null;
+  const tile = document.createElement('a');
+  tile.className = 'featured-tile';
+  tile.href = '/wc2026.html';
+  tile.setAttribute('aria-label', 'World Cup 2026 — Every Match in Your Timezone');
+  tile.innerHTML = `
+    <span class="featured-emoji" aria-hidden="true">⚽</span>
+    <div class="featured-body">
+      <span class="featured-label">FEATURED · WORLD CUP</span>
+      <span class="featured-title">World Cup 2026 — Every Match in Your Timezone</span>
+      <span class="featured-subtitle">Full schedule, add-to-calendar reminders, live group tables</span>
+    </div>
+    <span class="featured-arrow" aria-hidden="true">→</span>
+    <button class="featured-dismiss" aria-label="Dismiss" title="Dismiss">×</button>
+  `;
+  // Dismiss handler
+  tile.querySelector('.featured-dismiss').addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try { localStorage.setItem(WC_TILE_KEY, '1'); } catch(_) {}
+    tile.classList.add('dismissing');
+    setTimeout(() => tile.remove(), 400);
+  });
+  return tile;
+}
+
 // ── RENDER ───────────────────────────────────────────────────────
 function renderGrid() {
   const grid = document.getElementById('grid');
@@ -2317,6 +2505,12 @@ function renderGrid() {
     return;
   }
   errEl.style.display = 'none';
+
+  // Featured tile (only on default Pulse view of 'all')
+  if (currentFilter === 'all' && currentSort === 'pulse' && !searchQuery && activeSources.size === 0) {
+    const featured = renderFeaturedTile();
+    if (featured) grid.appendChild(featured);
+  }
 
   filtered.forEach((item, idx) => {
     const card = buildCard(item, idx + 1);
@@ -2594,7 +2788,12 @@ function renderModal(item, detail, credits) {
   const title    = detail.title || detail.name || item.title || item.name || 'Untitled';
   const tagline  = detail.tagline || '';
   const overview = detail.overview || 'No synopsis available.';
-  const year     = (detail.release_date || detail.first_air_date || '').slice(0,4);
+  const rawDate  = detail.release_date || detail.first_air_date || '';
+  const year     = rawDate.slice(0, 4);
+  const fullDate = rawDate ? (() => {
+    const d = new Date(rawDate);
+    return isNaN(d.getTime()) ? rawDate : d.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
+  })() : null;
   const rating   = detail.vote_average ? detail.vote_average.toFixed(1) : null;
   const pulse    = item._pulseScore ? item._pulseScore.toFixed(1) : null;
   const runtime  = detail.runtime || (detail.episode_run_time?.[0]);
@@ -2636,7 +2835,7 @@ function renderModal(item, detail, credits) {
         <div class="modal-meta">
           ${rating ? `<span class="modal-rating">★ ${rating}</span>` : ''}
           ${pulse  ? `<span class="modal-pulse">PULSE ${pulse}</span>` : ''}
-          ${year   ? `<span>${year}</span>` : ''}
+          ${fullDate ? `<span>${fullDate}</span>` : (year ? `<span>${year}</span>` : '')}
           ${runtime ? `<span>${runtime} min</span>` : ''}
         </div>
         ${tagline ? `<div class="modal-tagline">"${escHtml(tagline)}"</div>` : ''}
@@ -2871,6 +3070,43 @@ async function loadMovers() {
   }
 }
 
+
+// ═════════════════════════════════════════════════════════════
+//  REFRESH COUNTDOWN + ANNOUNCEMENT
+// ═════════════════════════════════════════════════════════════
+let lastRefreshTime = Date.now();
+let countdownTimer = null;
+
+function startCountdown() {
+  if (countdownTimer) clearInterval(countdownTimer);
+  countdownTimer = setInterval(updateCountdown, 1000);
+  updateCountdown();
+}
+
+function updateCountdown() {
+  const el = document.getElementById('last-updated');
+  if (!el) return;
+  const elapsed = Date.now() - lastRefreshTime;
+  const remaining = Math.max(0, AUTO_REFRESH_INTERVAL - elapsed);
+  const mins = Math.floor(remaining / 60000);
+  const secs = Math.floor((remaining % 60000) / 1000);
+  const updated = new Date(lastRefreshTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const countdownStr = remaining > 0
+    ? `next in ${mins}:${secs.toString().padStart(2, '0')}`
+    : 'refreshing…';
+  el.innerHTML = `<span>Updated ${updated}</span><span class="refresh-countdown">${countdownStr}</span>`;
+}
+
+function announceRefresh() {
+  lastRefreshTime = Date.now();
+  const el = document.getElementById('last-updated');
+  if (el) {
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 1500);
+  }
+  updateCountdown();
+}
+
 // ═════════════════════════════════════════════════════════════
 //  THEME (dark / light)
 // ═════════════════════════════════════════════════════════════
@@ -3074,9 +3310,7 @@ async function backgroundRefresh() {
     renderGrid();
     saveCurrentRanks();
 
-    const now = new Date();
-    const lu = document.getElementById('last-updated');
-    if (lu) lu.textContent = `Updated ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`;
+    announceRefresh();
   } catch(err) {
     console.warn('[AutoRefresh] failed (non-fatal):', err.message);
   } finally {
@@ -3151,7 +3385,8 @@ async function fetchTitleHistory(tmdbId, mediaType) {
 function buildSparkline(history) {
   if (!history || history.length < 2) return null;
 
-  const w = 260, h = 60, pad = 6;
+  const w = 280, chartH = 60, pad = 6, axisH = 16;
+  const h = chartH + axisH;
   const scores = history.map(p => p.pulse_score);
   const min = Math.min(...scores);
   const max = Math.max(...scores);
@@ -3159,16 +3394,31 @@ function buildSparkline(history) {
 
   const pts = history.map((p, i) => {
     const x = pad + (i / (history.length - 1)) * (w - pad * 2);
-    const y = h - pad - ((p.pulse_score - min) / range) * (h - pad * 2);
+    const y = chartH - pad - ((p.pulse_score - min) / range) * (chartH - pad * 2);
     return [x, y];
   });
 
   const linePath = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
-  const areaPath = linePath + ` L${pts[pts.length-1][0].toFixed(1)},${h-pad} L${pts[0][0].toFixed(1)},${h-pad} Z`;
+  const areaPath = linePath + ` L${pts[pts.length-1][0].toFixed(1)},${chartH - pad} L${pts[0][0].toFixed(1)},${chartH - pad} Z`;
 
   const first = scores[0], lastVal = scores[scores.length-1];
   const trend = lastVal > first ? 'up' : lastVal < first ? 'down' : 'flat';
   const trendColor = trend === 'up' ? '#38d9a9' : trend === 'down' ? '#ff4757' : '#7eb8d4';
+
+  // Date axis labels: start, mid, end
+  const fmt = ts => {
+    const d = new Date(ts);
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  };
+  const startDate = fmt(history[0].captured_at);
+  const endDate   = fmt(history[history.length - 1].captured_at);
+  const midIdx    = Math.floor(history.length / 2);
+  const midDate   = fmt(history[midIdx].captured_at);
+  const midX      = pad + (midIdx / (history.length - 1)) * (w - pad * 2);
+
+  // Pulse score axis hints — show min/max
+  const minLabel = Math.round(min).toString();
+  const maxLabel = Math.round(max).toString();
 
   return `
     <svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none" style="display:block">
@@ -3178,9 +3428,19 @@ function buildSparkline(history) {
           <stop offset="100%" stop-color="${trendColor}" stop-opacity="0"/>
         </linearGradient>
       </defs>
+      <!-- Min/Max guide lines (faint) -->
+      <line x1="${pad}" y1="${chartH - pad}" x2="${w - pad}" y2="${chartH - pad}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="${pad}" y1="${pad}" x2="${w - pad}" y2="${pad}" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
       <path d="${areaPath}" fill="url(#spark-grad)"/>
       <path d="${linePath}" fill="none" stroke="${trendColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       <circle cx="${pts[pts.length-1][0].toFixed(1)}" cy="${pts[pts.length-1][1].toFixed(1)}" r="3" fill="${trendColor}"/>
+      <!-- Y axis hints -->
+      <text x="${w - pad - 1}" y="${pad + 8}" text-anchor="end" font-family="DM Sans, sans-serif" font-size="9" fill="rgba(255,255,255,0.35)">${maxLabel}</text>
+      <text x="${w - pad - 1}" y="${chartH - pad - 2}" text-anchor="end" font-family="DM Sans, sans-serif" font-size="9" fill="rgba(255,255,255,0.35)">${minLabel}</text>
+      <!-- X axis date labels -->
+      <text x="${pad}" y="${chartH + 12}" font-family="DM Sans, sans-serif" font-size="9" fill="rgba(255,255,255,0.5)">${startDate}</text>
+      <text x="${midX.toFixed(1)}" y="${chartH + 12}" text-anchor="middle" font-family="DM Sans, sans-serif" font-size="9" fill="rgba(255,255,255,0.35)">${midDate}</text>
+      <text x="${w - pad}" y="${chartH + 12}" text-anchor="end" font-family="DM Sans, sans-serif" font-size="9" fill="rgba(255,255,255,0.5)">${endDate}</text>
     </svg>
   `;
 }

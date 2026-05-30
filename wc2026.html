@@ -144,7 +144,11 @@ body { background: #0d1520; font-family: system-ui, -apple-system, sans-serif; c
 .meta .vtime { color: #f0b429; font-weight: 600; }
 .badge-g { background: rgba(240,180,41,0.1); color: #f0b429; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; }
 .badge-m { background: rgba(255,255,255,0.06); color: #94a3b8; padding: 1px 6px; border-radius: 4px; font-size: 11px; }
-.gcal { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb; border-radius: 7px; padding: 8px 12px; font-size: 13px; font-weight: 600; text-decoration: none; flex-shrink: 0; white-space: nowrap; }
+.addbtns { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; }
+.gcal { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb; border-radius: 7px; padding: 7px 12px; font-size: 12px; font-weight: 600; text-decoration: none; white-space: nowrap; text-align: center; }
+.icsbtn { background: #1e2d3d; color: #cbd5e1; border: 1px solid #475569; border-radius: 7px; padding: 7px 12px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: pointer; text-align: center; }
+.icsbtn:hover { border-color: #94a3b8; color: #f1f5f9; }
+.gcal:hover { background: #25467a; }
 .empty { text-align: center; color: #475569; padding: 40px 20px; font-size: 14px; }
 
 /* group tables */
@@ -563,6 +567,28 @@ function buildICS(){
   lines.push('END:VCALENDAR');
   return lines.join('\r\n');
 }
+/* single-match .ics — universal (Apple Calendar, Outlook, Google, etc.) */
+function buildSingleICS(m){
+  var s = getUTC(m), e = new Date(s.getTime() + 7200000);
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//FIFA World Cup 2026//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH',
+    'BEGIN:VEVENT','UID:wc2026-' + s.getTime() + '@calendar','DTSTART:' + icsFmt(s),'DTEND:' + icsFmt(e),
+    'SUMMARY:⚽ WC2026: ' + m.teams,'LOCATION:' + m.venue,
+    'DESCRIPTION:FIFA World Cup 2026 — ' + m.stage + (m.group ? ' Group ' + m.group : '') + (m.match ? ' Match ' + m.match : ''),
+    'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Kicks off in 1 hour','TRIGGER:-PT60M','END:VALARM',
+    'END:VEVENT','END:VCALENDAR'].join('\r\n');
+}
+function safeFile(m){
+  return 'WC2026_' + m.teams.replace(/[^a-z0-9]+/gi,'_').replace(/^_|_$/g,'') + '.ics';
+}
+function downloadMatch(idx){
+  var m = MATCHES[idx];
+  if (!m) return;
+  var blob = new Blob([buildSingleICS(m)], {type:'text/calendar'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = safeFile(m);
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); document.body.removeChild(a); }, 100);
+}
 function download(){
   var blob = new Blob([buildICS()], {type:'text/calendar'});
   var a = document.createElement('a');
@@ -578,10 +604,11 @@ function renderList(){
   }
   var groups = {}, order = [];
   matches.forEach(function(m){
+    var idx = MATCHES.indexOf(m);
     var local = toLocal(getUTC(m), state.tz);
     var key = fmtDate(local);
     if (!groups[key]){ groups[key] = []; order.push(key); }
-    groups[key].push({ m:m, local:local });
+    groups[key].push({ m:m, local:local, idx:idx });
   });
 
   if (!order.length){ document.getElementById('list').innerHTML = '<div class="empty">No matches for this filter.<br>Pick some favourite teams or switch to “Show all”.</div>'; return; }
@@ -605,12 +632,21 @@ function renderList(){
         '<div class="dot" style="background:' + col + '"></div>' +
         '<div class="info"><div class="teams">' + (fav ? '⭐ ' : '') + teamsWithFlags(m) + '</div>' +
         '<div class="meta"><span class="time">' + fmtTime(it.local) + (userAbbr ? ' ' + userAbbr : '') + '</span><span>·</span>' + venueStr + badge + '</div></div>' +
-        '<a class="gcal" href="' + gcalUrl(m) + '" target="_blank" rel="noopener noreferrer">+ GCal</a>' +
+        '<div class="addbtns">' +
+          '<a class="gcal" href="' + gcalUrl(m) + '" target="_blank" rel="noopener noreferrer">+ GCal</a>' +
+          '<button class="icsbtn" data-idx="' + it.idx + '">+ ICS</button>' +
+        '</div>' +
         '</div>';
     });
     html += '</div>';
   });
   document.getElementById('list').innerHTML = html;
+  // delegate per-match ICS downloads
+  var listEl = document.getElementById('list');
+  var btns = listEl.querySelectorAll('.icsbtn');
+  for (var b = 0; b < btns.length; b++){
+    btns[b].onclick = function(){ downloadMatch(parseInt(this.getAttribute('data-idx'), 10)); };
+  }
 }
 
 function renderFilters(){

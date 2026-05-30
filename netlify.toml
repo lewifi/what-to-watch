@@ -2,11 +2,13 @@
   functions = "netlify/functions"
   publish = "."
 
+[functions]
+  node_bundler = "esbuild"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
-
 [[redirects]]
   from = "/share/*"
   to = "/.netlify/functions/share"

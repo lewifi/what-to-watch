@@ -102,8 +102,24 @@ function computeKnockouts(matches) {
 export default async (req) => {
   const token = process.env.FOOTBALL_DATA_TOKEN;
   if (!token) {
+    // Safe diagnostic: report which env var NAMES exist (never values),
+    // so we can tell "not deployed" from "wrong name / wrong scope".
+    const allNames = Object.keys(process.env);
+    const relevant = allNames.filter((n) =>
+      /TOKEN|FOOTBALL|DATA|KEY|API/i.test(n)
+    );
     return new Response(
-      JSON.stringify({ ok: false, error: "Missing FOOTBALL_DATA_TOKEN env var" }),
+      JSON.stringify({
+        ok: false,
+        error: "Missing FOOTBALL_DATA_TOKEN env var",
+        diagnostic: {
+          totalEnvVars: allNames.length,
+          matchingNames: relevant, // names only, no values
+          sawExactName: allNames.includes("FOOTBALL_DATA_TOKEN"),
+          context: process.env.CONTEXT || null, // production / deploy-preview / branch-deploy
+          branch: process.env.BRANCH || null,
+        },
+      }),
       { status: 500, headers: { "content-type": "application/json" } }
     );
   }

@@ -426,10 +426,6 @@ function isFav(m){
   return t.some(function(x){ return state.favs.indexOf(x) !== -1; });
 }
 function teamsWithFlags(m){
-  var t = matchTeams(m);
-  if (t.length === 2 && FLAGS[t[0]] && FLAGS[t[1]]) {
-    return FLAGS[t[0]] + ' ' + esc(t[0]) + '  v  ' + FLAGS[t[1]] + ' ' + esc(t[1]);
-  }
   return esc(m.teams);
 }
 
@@ -516,7 +512,7 @@ function renderFavBar(){
   document.getElementById('favOnly').classList.toggle('active', state.favMode === 'only');
   var chips = document.getElementById('favChips');
   if (!state.favs.length){ chips.innerHTML = '<span style="font-size:12px;color:#475569">None selected yet</span>'; return; }
-  chips.innerHTML = state.favs.map(function(t){ return '<span class="chip">' + (FLAGS[t]||'') + ' ' + esc(t) + '</span>'; }).join('');
+  chips.innerHTML = state.favs.map(function(t){ return '<span class="chip">' + esc(t) + '</span>'; }).join('');
 }
 
 /* ---------- RENDER: GROUP TABLES ---------- */
@@ -527,7 +523,7 @@ function renderGroups(){
       '<th class="tname">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th class="pts">Pts</th>' +
       '</tr></thead><tbody>';
     GROUPS[g].forEach(function(t, i){
-      html += '<tr' + (i < 2 ? ' class="q"' : '') + '><td class="tname">' + (FLAGS[t]||'') + ' ' + esc(t) + '</td>' +
+      html += '<tr' + (i < 2 ? ' class="q"' : '') + '><td class="tname">' + esc(t) + '</td>' +
         '<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="pts">0</td></tr>';
     });
     html += '</tbody></table></div>';
@@ -542,7 +538,7 @@ function renderTeamGrid(){
   ALL_TEAMS.forEach(function(t){
     var div = document.createElement('div');
     div.className = 'teamopt' + (state.favs.indexOf(t) !== -1 ? ' sel' : '');
-    div.innerHTML = '<span class="fl">' + (FLAGS[t]||'') + '</span><span class="nm">' + esc(t) + '</span>';
+    div.innerHTML = '<span class="nm">' + esc(t) + '</span>';
     div.onclick = function(){
       var i = state.favs.indexOf(t);
       if (i === -1) state.favs.push(t); else state.favs.splice(i, 1);

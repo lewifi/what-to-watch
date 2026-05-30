@@ -403,6 +403,9 @@ var state = {
 };
 if (state.tz === null) state.tz = autoTz();
 
+/* live data fetched from /api/scores (Netlify function); null until loaded */
+var LIVE = null;
+
 /* ---------- HELPERS ---------- */
 function getUTC(m){ var d = new Date(m.date + 'T00:00:00Z'); d.setUTCHours(m.etH + 4, m.etM, 0, 0); return d; }
 function toLocal(utc, o){ return new Date(utc.getTime() + o * 3600000); }
@@ -516,19 +519,70 @@ function renderFavBar(){
 }
 
 /* ---------- RENDER: GROUP TABLES ---------- */
+/* normalise team names so football-data.org names match our GROUPS list */
+function normName(n){
+  if (!n) return '';
+  var map = {
+    'United States':'USA','South Korea':'South Korea','Republic of Korea':'South Korea',
+    'IR Iran':'Iran','Iran':'Iran','Korea Republic':'South Korea',
+    'Bosnia and Herzegovina':'Bosnia & Herz.','Bosnia & Herzegovina':'Bosnia & Herz.',
+    'Côte d\u2019Ivoire':'Ivory Coast','Cote d\u2019Ivoire':'Ivory Coast','Ivory Coast':'Ivory Coast',
+    'Turkey':'Türkiye','Türkiye':'Türkiye','Turkiye':'Türkiye',
+    'Czech Republic':'Czechia','Czechia':'Czechia',
+    'DR Congo':'DR Congo','Congo DR':'DR Congo','Democratic Republic of Congo':'DR Congo',
+    'Cape Verde':'Cape Verde','Cabo Verde':'Cape Verde',
+    'Curacao':'Curaçao','Curaçao':'Curaçao'
+  };
+  if (map[n]) return map[n];
+  // strip common suffixes / trim
+  return n.replace(/\s+FC$/,'').trim();
+}
+
+function liveRowFor(letter, team){
+  if (!LIVE || !LIVE.ok || !LIVE.groups || !LIVE.groups[letter]) return null;
+  var rows = LIVE.groups[letter];
+  for (var i = 0; i < rows.length; i++){
+    if (normName(rows[i].team) === team) return rows[i];
+  }
+  return null;
+}
+
 function renderGroups(){
   var c = document.getElementById('groups'); var html = '';
+  var haveLive = LIVE && LIVE.ok && LIVE.groups && Object.keys(LIVE.groups).length;
+
   Object.keys(GROUPS).forEach(function(g){
+    // decide row order: live standings order if we have played matches, else seeded order
+    var order = GROUPS[g].slice();
+    if (haveLive && LIVE.groups[g] && LIVE.groups[g].some(function(r){ return r.P > 0; })){
+      // sort our known teams by their live position
+      var liveOrder = LIVE.groups[g].map(function(r){ return normName(r.team); });
+      order.sort(function(a, b){
+        var ia = liveOrder.indexOf(a), ib = liveOrder.indexOf(b);
+        if (ia === -1) ia = 99; if (ib === -1) ib = 99;
+        return ia - ib;
+      });
+    }
+
     html += '<div class="gtable"><div class="gtitle">GROUP ' + g + '</div><table><thead><tr>' +
       '<th class="tname">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th class="pts">Pts</th>' +
       '</tr></thead><tbody>';
-    GROUPS[g].forEach(function(t, i){
+    order.forEach(function(t, i){
+      var r = liveRowFor(g, t);
+      var P = r ? r.P : 0, W = r ? r.W : 0, D = r ? r.D : 0, L = r ? r.L : 0;
+      var GF = r ? r.GF : 0, GA = r ? r.GA : 0, GD = r ? r.GD : 0, Pts = r ? r.Pts : 0;
+      var gd = GD > 0 ? '+' + GD : GD;
       html += '<tr' + (i < 2 ? ' class="q"' : '') + '><td class="tname">' + esc(t) + '</td>' +
-        '<td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="pts">0</td></tr>';
+        '<td>' + P + '</td><td>' + W + '</td><td>' + D + '</td><td>' + L + '</td>' +
+        '<td>' + GF + '</td><td>' + GA + '</td><td>' + gd + '</td><td class="pts">' + Pts + '</td></tr>';
     });
     html += '</tbody></table></div>';
   });
-  html += '<div class="empty" style="padding:16px">Standings show 0 until matches begin on 11 June.<br>Top 2 of each group (green) plus 8 best third-placed teams advance.</div>';
+
+  var note = haveLive
+    ? 'Standings update a few times daily from football-data.org. Last update: ' + new Date(LIVE.updated).toLocaleString()
+    : 'Standings show 0 until matches begin on 11 June.';
+  html += '<div class="empty" style="padding:16px">' + esc(note) + '<br>Top 2 of each group (green) plus 8 best third-placed teams advance.</div>';
   c.innerHTML = html;
 }
 
@@ -582,6 +636,17 @@ function init(){
   document.getElementById('tabGroups').onclick = function(){ showTab('groups'); };
 
   renderFilters(); renderFavBar(); renderGroups(); renderList();
+  fetchLive();
+}
+
+/* fetch live scores/standings from the Netlify function; re-render on success */
+function fetchLive(){
+  fetch('/api/scores', { headers: { 'accept': 'application/json' } })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(data){
+      if (data && data.ok){ LIVE = data; renderGroups(); }
+    })
+    .catch(function(){ /* offline or function down: keep static fallback */ });
 }
 init();
 </script>

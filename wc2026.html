@@ -57,6 +57,8 @@ body { background: #0d1520; font-family: system-ui, -apple-system, sans-serif; c
 .teams { font-size: 15px; font-weight: 600; color: #f1f5f9; margin-bottom: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .meta { font-size: 12px; color: #64748b; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 .meta .time { color: #94a3b8; font-weight: 600; }
+.meta .venue { color: #64748b; }
+.meta .vtime { color: #f0b429; font-weight: 600; }
 .badge-g { background: rgba(240,180,41,0.1); color: #f0b429; padding: 1px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; }
 .badge-m { background: rgba(255,255,255,0.06); color: #94a3b8; padding: 1px 6px; border-radius: 4px; font-size: 11px; }
 .gcal { background: #1e3a5f; color: #60a5fa; border: 1px solid #2563eb; border-radius: 7px; padding: 8px 12px; font-size: 13px; font-weight: 600; text-decoration: none; flex-shrink: 0; white-space: nowrap; }
@@ -66,13 +68,14 @@ body { background: #0d1520; font-family: system-ui, -apple-system, sans-serif; c
 .groups { padding: 8px 12px; }
 .gtable { background: #141f2e; border: 1px solid #1e2d3d; border-radius: 8px; margin-bottom: 14px; overflow: hidden; }
 .gtitle { background: #1a2433; color: #f0b429; font-weight: 800; font-size: 14px; padding: 8px 12px; letter-spacing: 1px; }
-.gtable table { width: 100%; border-collapse: collapse; }
-.gtable th { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 4px; text-align: center; font-weight: 600; }
-.gtable th.tname, .gtable td.tname { text-align: left; padding-left: 12px; }
-.gtable td { font-size: 13px; padding: 8px 4px; text-align: center; border-top: 1px solid #1e2d3d; color: #cbd5e1; }
+.gtable table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.gtable th { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 0; text-align: center; font-weight: 600; width: 30px; }
+.gtable th.tname, .gtable td.tname { text-align: left; padding-left: 12px; width: auto; }
+.gtable td { font-size: 13px; padding: 8px 0; text-align: center; border-top: 1px solid #1e2d3d; color: #cbd5e1; width: 30px; font-variant-numeric: tabular-nums; }
 .gtable td.tname { color: #f1f5f9; font-weight: 600; }
 .gtable tr.q td { background: rgba(34,197,94,0.06); }
-.gtable td.pts { font-weight: 800; color: #f0b429; }
+.gtable td.pts { font-weight: 800; color: #f0b429; width: 36px; }
+.gtable th.pts { width: 36px; }
 
 /* modal */
 .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: flex-end; justify-content: center; z-index: 100; }
@@ -345,6 +348,36 @@ var TIMEZONES = [
 var STAGES = ['All','Group Stage','Round of 32','Round of 16','Quarter-final','Semi-final','Final'];
 var STAGE_COLOR = {'Group Stage':'#22c55e','Round of 32':'#3b82f6','Round of 16':'#a855f7','Quarter-final':'#f97316','Semi-final':'#ef4444','Final':'#f0b429'};
 
+/* host city -> June/July (summer) offset from UTC + abbreviation */
+var VENUE_TZ = {
+  'Mexico City':{o:-6,abbr:'CST'},
+  'Guadalajara':{o:-6,abbr:'CST'},
+  'Monterrey':{o:-6,abbr:'CST'},
+  'Toronto':{o:-4,abbr:'EDT'},
+  'New York/NJ':{o:-4,abbr:'EDT'},
+  'Boston':{o:-4,abbr:'EDT'},
+  'Philadelphia':{o:-4,abbr:'EDT'},
+  'Atlanta':{o:-4,abbr:'EDT'},
+  'Miami':{o:-4,abbr:'EDT'},
+  'Houston':{o:-5,abbr:'CDT'},
+  'Dallas':{o:-5,abbr:'CDT'},
+  'Kansas City':{o:-5,abbr:'CDT'},
+  'Los Angeles':{o:-7,abbr:'PDT'},
+  'San Francisco':{o:-7,abbr:'PDT'},
+  'Seattle':{o:-7,abbr:'PDT'},
+  'Vancouver':{o:-7,abbr:'PDT'},
+  'MetLife Stadium, NY/NJ':{o:-4,abbr:'EDT'}
+};
+
+/* abbreviation for the user's selected offset (best-effort) */
+var USER_TZ_ABBR = {
+  '-12':'AoE','-11':'SST','-10':'HST','-9.5':'MART','-9':'AKDT','-8':'PST','-7':'MST','-6':'CST',
+  '-5':'EST','-4':'AST','-3.5':'NDT','-3':'ART','-2':'FNT','-1':'AZOT','0':'GMT','1':'CET','2':'EET',
+  '3':'MSK','3.5':'IRST','4':'GST','4.5':'AFT','5':'PKT','5.5':'IST','5.75':'NPT','6':'BST','6.5':'MMT',
+  '7':'ICT','8':'SGT','8.75':'CWST','9':'JST','9.5':'ACST','10':'AEST','10.5':'LHST','11':'NCT',
+  '12':'NZST','12.75':'CHAST','13':'TOT','14':'LINT'
+};
+
 /* ---------- STATE + CACHE ---------- */
 var LS = {
   get: function(k, d){ try { var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
@@ -447,10 +480,19 @@ function renderList(){
     groups[key].forEach(function(it){
       var m = it.m, col = STAGE_COLOR[m.stage] || '#94a3b8', fav = isFav(m);
       var badge = m.group ? '<span class="badge-g">Grp ' + esc(m.group) + '</span>' : (m.match ? '<span class="badge-m">M' + esc(m.match) + '</span>' : '');
+      var userAbbr = USER_TZ_ABBR[String(state.tz)] || '';
+      var vtz = VENUE_TZ[m.venue];
+      var venueStr;
+      if (vtz){
+        var vLocal = toLocal(getUTC(m), vtz.o);
+        venueStr = '<span class="venue">' + esc(m.venue) + '</span> <span class="vtime">' + fmtTime(vLocal) + ' ' + vtz.abbr + '</span>';
+      } else {
+        venueStr = '<span class="venue">' + esc(m.venue) + '</span>';
+      }
       html += '<div class="card' + (fav ? ' fav' : '') + '">' +
         '<div class="dot" style="background:' + col + '"></div>' +
         '<div class="info"><div class="teams">' + (fav ? '⭐ ' : '') + teamsWithFlags(m) + '</div>' +
-        '<div class="meta"><span class="time">' + fmtTime(it.local) + '</span><span>·</span><span>' + esc(m.venue) + '</span>' + badge + '</div></div>' +
+        '<div class="meta"><span class="time">' + fmtTime(it.local) + (userAbbr ? ' ' + userAbbr : '') + '</span><span>·</span>' + venueStr + badge + '</div></div>' +
         '<a class="gcal" href="' + gcalUrl(m) + '" target="_blank" rel="noopener noreferrer">+ GCal</a>' +
         '</div>';
     });
@@ -482,7 +524,7 @@ function renderGroups(){
   var c = document.getElementById('groups'); var html = '';
   Object.keys(GROUPS).forEach(function(g){
     html += '<div class="gtable"><div class="gtitle">GROUP ' + g + '</div><table><thead><tr>' +
-      '<th class="tname">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th>' +
+      '<th class="tname">Team</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th class="pts">Pts</th>' +
       '</tr></thead><tbody>';
     GROUPS[g].forEach(function(t, i){
       html += '<tr' + (i < 2 ? ' class="q"' : '') + '><td class="tname">' + (FLAGS[t]||'') + ' ' + esc(t) + '</td>' +

@@ -378,7 +378,8 @@ exports.handler = async (event) => {
       };
     }
 
-    const { ImageResponse } = await import('@vercel/og');
+    const ogModule = await import('@vercel/og');
+    const ImageResponse = ogModule.ImageResponse || ogModule.default?.ImageResponse || ogModule.default;
     const bebas = await loadBebas();
     const h = React.createElement;
 

@@ -1,39 +1,30 @@
 // Netlify Function: dynamic OG image for share previews
+// First working Bebas Neue version — single font loaded from jsDelivr.
 // Supports two modes:
 //   /api/og                        → site card (today's top 3)
 //   /api/og?type=movie&id=12345    → per-title card (single big poster + details)
-//
-// Fonts registered: 'Bebas Neue' (brand) + 'DM Sans' (sentence-case body)
-// @vercel/og is ESM-only — we use dynamic import inside the handler
 
 const React = require('react');
 
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const POSTER_BASE = 'https://image.tmdb.org/t/p/w500';
 
-// Fontsource jsDelivr mirrors — reliable for server-side fetching
+// jsDelivr mirror — reliable for server-side font fetching
 const BEBAS_URL = 'https://cdn.jsdelivr.net/fontsource/fonts/bebas-neue@latest/latin-400-normal.ttf';
-const DMSANS_REGULAR_URL = 'https://cdn.jsdelivr.net/fontsource/fonts/dm-sans@latest/latin-400-normal.ttf';
-const DMSANS_BOLD_URL    = 'https://cdn.jsdelivr.net/fontsource/fonts/dm-sans@latest/latin-700-normal.ttf';
 
-// In-memory cache keyed by request signature; warm instances reuse renders
 const cache = new Map();
 const CACHE_TTL = 60 * 60 * 1000;
+let bebasFont = null;
 
-let fontCache = null;
-
-async function loadFonts() {
-  if (fontCache) return fontCache;
+async function loadBebas() {
+  if (bebasFont) return bebasFont;
   try {
-    const [bebas, dmRegular, dmBold] = await Promise.all([
-      fetch(BEBAS_URL).then(r => r.ok ? r.arrayBuffer() : null),
-      fetch(DMSANS_REGULAR_URL).then(r => r.ok ? r.arrayBuffer() : null),
-      fetch(DMSANS_BOLD_URL).then(r => r.ok ? r.arrayBuffer() : null)
-    ]);
-    fontCache = { bebas, dmRegular, dmBold };
-    return fontCache;
+    const res = await fetch(BEBAS_URL);
+    if (!res.ok) return null;
+    bebasFont = await res.arrayBuffer();
+    return bebasFont;
   } catch (_) {
-    return { bebas: null, dmRegular: null, dmBold: null };
+    return null;
   }
 }
 
@@ -58,21 +49,7 @@ function truncate(s, n) {
   return s.length > n ? s.slice(0, n - 1) + '…' : s;
 }
 
-function buildFontsArray(fontCache) {
-  const fonts = [];
-  if (fontCache.dmRegular) {
-    fonts.push({ name: 'DM Sans', data: fontCache.dmRegular, style: 'normal', weight: 400 });
-  }
-  if (fontCache.dmBold) {
-    fonts.push({ name: 'DM Sans', data: fontCache.dmBold, style: 'normal', weight: 700 });
-  }
-  if (fontCache.bebas) {
-    fonts.push({ name: 'Bebas Neue', data: fontCache.bebas, style: 'normal', weight: 400 });
-  }
-  return fonts;
-}
-
-// ─── SITE CARD (default) ─────────────────────────────────────────
+// ─── SITE CARD ──────────────────────────────────────────────
 function renderSiteCard(h, titles) {
   const top1 = titles[0] || {};
   const headline = truncate(top1.title || top1.name || 'EPHIX PULSE', 26);
@@ -112,7 +89,6 @@ function renderSiteCard(h, titles) {
         alignItems: 'center',
         justifyContent: 'center',
         color: '#2196F3',
-        fontFamily: 'DM Sans',
         fontSize: '18px',
         fontWeight: 700
       }
@@ -126,7 +102,7 @@ function renderSiteCard(h, titles) {
       display: 'flex',
       backgroundColor: '#080a0f',
       backgroundImage: 'linear-gradient(135deg, #080a0f 0%, #0a1424 100%)',
-      fontFamily: 'DM Sans',
+      fontFamily: 'sans-serif',
       padding: '60px',
       color: '#ffffff'
     }
@@ -135,7 +111,7 @@ function renderSiteCard(h, titles) {
       key: 'left',
       style: { display: 'flex', flexDirection: 'column', gap: '12px', justifyContent: 'center' }
     }, (() => {
-      // Display order: #2 top, #1 middle (anchor), #3 bottom — rank badges still reflect true rank
+      // #2 top, #1 middle (anchor), #3 bottom
       const ordered = [];
       if (titles[1]) ordered.push({ item: titles[1], rank: 2 });
       if (titles[0]) ordered.push({ item: titles[0], rank: 1 });
@@ -163,7 +139,6 @@ function renderSiteCard(h, titles) {
         h('div', {
           key: 'label',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '20px',
             fontWeight: 500,
             color: '#2196F3',
@@ -174,9 +149,8 @@ function renderSiteCard(h, titles) {
         h('div', {
           key: 'h1',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '64px',
-            fontWeight: 700,
+            fontWeight: 900,
             lineHeight: 1.05,
             letterSpacing: '-1px',
             marginBottom: '40px',
@@ -192,7 +166,6 @@ function renderSiteCard(h, titles) {
         h('div', {
           key: 'subtle',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '18px',
             fontWeight: 500,
             color: 'rgba(255,255,255,0.5)',
@@ -203,16 +176,14 @@ function renderSiteCard(h, titles) {
         h('div', {
           key: 'title',
           style: {
-            fontFamily: 'Bebas Neue',
-            fontSize: '56px',
-            letterSpacing: '2px',
-            lineHeight: 1.05
+            fontSize: '44px',
+            fontWeight: 700,
+            lineHeight: 1.1
           }
         }, headline),
         year ? h('div', {
           key: 'year',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '22px',
             color: 'rgba(255,255,255,0.45)',
             marginTop: '10px'
@@ -233,7 +204,6 @@ function renderSiteCard(h, titles) {
         h('div', {
           key: 'tagline',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '15px',
             color: 'rgba(255,255,255,0.4)',
             letterSpacing: '2px',
@@ -245,7 +215,7 @@ function renderSiteCard(h, titles) {
   ]);
 }
 
-// ─── PER-TITLE CARD ──────────────────────────────────────────────
+// ─── PER-TITLE CARD ──────────────────────────────────────────
 function renderTitleCard(h, detail, mediaType) {
   const title = truncate(detail.title || detail.name || 'Untitled', 38);
   const year = (detail.release_date || detail.first_air_date || '').slice(0, 4);
@@ -263,12 +233,11 @@ function renderTitleCard(h, detail, mediaType) {
       display: 'flex',
       backgroundColor: '#080a0f',
       backgroundImage: 'linear-gradient(135deg, #080a0f 0%, #0a1424 100%)',
-      fontFamily: 'DM Sans',
+      fontFamily: 'sans-serif',
       padding: '50px',
       color: '#ffffff'
     }
   }, [
-    // Left: big poster
     h('div', {
       key: 'poster',
       style: {
@@ -294,7 +263,6 @@ function renderTitleCard(h, detail, mediaType) {
       style: { display: 'flex', width: '1px', backgroundColor: 'rgba(33,150,243,0.2)', margin: '20px 40px' }
     }),
 
-    // Right: details
     h('div', {
       key: 'right',
       style: {
@@ -310,7 +278,6 @@ function renderTitleCard(h, detail, mediaType) {
         h('div', {
           key: 'label',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '16px',
             fontWeight: 500,
             color: '#2196F3',
@@ -331,7 +298,6 @@ function renderTitleCard(h, detail, mediaType) {
         h('div', {
           key: 'meta',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '17px',
             color: 'rgba(255,255,255,0.55)',
             display: 'flex',
@@ -346,18 +312,16 @@ function renderTitleCard(h, detail, mediaType) {
         tagline ? h('div', {
           key: 'tagline',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '17px',
             fontStyle: 'italic',
             color: 'rgba(255,255,255,0.65)',
             lineHeight: 1.4,
             marginBottom: '16px'
           }
-        }, `“${tagline}”`) : null,
+        }, `"${tagline}"`) : null,
         overview ? h('div', {
           key: 'overview',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '15px',
             color: 'rgba(255,255,255,0.55)',
             lineHeight: 1.5,
@@ -366,7 +330,6 @@ function renderTitleCard(h, detail, mediaType) {
         }, overview) : null
       ]),
 
-      // Bottom: logo
       h('div', { key: 'bottom', style: { display: 'flex', flexDirection: 'column' } }, [
         h('div', {
           key: 'logo',
@@ -381,7 +344,6 @@ function renderTitleCard(h, detail, mediaType) {
         h('div', {
           key: 'tag',
           style: {
-            fontFamily: 'DM Sans',
             fontSize: '13px',
             color: 'rgba(255,255,255,0.4)',
             letterSpacing: '2px',
@@ -393,7 +355,7 @@ function renderTitleCard(h, detail, mediaType) {
   ]);
 }
 
-// ─── HANDLER ─────────────────────────────────────────────────────
+// ─── HANDLER ─────────────────────────────────────────────────
 exports.handler = async (event) => {
   try {
     const params = event.queryStringParameters || {};
@@ -402,7 +364,6 @@ exports.handler = async (event) => {
     const mode = type && id ? 'title' : 'site';
     const cacheKey = mode === 'title' ? `title-${type}-${id}` : 'site';
 
-    // Serve from cache
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.t < CACHE_TTL) {
       return {
@@ -418,14 +379,13 @@ exports.handler = async (event) => {
     }
 
     const { ImageResponse } = await import('@vercel/og');
-    const fonts = await loadFonts();
+    const bebas = await loadBebas();
     const h = React.createElement;
 
     let root;
     if (mode === 'title') {
       const detail = await fetchTitleById(type, id);
       if (!detail) {
-        // Fall back to site card if title not found
         const titles = await fetchTopTitles();
         root = renderSiteCard(h, titles);
       } else {
@@ -439,7 +399,9 @@ exports.handler = async (event) => {
     const response = new ImageResponse(root, {
       width: 1200,
       height: 630,
-      fonts: buildFontsArray(fonts)
+      fonts: bebas ? [
+        { name: 'Bebas Neue', data: bebas, style: 'normal', weight: 400 }
+      ] : []
     });
 
     const arrayBuffer = await response.arrayBuffer();
